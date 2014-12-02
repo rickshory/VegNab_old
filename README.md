@@ -5,8 +5,7 @@ VegNab
 
 
 #### Works on
-* Devices it works with
- Andorid, Version 2.2 or later, Froyo, API 8
+* Andorid, Version 2.2 or later, Froyo, API 8
 
 
 ## Contact

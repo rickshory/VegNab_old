@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,8 +19,11 @@ public class NewVisit extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_visit);
 		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+//			getSupportFragmentManager().beginTransaction()
+//					.add(R.id.container, new PlaceholderFragment()).commit();
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
+			transaction.add(R.id.container, new PlaceholderFragment());
+			transaction.commit();
 		}
 	}
 

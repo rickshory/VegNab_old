@@ -6,6 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_toggle">Toggle</string>
     <string name="action_swap">Swap</string>
+    <string name="action_swap_to_one">Swap to State 1</string>
+    <string name="action_swap_to_two">Swap to State 2</string>
     <string name="msg_state1">State 1</string>
     <string name="msg_state2">State 2</string>
 

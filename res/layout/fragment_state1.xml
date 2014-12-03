@@ -9,16 +9,16 @@
     tools:context="com.vegnab.vegnab.NewVisit$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/state1text"
+        android:id="@+id/state_one_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/msg_state1" />
     <Button
-        android:id="@+id/frag1Button"
+        android:id="@+id/fragOneButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/action_swap"
+        android:text="@string/action_swap_to_two"
         android:padding="5dp"
-        android:layout_below="@id/state1text"
+        android:layout_below="@id/state_one_text"
         />
 </RelativeLayout>

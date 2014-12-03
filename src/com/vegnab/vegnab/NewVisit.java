@@ -22,7 +22,7 @@ public class NewVisit extends ActionBarActivity {
 //			getSupportFragmentManager().beginTransaction()
 //					.add(R.id.container, new PlaceholderFragment()).commit();
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.container, new PlaceholderFragment());
+			transaction.add(R.id.fragment_container, new PlaceholderFragment());
 			transaction.commit();
 		}
 	}
@@ -57,7 +57,7 @@ public class NewVisit extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_new_visit,
+			View rootView = inflater.inflate(R.layout.fragment_state1,
 					container, false);
 			return rootView;
 		}

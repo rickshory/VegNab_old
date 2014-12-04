@@ -18,12 +18,13 @@ public class NewVisit extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_visit);
-		if (savedInstanceState == null) {
-//			getSupportFragmentManager().beginTransaction()
-//					.add(R.id.container, new PlaceholderFragment()).commit();
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, new PlaceholderFragment());
-			transaction.commit();
+		if (true) { // put conditions to test here
+			if (savedInstanceState == null) {
+				FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
+				transaction.add(R.id.fragment_container, new PlaceholderFragment());
+//				transaction.add(R.id.fragment_container, new PlaceholderFragment()); // going to edit this one
+				transaction.commit();
+			}
 		}
 	}
 

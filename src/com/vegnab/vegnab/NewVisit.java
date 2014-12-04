@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import android.os.Build;
 
 public class NewVisit extends ActionBarActivity 
@@ -63,6 +64,7 @@ public class NewVisit extends ActionBarActivity
 	}
 	
 	public void onSwapButtonClicked() {
+		Toast.makeText(getApplicationContext(), "Main Activity received event", Toast.LENGTH_LONG).show();
 		;
 	}
 }

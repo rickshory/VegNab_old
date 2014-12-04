@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-public class VegSubplotFragment extends Fragment {
+public class VegSubplotFragment extends Fragment implements OnClickListener {
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
@@ -17,7 +19,6 @@ public class VegSubplotFragment extends Fragment {
 		// methods that must be implemented in the container Activity
 		public void onSwapButtonClicked();
 	}
-
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -29,7 +30,11 @@ public class VegSubplotFragment extends Fragment {
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT);
 		}
 		// inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_state1, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_state1, container, false);
+		// set click listener for the button in the view
+		Button b = (Button) rootView.findViewById(R.id.fragOneButton);
+		b.setOnClickListener(this);
+		return rootView;
 	}
 	
 	@Override
@@ -70,12 +75,17 @@ public class VegSubplotFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		// save the curren subplot arguments in case we need to re-create the fragment
+		// save the current subplot arguments in case we need to re-create the fragment
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
 	}
-	
-	public void onButtonClick() {
-		mButtonCallback.onSwapButtonClicked();
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.fragOneButton:
+			mButtonCallback.onSwapButtonClicked();
+			break;
+		}
 	}
 
 }

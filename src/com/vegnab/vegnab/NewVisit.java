@@ -24,6 +24,9 @@ public class NewVisit extends ActionBarActivity {
 				// could end up with overlapping views
 				return;
 			}
+			
+			VegSubplotFragment firstSubpFrag = new VegSubplotFragment();
+			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
 			transaction.add(R.id.fragment_container, new PlaceholderFragment());
 //				transaction.add(R.id.fragment_container, new PlaceholderFragment()); // going to edit this one

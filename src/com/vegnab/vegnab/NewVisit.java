@@ -28,10 +28,9 @@ public class NewVisit extends ActionBarActivity {
 			VegSubplotFragment firstSubpFrag = new VegSubplotFragment();
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, new PlaceholderFragment());
-//				transaction.add(R.id.fragment_container, new PlaceholderFragment()); // going to edit this one
+//			transaction.add(R.id.fragment_container, new PlaceholderFragment());
+			transaction.add(R.id.fragment_container, firstSubpFrag);
 			transaction.commit();
-			
 		}
 	}
 

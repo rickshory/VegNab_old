@@ -25,7 +25,12 @@ public class NewVisit extends ActionBarActivity {
 				return;
 			}
 			
+			// create an instance of VegSubplot fragment
 			VegSubplotFragment firstSubpFrag = new VegSubplotFragment();
+			
+			// in case this activity were started with special instructions from an Intent
+			// pass the Intent's Extras to the fragment as arguments
+			firstSubpFrag.setArguments(getIntent().getExtras());
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
 			transaction.add(R.id.fragment_container, firstSubpFrag);

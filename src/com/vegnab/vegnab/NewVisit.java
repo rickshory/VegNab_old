@@ -19,12 +19,16 @@ public class NewVisit extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_visit);
 		if (true) { // put conditions to test here
-			if (savedInstanceState == null) {
-				FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-				transaction.add(R.id.fragment_container, new PlaceholderFragment());
-//				transaction.add(R.id.fragment_container, new PlaceholderFragment()); // going to edit this one
-				transaction.commit();
+			if (savedInstanceState != null) {
+				// if restoring from a previous state, do not create
+				// could end up with overlapping views
+				return;
 			}
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
+			transaction.add(R.id.fragment_container, new PlaceholderFragment());
+//				transaction.add(R.id.fragment_container, new PlaceholderFragment()); // going to edit this one
+			transaction.commit();
+			
 		}
 	}
 

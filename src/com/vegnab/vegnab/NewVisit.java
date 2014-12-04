@@ -28,7 +28,6 @@ public class NewVisit extends ActionBarActivity {
 			VegSubplotFragment firstSubpFrag = new VegSubplotFragment();
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-//			transaction.add(R.id.fragment_container, new PlaceholderFragment());
 			transaction.add(R.id.fragment_container, firstSubpFrag);
 			transaction.commit();
 		}
@@ -51,22 +50,5 @@ public class NewVisit extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_state1,
-					container, false);
-			return rootView;
-		}
 	}
 }

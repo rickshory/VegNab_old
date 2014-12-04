@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +11,13 @@ import android.view.ViewGroup;
 public class VegSubplotFragment extends Fragment {
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
+	OnButtonListener mButtonCallback; // declare the interface
+	// declare that the container Activity must implement this interface
+	public interface OnButtonListener {
+		// methods that must be implemented in the container Activity
+		public void onSwapButtonClicked();
+	}
+
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -41,6 +50,17 @@ public class VegSubplotFragment extends Fragment {
 		}
 	}
 
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		// assure the container activity has implemented the callback interface
+		try {
+			mButtonCallback = (OnButtonListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException (activity.toString() + " must implement OnButtonListener");
+		}
+	}
+	
 	public void updateSubplotViews(int subplotNum) {
 		// don't do anything yet
 		// figure out how to deal with default of -1
@@ -52,7 +72,10 @@ public class VegSubplotFragment extends Fragment {
 		super.onSaveInstanceState(outState);
 		// save the curren subplot arguments in case we need to re-create the fragment
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
-		
+	}
+	
+	public void onButtonClick() {
+		mButtonCallback.onSwapButtonClicked();
 	}
 
 }

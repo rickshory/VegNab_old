@@ -12,13 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-public class NewVisit extends ActionBarActivity {
+public class NewVisit extends ActionBarActivity 
+		implements VegSubplotFragment.OnButtonListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_visit);
-		if (true) { // put conditions to test here
+		/* put conditions to test below
+		 * such as whether the container even exists in this layout
+		 * e.g. if (findViewById(R.id.fragment_container) != null)
+		 * */
+		if (true) {
 			if (savedInstanceState != null) {
 				// if restoring from a previous state, do not create
 				// could end up with overlapping views
@@ -55,5 +60,9 @@ public class NewVisit extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onSwapButtonClicked() {
+		;
 	}
 }

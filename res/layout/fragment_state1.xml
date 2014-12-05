@@ -19,6 +19,10 @@
         android:layout_height="wrap_content"
         android:text="@string/action_swap_to_two"
         android:padding="5dp"
-        android:layout_below="@id/state_one_text"
-        />
+        android:layout_below="@id/state_one_text" />
+    <ListView
+        android:id="@android:id/list"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/fragOneButton" />
 </RelativeLayout>

@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class VegSubplotFragment extends Fragment implements OnClickListener {
+public class VegSubplotFragment extends ListFragment implements OnClickListener {
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
@@ -34,6 +35,8 @@ public class VegSubplotFragment extends Fragment implements OnClickListener {
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.fragOneButton);
 		b.setOnClickListener(this);
+		// if more, loop through all the child items of the ViewGroup rootView and 
+		// set the onclicklistener for all the Button instances found
 		return rootView;
 	}
 	

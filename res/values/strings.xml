@@ -10,5 +10,7 @@
     <string name="action_swap_to_two">Swap to State 2</string>
     <string name="msg_state1">State 1</string>
     <string name="msg_state2">State 2</string>
+    <string name="visit_header_title">You would put in header information here</string>
+    <string name="visit_header_go_button_msg">Start subplots</string>
 
 </resources>

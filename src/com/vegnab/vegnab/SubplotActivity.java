@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
 
-public class NewVisit extends ActionBarActivity 
+public class SubplotActivity extends ActionBarActivity 
 		implements VegSubplotFragment.OnButtonListener {
+	private int totalSubplotScreens = 0;
+	private int currentSubplotScreen = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +33,17 @@ public class NewVisit extends ActionBarActivity
 				return;
 			}
 			
-			// create an instance of Visit Header fragment
-			VisitHeaderFragment visitHdrFrag = new VisitHeaderFragment();
+			// create an instance of VegSubplot fragment
+			VegSubplotFragment firstSubpFrag = new VegSubplotFragment();
+			totalSubplotScreens++;
+			currentSubplotScreen = totalSubplotScreens;
 			
 			// in case this activity were started with special instructions from an Intent
 			// pass the Intent's Extras to the fragment as arguments
-			visitHdrFrag.setArguments(getIntent().getExtras());
+			firstSubpFrag.setArguments(getIntent().getExtras());
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, visitHdrFrag);
+			transaction.add(R.id.fragment_container, firstSubpFrag);
 			transaction.commit();
 		}
 	}
@@ -67,11 +71,4 @@ public class NewVisit extends ActionBarActivity
 		Toast.makeText(getApplicationContext(), "Main Activity received event", Toast.LENGTH_LONG).show();
 		;
 	}
-
-	public void onVisitHeaderGoButtonClicked() {
-		Toast.makeText(getApplicationContext(), "Main Activity received event from Visit Header", Toast.LENGTH_LONG).show();
-		;
-	}
-
-
 }

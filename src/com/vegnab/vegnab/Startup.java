@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
 
-public class NewVisit extends ActionBarActivity 
-		implements VegSubplotFragment.OnButtonListener {
+public class Startup extends ActionBarActivity 
+		implements VisitHeaderFragment.OnButtonListener, VegSubplotFragment.OnButtonListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

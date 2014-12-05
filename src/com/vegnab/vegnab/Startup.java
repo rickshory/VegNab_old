@@ -70,7 +70,17 @@ public class Startup extends ActionBarActivity
 
 	public void onVisitHeaderGoButtonClicked() {
 		Toast.makeText(getApplicationContext(), "Main Activity received event from Visit Header", Toast.LENGTH_LONG).show();
-		;
+		// swap fragments
+		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
+		Bundle args = new Bundle();
+		args.putInt(VegSubplotFragment.ARG_SUBPLOT, 1); // start with subplot 1
+		vegSbpFrag.setArguments(args);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		// replace the fragment in the fragment container with this new fragment and
+		// put the present fragment on the backstack so the user can navigate back to it
+		transaction.replace(R.id.fragment_container, vegSbpFrag);
+		transaction.addToBackStack("(header)");
+		transaction.commit();
 	}
 
 

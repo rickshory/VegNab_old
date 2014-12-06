@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
 
-public class Startup extends ActionBarActivity 
+public class StartupActivity extends ActionBarActivity 
 		implements VisitHeaderFragment.OnButtonListener, VegSubplotFragment.OnButtonListener {
 
 	@Override
@@ -69,7 +69,7 @@ public class Startup extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked() {
-		Toast.makeText(getApplicationContext(), "Main Activity received event from Visit Header", Toast.LENGTH_LONG).show();
+//		Toast.makeText(getApplicationContext(), "Main Activity received event from Visit Header", Toast.LENGTH_LONG).show();
 		// swap fragments
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
 		Bundle args = new Bundle();

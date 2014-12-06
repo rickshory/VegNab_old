@@ -18,7 +18,7 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
-		public void onSwapButtonClicked();
+		public void onNextSubplotButtonClicked();
 	}
 	
 	@Override
@@ -31,9 +31,9 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT);
 		}
 		// inflate the layout for this fragment
-		View rootView = inflater.inflate(R.layout.fragment_state1, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_veg_subplot, container, false);
 		// set click listener for the button in the view
-		Button b = (Button) rootView.findViewById(R.id.fragOneButton);
+		Button b = (Button) rootView.findViewById(R.id.subplotNextButton);
 		b.setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
@@ -85,8 +85,8 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.fragOneButton:
-			mButtonCallback.onSwapButtonClicked();
+		case R.id.subplotNextButton:
+			mButtonCallback.onNextSubplotButtonClicked();
 			break;
 		}
 	}

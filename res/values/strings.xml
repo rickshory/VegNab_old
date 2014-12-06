@@ -12,5 +12,8 @@
     <string name="msg_state2">State 2</string>
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>
+    <string name="veg_subplot_header_msg">This is where you work on subplots</string>
+    <string name="veg_subplot_next_button_msg">Next subplot</string>
+    <string name="veg_subplot_name_msg">Subplot: </string>
 
 </resources>

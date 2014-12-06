@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.vegnab.vegnab.NewVisit$PlaceholderFragment" >
+
+    <TextView
+        android:id="@+id/subplot_header_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/veg_subplot_header_msg" />
+    <TextView
+        android:id="@+id/subplot_header_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/veg_subplot_name_msg"
+    	android:layout_below="@id/subplot_header_text" />
+    <ListView
+        android:id="@android:id/list"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/subplot_header_name" />
+    <Button
+        android:id="@+id/subplotNextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/veg_subplot_next_button_msg"
+        android:padding="5dp"
+        android:layout_below="@android:id/list" />
+
+</RelativeLayout>

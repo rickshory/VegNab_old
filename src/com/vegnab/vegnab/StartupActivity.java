@@ -63,7 +63,7 @@ public class StartupActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void onSwapButtonClicked() {
+	public void onNextSubplotButtonClicked() {
 		Toast.makeText(getApplicationContext(), "Main Activity received event", Toast.LENGTH_LONG).show();
 		;
 	}

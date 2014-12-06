@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
 
-public class StartupActivity extends ActionBarActivity 
+public class MainVNActivity extends ActionBarActivity 
 		implements VisitHeaderFragment.OnButtonListener, VegSubplotFragment.OnButtonListener {
 
 	@Override

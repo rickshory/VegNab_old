@@ -74,6 +74,7 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		// don't do anything yet
 		// figure out how to deal with default of -1
 		mCurrentSubplot = subplotNum;
+		// at this point, after inflate, the frag's objects are all child objects of the activity
 		TextView t = (TextView)getActivity().findViewById(R.id.subplot_header_name);
 		t.setText("Subplot " + mCurrentSubplot);
 	}

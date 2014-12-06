@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class VegSubplotFragment extends ListFragment implements OnClickListener {
 	final static String ARG_SUBPLOT = "subplot";
@@ -73,6 +74,8 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		// don't do anything yet
 		// figure out how to deal with default of -1
 		mCurrentSubplot = subplotNum;
+		TextView t = (TextView)getActivity().findViewById(R.id.subplot_header_name);
+		t.setText("Subplot " + mCurrentSubplot);
 	}
 	
 	@Override

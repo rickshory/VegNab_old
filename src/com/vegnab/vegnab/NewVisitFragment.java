@@ -85,7 +85,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.visit_header_go_button:
+		case R.id.new_visit_go_button:
 			mButtonCallback.onNewVisitGoButtonClicked();
 			break;
 		}

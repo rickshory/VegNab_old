@@ -34,14 +34,14 @@ public class MainVNActivity extends ActionBarActivity
 			}
 			
 			// create an instance of Visit Header fragment
-			VisitHeaderFragment visitHdrFrag = new VisitHeaderFragment();
+			NewVisitFragment newVisitFrag = new NewVisitFragment();
 			
 			// in case this activity were started with special instructions from an Intent
 			// pass the Intent's Extras to the fragment as arguments
-			visitHdrFrag.setArguments(getIntent().getExtras());
+			newVisitFrag.setArguments(getIntent().getExtras());
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, visitHdrFrag);
+			transaction.add(R.id.fragment_container, newVisitFrag);
 			transaction.commit();
 		}
 	}
@@ -100,7 +100,7 @@ public class MainVNActivity extends ActionBarActivity
 	public void onNewVisitGoButtonClicked() {
 		VisitHeaderFragment visHdrFrag = new VisitHeaderFragment();
 		Bundle args = new Bundle();
-		args.putInt(VisitHeaderFragment.ARG_SUBPLOT, 1); // start with subplot 1
+		args.putInt(VisitHeaderFragment.ARG_SUBPLOT, 0); // start with dummy value, subplot 0
 		visHdrFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and

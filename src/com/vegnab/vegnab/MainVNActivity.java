@@ -14,7 +14,9 @@ import android.widget.Toast;
 import android.os.Build;
 
 public class MainVNActivity extends ActionBarActivity 
-		implements VisitHeaderFragment.OnButtonListener, VegSubplotFragment.OnButtonListener {
+		implements NewVisitFragment.OnButtonListener, 
+		VisitHeaderFragment.OnButtonListener, 
+		VegSubplotFragment.OnButtonListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,20 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.replace(R.id.fragment_container, vegSbpFrag);
 		transaction.addToBackStack("(header)");
 		transaction.commit();
+	}
+
+	@Override
+	public void onNewVisitGoButtonClicked() {
+		VisitHeaderFragment visHdrFrag = new VisitHeaderFragment();
+		Bundle args = new Bundle();
+		args.putInt(VisitHeaderFragment.ARG_SUBPLOT, 1); // start with subplot 1
+		visHdrFrag.setArguments(args);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		// replace the fragment in the fragment container with this new fragment and
+		// put the present fragment on the backstack so the user can navigate back to it
+		transaction.replace(R.id.fragment_container, visHdrFrag);
+		transaction.addToBackStack("(start visit)");
+		transaction.commit();		
 	}
 
 

@@ -18,7 +18,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
-		public void onVisitHeaderGoButtonClicked();
+		public void onNewVisitGoButtonClicked();
 	}
 	
 	@Override
@@ -31,9 +31,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT);
 		}
 		// inflate the layout for this fragment
-		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_new_visit, container, false);
 		// set click listener for the button in the view
-		Button b = (Button) rootView.findViewById(R.id.visit_header_go_button);
+		Button b = (Button) rootView.findViewById(R.id.new_visit_go_button);
 		b.setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
@@ -86,7 +86,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.visit_header_go_button:
-			mButtonCallback.onVisitHeaderGoButtonClicked();
+			mButtonCallback.onNewVisitGoButtonClicked();
 			break;
 		}
 	}

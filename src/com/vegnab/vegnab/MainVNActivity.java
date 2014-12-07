@@ -19,7 +19,7 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_new_visit);
+		setContentView(R.layout.activity_vn_main);
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout
 		 * e.g. if (findViewById(R.id.fragment_container) != null)

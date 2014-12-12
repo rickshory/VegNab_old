@@ -24,7 +24,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 //	, OnItemSelectedListener
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
-	
+	VegNabDbHelper DbHelper;
+	Spinner projSpinner;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -43,8 +44,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_new_visit, container, false);
-		Spinner projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
-		projSpinner.setOnItemSelectedListener((android.widget.AdapterView.OnItemSelectedListener) this);
+		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
+//		projSpinner.setOnItemSelectedListener((android.widget.AdapterView.OnItemSelectedListener) this);
+		loadProjSpinnerItems();
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.new_visit_go_button);
 		b.setOnClickListener(this);
@@ -74,7 +76,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		VegNabDbHelper DbHelper = new VegNabDbHelper(activity);
+		DbHelper = new VegNabDbHelper(activity);
 		// assure the container activity has implemented the callback interface
 		try {
 			mButtonCallback = (OnButtonListener) activity;
@@ -106,10 +108,12 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	}
 
 	private void loadProjSpinnerItems() {
-		VegNabDbHelper DbHelper = new VegNabDbHelper(getActivity().getApplicationContext());
+//		VegNabDbHelper DbHelper = new VegNabDbHelper(getActivity().getApplicationContext());
 		List<String> projCodes = DbHelper.getProjectsAsList();
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(),
 				android.R.layout.simple_spinner_item, projCodes);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		projSpinner.setAdapter(dataAdapter);
 		
 	}
 

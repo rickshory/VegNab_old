@@ -3,6 +3,9 @@
  */
 package com.vegnab.vegnab.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import android.content.Context;
@@ -27,7 +30,7 @@ public class VegNabDbHelper extends SQLiteAssetHelper {
 		
 	}
 	
-	public Cursor getProjects() {
+	public Cursor getProjectsAsCursor() {
 		SQLiteDatabase db = getReadableDatabase();
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		String[] projectionIn = {"_id", "ProjCode"};
@@ -36,6 +39,22 @@ public class VegNabDbHelper extends SQLiteAssetHelper {
 		Cursor c = qb.query(db, projectionIn, null, null, null, null, null);
 		c.moveToFirst();
 		return c;
+	}
+	
+	public List<String> getProjectsAsList() {
+		// redundant to previous method, but illustrates grammar
+		List<String> projectCodes = new ArrayList<String>();
+		String selectQuery = "SELECT * FROM Projects;";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			do {
+				projectCodes.add(cursor.getString(1));
+			} while (cursor.moveToNext());
+		}
+		cursor.close();
+		db.close();
+		return projectCodes;
 	}
 
 

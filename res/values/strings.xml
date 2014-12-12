@@ -6,8 +6,13 @@
     <string name="action_settings">Settings</string>
     <string name="action_toggle">Toggle</string>
     <string name="action_swap">Swap</string>
-    <string name="new_visit_title">Here you start a new visit</string>
-    <string name="new_visit_go_button_msg">Start visit</string>
+    <string name="new_visit_title">Start a new visit</string>
+    <string name="new_visit_plot_type">Of Plot Type</string>
+    <string name="new_visit_plot_type_prompt">Plot Type</string>
+    <string name="new_visit_project">In the Project</string>
+    <string name="new_visit_project_prompt">Project</string>
+    <string name="new_visit_existing">Work on an exisitng Visit</string>
+    <string name="new_visit_go_button_msg">Start</string>
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>

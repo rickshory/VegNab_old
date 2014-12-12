@@ -12,13 +12,52 @@
         android:id="@+id/new_visit_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/new_visit_title" />
+        android:text="@string/new_visit_title"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/new_visit_plottype_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/new_visit_title_text"
+        android:layout_below="@+id/new_visit_title_text"
+        android:text="@string/new_visit_plot_type"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Spinner
+        android:id="@+id/sel_plot_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/new_visit_plottype_text"
+        android:layout_below="@+id/new_visit_plottype_text"
+        android:prompt="@string/new_visit_plot_type_prompt" />
+    
+    <TextView
+        android:id="@+id/project_label_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/sel_plot_type"
+        android:layout_below="@+id/sel_plot_type"
+        android:text="@string/new_visit_project"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Spinner
+        android:id="@+id/sel_project"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/project_label_text"
+        android:layout_toRightOf="@+id/project_label_text"
+        android:prompt="@string/new_visit_project_prompt" />
+    
     <Button
         android:id="@+id/new_visit_go_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/new_visit_go_button_msg"
         android:padding="5dp"
-        android:layout_below="@id/new_visit_title_text"
+        android:layout_alignLeft="@+id/project_label_text"
+        android:layout_below="@id/project_label_text"
         />
+
+    
 </RelativeLayout>

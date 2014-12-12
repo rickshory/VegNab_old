@@ -1,19 +1,30 @@
 package com.vegnab.vegnab;
 
+import java.util.List;
+
+import com.vegnab.vegnab.database.VegNabDbHelper;
+
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.internal.widget.AdapterViewCompat;
+import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 public class NewVisitFragment extends Fragment implements OnClickListener {
+//	, OnItemSelectedListener
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
+	
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -32,6 +43,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_new_visit, container, false);
+		Spinner projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
+		projSpinner.setOnItemSelectedListener((android.widget.AdapterView.OnItemSelectedListener) this);
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.new_visit_go_button);
 		b.setOnClickListener(this);
@@ -61,6 +74,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		VegNabDbHelper DbHelper = new VegNabDbHelper(activity);
 		// assure the container activity has implemented the callback interface
 		try {
 			mButtonCallback = (OnButtonListener) activity;
@@ -91,4 +105,26 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 		}
 	}
 
+	private void loadProjSpinnerItems() {
+		VegNabDbHelper DbHelper = new VegNabDbHelper(getActivity().getApplicationContext());
+		List<String> projCodes = DbHelper.getProjectsAsList();
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, projCodes);
+		
+	}
+
+	/*
+	 * 
+	@Override
+	public void onItemSelected(AdapterViewCompat<?> parent, View view, int position,
+			long id) {
+		String strSel = parent.getItemAtPosition(position).toString();
+		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onNothingSelected(AdapterViewCompat<?> arg0) {
+		// TODO Auto-generated method stub
+	}
+*/
 }

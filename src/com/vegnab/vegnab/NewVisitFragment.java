@@ -5,10 +5,13 @@ import java.util.List;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.view.LayoutInflater;
@@ -108,10 +111,15 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 	}
 
 	private void loadProjSpinnerItems() {
-//		VegNabDbHelper DbHelper = new VegNabDbHelper(getActivity().getApplicationContext());
 		List<String> projCodes = DbHelper.getProjectsAsList();
+//		Cursor prjCursor = DbHelper.getProjectsAsCursor();
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(),
 				android.R.layout.simple_spinner_item, projCodes);
+//		String[] columns = new String[] { "Project" };
+//		Int [] to = new Int[] {};
+//		SimpleCursorAdapter cAdapter = new SimpleCursorAdapter(this.getActivity(), 
+//				android.R.layout.simple_spinner_item, prjCursor, null, null, mCurrentSubplot);
+		
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		projSpinner.setAdapter(dataAdapter);
 		

@@ -32,6 +32,7 @@ import android.widget.Toast;
 public class NewVisitFragment extends Fragment implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
+	int ProjectId = 0;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	VegNabDbHelper DbHelper;
@@ -124,6 +125,12 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.new_visit_go_button:
+			if (ProjectId == 0) {
+				Toast.makeText(this.getActivity(),
+						"" + getResources().getString(R.string.missing_project),
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 			mButtonCallback.onNewVisitGoButtonClicked();
 			break;
 		}

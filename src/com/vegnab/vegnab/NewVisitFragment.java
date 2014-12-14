@@ -37,8 +37,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	VegNabDbHelper DbHelper;
-	Spinner projSpinner;
-	SimpleCursorAdapter mProjAdapter; // to link the Projects spinner data
+	Spinner projSpinner, plotTypeSpinner;
+	SimpleCursorAdapter mProjAdapter, mPlotTypeAdapter; // to link the spinners' data
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -76,6 +76,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		getLoaderManager().initLoader(0, null, this);
 		// Since there in no Loader yet, this will call
 		// Loader<Cursor> onCreateLoader and pass it a first parameter of 0
+		plotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
+		plotTypeSpinner.setAdapter(mPlotTypeAdapter); // for testing, don't load it yet
 		return rootView;
 	}
 	
@@ -129,6 +131,11 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			Toast.makeText(this.getActivity(), 
 					"Selected Project position: " + projSpinner.getSelectedItemPosition() 
 					+ ", Id: " + projSpinner.getSelectedItemId() , 
+					Toast.LENGTH_LONG).show();
+
+			Toast.makeText(this.getActivity(), 
+					"Selected PlotType position: " + plotTypeSpinner.getSelectedItemPosition() 
+					+ ", Id: " + plotTypeSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
 			
 			if (ProjectId == 0) {

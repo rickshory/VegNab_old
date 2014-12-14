@@ -13,6 +13,12 @@
     <string name="new_visit_project_prompt">Project</string>
     <string name="new_visit_existing">Work on an exisitng Visit</string>
     <string name="new_visit_go_button_msg">Start</string>
+
+    <string name="empty_projects">No Projects yet</string>
+    <string name="empty_plottypes">No Plot Types yet</string>
+    <string name="empty_namers">No Namers yet</string>
+    <string name="empty_data">No data yet</string>
+        
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>

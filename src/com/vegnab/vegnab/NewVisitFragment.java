@@ -5,11 +5,15 @@ import java.util.List;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat;
@@ -23,7 +27,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class NewVisitFragment extends Fragment implements OnClickListener {
+public class NewVisitFragment extends Fragment implements OnClickListener,
+		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
@@ -122,6 +127,24 @@ public class NewVisitFragment extends Fragment implements OnClickListener {
 		
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		projSpinner.setAdapter(dataAdapter);
+		
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 

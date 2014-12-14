@@ -25,7 +25,7 @@ public class ContentProvider_Projects extends ContentProvider {
 	private static final int PROJECTS = 10;
 	private static final int PROJECT_ID = 20;
 	
-	private static final String AUTHORITY = "com.vegnab.provider";
+	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
 	private static final String BASE_PATH = "projects";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);

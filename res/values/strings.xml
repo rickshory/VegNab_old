@@ -4,6 +4,10 @@
     <string name="app_name">VegNab</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="default_project">MyProject</string>
+    <string name="default_plottype">Species List</string>
+    
     <string name="action_toggle">Toggle</string>
     <string name="action_swap">Swap</string>
     <string name="new_visit_title">Start a new visit</string>

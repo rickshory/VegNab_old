@@ -38,8 +38,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	private static final String LOG_TAG = "NewVisitFragment";
 	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
-	public static final int LOADER_FOR_PROJECTS = 1;
-	public static final int LOADER_FOR_PLOTTYPES = 2;
+	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
+	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types
 	int projectId;
 	int plotTypeId;
 	final static String ARG_SUBPLOT = "subplot";
@@ -91,18 +91,20 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 		// Create an empty adapter we will use to display the list of Projects
+		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
+		projSpinner.setEnabled(false); // will enable when data ready
 		mProjAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"ProjCode"},
 				new int[] {android.R.id.text1}, 0);
 		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
 		projSpinner.setAdapter(mProjAdapter);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_PROJECTS, null, this);
 		// If there in no Loader yet, this will call
 		// Loader<Cursor> onCreateLoader and pass it a first parameter of LOADER_FOR_PROJECTS
 		plotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
+		plotTypeSpinner.setEnabled(false); // will enable when data ready
 		plotTypeSpinner.setAdapter(mPlotTypeAdapter); // for testing, don't load it yet
 		return rootView;
 	}
@@ -234,17 +236,19 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mProjAdapter.swapCursor(finishedCursor);
+			int rowCt = finishedCursor.getCount();
+			if (rowCt > 0) {
+				projSpinner.setEnabled(true);
+//				finishedCursor.moveToPosition(1); // test, does not work
+			} else {
+				projSpinner.setEnabled(false);
+			}
+			
 			break;
 		case LOADER_FOR_PLOTTYPES:
 			// still to be written
 			break;
 		}
-		
-		
-		
-
-		
-		
 	}
 
 	@Override

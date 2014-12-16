@@ -38,8 +38,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	private static final String LOG_TAG = "NewVisitFragment";
 	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
-	int ProjectId = 0;
-	int PlotTypeId = 0;
+	int projectId;
+	int plotTypeId;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	VegNabDbHelper DbHelper;
@@ -59,7 +59,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		// database comes pre-loaded with one Project record that has Id = 1
 		// default projCode = "MyProject', but may be renamed
-		int defaultProjectID = sharedPref.getInt(PREF_DEFAULT_PROJECT_ID, 1);
+		projectId = sharedPref.getInt(PREF_DEFAULT_PROJECT_ID, 1);
 		if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
 			Toast.makeText(this.getActivity(), 
 					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
@@ -69,9 +69,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			
 		} else {
 			Toast.makeText(this.getActivity(), 
-					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + defaultProjectID, 
+					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
 					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + defaultProjectID);
+			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId);
 		}
 		// if the activity was re-created (e.g. from a screen rotate)
 		// restore the previous screen, remembered by onSaveInstanceState()
@@ -140,6 +140,13 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// figure out how to deal with default of -1
 		mCurrentSubplot = subplotNum;
 	}
+
+	public void saveDefaults() {
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sharedPref.edit();
+		prefEditor.putInt(PREF_DEFAULT_PROJECT_ID, projectId);
+		prefEditor.commit();
+	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -162,18 +169,19 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					+ ", Id: " + plotTypeSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
 			
-			if (ProjectId == 0) {
+			if (projSpinner.getSelectedItemPosition() == -1) {
 				Toast.makeText(this.getActivity(),
 						"" + getResources().getString(R.string.missing_project),
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
-			if (PlotTypeId == 0) {
+			if (plotTypeSpinner.getSelectedItemPosition() == -1) {
 				Toast.makeText(this.getActivity(),
 						"" + getResources().getString(R.string.missing_plottype),
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
+
 			mButtonCallback.onNewVisitGoButtonClicked();
 			break;
 		}

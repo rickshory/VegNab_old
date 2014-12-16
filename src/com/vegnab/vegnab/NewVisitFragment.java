@@ -35,7 +35,7 @@ import android.widget.Toast;
 public class NewVisitFragment extends Fragment implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
-	private final String LOG_TAG = "NewVisitFragment";
+	private static final String LOG_TAG = "NewVisitFragment";
 	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
 	int ProjectId = 0;
@@ -61,10 +61,16 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// default projCode = "MyProject', but may be renamed
 		int defaultProjectID = sharedPref.getInt(PREF_DEFAULT_PROJECT_ID, 1);
 		if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
+			Toast.makeText(this.getActivity(), 
+					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
+					Toast.LENGTH_LONG).show();
 			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
 			// update the create time in the database
 			
 		} else {
+			Toast.makeText(this.getActivity(), 
+					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + defaultProjectID, 
+					Toast.LENGTH_LONG).show();
 			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + defaultProjectID);
 		}
 		// if the activity was re-created (e.g. from a screen rotate)

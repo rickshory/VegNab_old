@@ -24,7 +24,7 @@
     <string name="empty_data">No data yet</string>
 
     <string name="missing_project">Please select a Project, or create a new one.</string>
-    <string name="missing_plottype">Please select Plot Type, or set up a new one.</string>
+    <string name="missing_plottype">Please select a Plot Type, or set up a new one.</string>
     <string name="missing_namer">Please select a Namer, or enter a new one.</string>
     
     <string name="visit_header_title">You would put in header information here</string>

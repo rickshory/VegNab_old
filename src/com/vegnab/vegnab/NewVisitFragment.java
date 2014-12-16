@@ -38,6 +38,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	private static final String LOG_TAG = "NewVisitFragment";
 	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
+	public static final int LOADER_FOR_PROJECTS = 1;
+	public static final int LOADER_FOR_PLOTTYPES = 2;
 	int projectId;
 	int plotTypeId;
 	final static String ARG_SUBPLOT = "subplot";
@@ -97,9 +99,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
 		projSpinner.setAdapter(mProjAdapter);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
-		getLoaderManager().initLoader(0, null, this);
-		// Since there in no Loader yet, this will call
-		// Loader<Cursor> onCreateLoader and pass it a first parameter of 0
+		getLoaderManager().initLoader(LOADER_FOR_PROJECTS, null, this);
+		// If there in no Loader yet, this will call
+		// Loader<Cursor> onCreateLoader and pass it a first parameter of LOADER_FOR_PROJECTS
 		plotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
 		plotTypeSpinner.setAdapter(mPlotTypeAdapter); // for testing, don't load it yet
 		return rootView;
@@ -225,11 +227,23 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor projCursor) {
-		// Swap the new cursor in.
-		// The framework will take care of closing the old cursor once we return.
-		// if there were various Loaders, switch them out here
-		mProjAdapter.swapCursor(projCursor);
+	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
+		// there will be various loaders, switch them out here
+		switch (loader.getId()) {
+		case LOADER_FOR_PROJECTS:
+			// Swap the new cursor in.
+			// The framework will take care of closing the old cursor once we return.
+			mProjAdapter.swapCursor(finishedCursor);
+			break;
+		case LOADER_FOR_PLOTTYPES:
+			// still to be written
+			break;
+		}
+		
+		
+		
+
+		
 		
 	}
 

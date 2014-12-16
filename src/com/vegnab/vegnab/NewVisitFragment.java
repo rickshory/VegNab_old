@@ -7,6 +7,8 @@ import com.vegnab.vegnab.database.VegNabDbHelper;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +22,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +35,9 @@ import android.widget.Toast;
 public class NewVisitFragment extends Fragment implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
+	private final String LOG_TAG = "NewVisitFragment";
+	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
+	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
 	int ProjectId = 0;
 	int PlotTypeId = 0;
 	final static String ARG_SUBPLOT = "subplot";
@@ -49,6 +55,18 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 			Bundle savedInstanceState) {
+		// first time, set default preferences
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		// database comes pre-loaded with one Project record that has Id = 1
+		// default projCode = "MyProject', but may be renamed
+		int defaultProjectID = sharedPref.getInt(PREF_DEFAULT_PROJECT_ID, 1);
+		if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
+			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
+			// update the create time in the database
+			
+		} else {
+			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + defaultProjectID);
+		}
 		// if the activity was re-created (e.g. from a screen rotate)
 		// restore the previous screen, remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts

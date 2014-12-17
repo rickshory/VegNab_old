@@ -33,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class NewVisitFragment extends Fragment implements OnClickListener,
+		OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
 	private static final String LOG_TAG = "NewVisitFragment";
@@ -83,8 +84,6 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_new_visit, container, false);
-//		projSpinner.setOnItemSelectedListener((android.widget.AdapterView.OnItemSelectedListener) this);
-//		loadProjSpinnerItems();
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.new_visit_go_button);
 		b.setOnClickListener(this);
@@ -264,6 +263,23 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// still to be written
 			break;
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterViewCompat<?> arg0, View arg1, int arg2,
+			long arg3) {
+		
+		// TODO Auto-generated method stub
+		Toast.makeText(this.getActivity(), 
+				"arg0: " + arg0 + ", arg2: " + arg2 + ", arg3" + arg3 , 
+				Toast.LENGTH_LONG).show();
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterViewCompat<?> arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/*

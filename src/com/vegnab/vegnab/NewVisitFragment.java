@@ -271,12 +271,27 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		Toast.makeText(parent.getContext(), 
 				"R.id.sel_plot_type_spinner: " + R.id.sel_plot_type_spinner, 
 				Toast.LENGTH_LONG).show();
+		
+		Toast.makeText(parent.getContext(), 
+				"projSpinner.getId(): " + projSpinner.getId() , 
+				Toast.LENGTH_LONG).show();
+		
 		Toast.makeText(parent.getContext(), 
 				"parent id: " + parent.getId(), 
+				Toast.LENGTH_LONG).show(); // seems to match 'projSpinner.getId()' when that was the one selected
+
+		Toast.makeText(parent.getContext(), 
+				"android.R.layout.simple_spinner_dropdown_item: " + android.R.layout.simple_spinner_dropdown_item , 
 				Toast.LENGTH_LONG).show();
+
+		Toast.makeText(parent.getContext(), 
+				"android.R.layout.simple_spinner_item: " + android.R.layout.simple_spinner_item , 
+				Toast.LENGTH_LONG).show();
+
 		Toast.makeText(parent.getContext(), 
 				"ViewId: " + view.getId(), 
-				Toast.LENGTH_LONG).show();		
+				Toast.LENGTH_LONG).show();
+
 		Toast.makeText(parent.getContext(), 
 				"Position: " + position, 
 				Toast.LENGTH_LONG).show();		

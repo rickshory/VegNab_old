@@ -27,13 +27,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 public class NewVisitFragment extends Fragment implements OnClickListener,
-		OnItemSelectedListener,
+		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 //	, OnItemSelectedListener
 	private static final String LOG_TAG = "NewVisitFragment";
@@ -98,6 +99,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				new int[] {android.R.id.text1}, 0);
 		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
 		projSpinner.setAdapter(mProjAdapter);
+		projSpinner.setOnItemSelectedListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_PROJECTS, null, this);
 		// If there in no Loader yet, this will call
@@ -264,7 +266,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			break;
 		}
 	}
-
+/*
 	@Override
 	public void onItemSelected(AdapterViewCompat<?> arg0, View arg1, int arg2,
 			long arg3) {
@@ -281,19 +283,17 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// TODO Auto-generated method stub
 		
 	}
-
-	/*
-	 * 
+*/
+ 
 	@Override
-	public void onItemSelected(AdapterViewCompat<?> parent, View view, int position,
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
 		String strSel = parent.getItemAtPosition(position).toString();
-		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_SHORT).show();
+		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
-	public void onNothingSelected(AdapterViewCompat<?> arg0) {
+	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 	}
-*/
 }

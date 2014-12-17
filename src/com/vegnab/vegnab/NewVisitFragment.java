@@ -266,24 +266,6 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			break;
 		}
 	}
-/*
-	@Override
-	public void onItemSelected(AdapterViewCompat<?> arg0, View arg1, int arg2,
-			long arg3) {
-		
-		// TODO Auto-generated method stub
-		Toast.makeText(this.getActivity(), 
-				"arg0: " + arg0 + ", arg2: " + arg2 + ", arg3" + arg3 , 
-				Toast.LENGTH_LONG).show();
-		
-	}
-
-	@Override
-	public void onNothingSelected(AdapterViewCompat<?> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-*/
  
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,

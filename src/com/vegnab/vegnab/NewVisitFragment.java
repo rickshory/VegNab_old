@@ -192,20 +192,6 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		}
 	}
 
-	private void loadProjSpinnerItems() {
-		List<String> projCodes = DbHelper.getProjectsAsList();
-//		Cursor prjCursor = DbHelper.getProjectsAsCursor();
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(),
-				android.R.layout.simple_spinner_item, projCodes);
-//		String[] columns = new String[] { "Project" };
-//		Int [] to = new Int[] {};
-//		SimpleCursorAdapter cAdapter = new SimpleCursorAdapter(this.getActivity(), 
-//				android.R.layout.simple_spinner_item, prjCursor, null, null, mCurrentSubplot);
-		
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		projSpinner.setAdapter(dataAdapter);
-		
-	}
 	// define the columns we will retrieve from the Projects table
 	static final String[] PROJECTS_PROJCODES = new String[] {
 		"_id", "ProjCode",

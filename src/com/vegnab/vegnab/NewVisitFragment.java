@@ -288,8 +288,34 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		String strSel = parent.getItemAtPosition(position).toString();
-		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
+/*		switch (view.getId() ) {
+		case R.id.sel_plot_type_spinner:
+			Toast.makeText(this.getActivity(),
+					"Selected Project position: " + projSpinner.getSelectedItemPosition()
+					+ ", Id: " + projSpinner.getSelectedItemId(), 
+					Toast.LENGTH_LONG).show();
+			break;
+		} */
+
+//		String strSel = parent.getItemAtPosition(position).toString();
+//		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
+
+		Toast.makeText(parent.getContext(), 
+				"R.id.sel_plot_type_spinner: " + R.id.sel_plot_type_spinner, 
+				Toast.LENGTH_LONG).show();
+		Toast.makeText(parent.getContext(), 
+				"parent id: " + parent.getId(), 
+				Toast.LENGTH_LONG).show();
+		Toast.makeText(parent.getContext(), 
+				"ViewId: " + view.getId(), 
+				Toast.LENGTH_LONG).show();		
+		Toast.makeText(parent.getContext(), 
+				"Position: " + position, 
+				Toast.LENGTH_LONG).show();		
+		Toast.makeText(parent.getContext(), 
+				"id: " + id, 
+				Toast.LENGTH_LONG).show();		
+		
 	}
 
 	@Override

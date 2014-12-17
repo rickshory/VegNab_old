@@ -240,6 +240,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			if (rowCt > 0) {
 				projSpinner.setEnabled(true);
 //				finishedCursor.moveToPosition(1); // test, does not work
+				projSpinner.setSelection(1); // test something other than the default
 			} else {
 				projSpinner.setEnabled(false);
 			}
@@ -252,10 +253,17 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
+	public void onLoaderReset(Loader<Cursor> loader) {
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
-		mProjAdapter.swapCursor(null);
+		switch (loader.getId()) {
+		case LOADER_FOR_PROJECTS:
+			mProjAdapter.swapCursor(null);
+			break;
+		case LOADER_FOR_PLOTTYPES:
+			// still to be written
+			break;
+		}
 	}
 
 	/*

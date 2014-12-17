@@ -97,7 +97,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"ProjCode"},
 				new int[] {android.R.id.text1}, 0);
-		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		projSpinner.setAdapter(mProjAdapter);
 		projSpinner.setOnItemSelectedListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one

@@ -1,7 +1,7 @@
 package com.vegnab.vegnab;
 
 import java.util.List;
-import com.vegnab.vegnab.contentprovider.ContentProvider_Projects;
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -205,7 +205,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// First, create the base URI
 			Uri baseUri;
 			// could test here, based on e.g. filters
-			baseUri = ContentProvider_Projects.CONTENT_URI; // get the whole list
+			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as

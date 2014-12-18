@@ -26,10 +26,10 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final int PROJECT_ID = 20;
 	
 	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
-	private static final String BASE_PATH = "projects";
+	private static final String BASE_PATH = "data";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
-	private static final String CONTENT_SUBTYPE = "vnd.vegnab.projects";
+	private static final String CONTENT_SUBTYPE = "vnd.vegnab.data";
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_SUBTYPE;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_SUBTYPE;
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);

@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <provider
-            android:name=".contentprovider.ContentProvider_Projects"
+            android:name=".contentprovider.ContentProvider_VegNab"
             android:authorities="com.vegnab.provider" >
         </provider>
     </application>

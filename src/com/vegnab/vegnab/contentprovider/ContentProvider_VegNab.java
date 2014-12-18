@@ -22,6 +22,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private VegNabDbHelper database;
 	
 	// used for the UriMatcher
+	private static final int RAW_SQL = 0;
 	private static final int PROJECTS = 10;
 	private static final int PROJECT_ID = 20;
 	
@@ -34,6 +35,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_SUBTYPE;
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH, RAW_SQL);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PROJECTS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PROJECT_ID);
 	}
@@ -46,25 +48,31 @@ public class ContentProvider_VegNab extends ContentProvider {
 	
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		// use SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		// check if the caller has requested a column that does not exist
-		checkColumns(projection);
-		// assign the table
-		queryBuilder.setTables("Projects");
+		Cursor cursor = null;
 		int uriType = sURIMatcher.match(uri);
-		switch (uriType) {
-		case PROJECTS:
-			break;
-		case PROJECT_ID:
-			// add the ID to the original query
-			queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);		
+		if (uriType == RAW_SQL) { // use rawQuery
+			cursor = database.getReadableDatabase().rawQuery(selection, selectionArgs);
+		} else {
+			// fix up the following to work with all tables
+			// check if the caller has requested a column that does not exist
+			checkColumns(projection);
+			// assign the table
+			queryBuilder.setTables("Projects");
+			
+			switch (uriType) {
+			case PROJECTS:
+				break;
+			case PROJECT_ID:
+				// add the ID to the original query
+				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown URI: " + uri);		
+			}
+			SQLiteDatabase db = database.getReadableDatabase();
+			cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 		}
-		SQLiteDatabase db = database.getWritableDatabase();
-		Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 		// assure potential listeners are notified
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;

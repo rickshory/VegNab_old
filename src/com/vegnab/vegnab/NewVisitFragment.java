@@ -1,10 +1,8 @@
 package com.vegnab.vegnab;
 
 import java.util.List;
-
 import com.vegnab.vegnab.contentprovider.ContentProvider_Projects;
 import com.vegnab.vegnab.database.VegNabDbHelper;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -42,8 +40,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
 	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
 	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types
-	int projectId;
-	int plotTypeId;
+	long projectId;
+	long plotTypeId;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	VegNabDbHelper DbHelper;
@@ -61,9 +59,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			Bundle savedInstanceState) {
 		// first time, set default preferences
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-		// database comes pre-loaded with one Project record that has Id = 1
-		// default projCode = "MyProject', but may be renamed
-		projectId = sharedPref.getInt(PREF_DEFAULT_PROJECT_ID, 1);
+		// database comes pre-loaded with one Project record that has _id = 1
+		// default ProjCode = "MyProject', but may be renamed
+		projectId = sharedPref.getLong(PREF_DEFAULT_PROJECT_ID, 1);
 		if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
 			Toast.makeText(this.getActivity(), 
 					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
@@ -146,10 +144,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		mCurrentSubplot = subplotNum;
 	}
 
-	public void saveDefaults() {
+	public void saveDefaultProjectId(long id) {
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sharedPref.edit();
-		prefEditor.putInt(PREF_DEFAULT_PROJECT_ID, projectId);
+		prefEditor.putLong(PREF_DEFAULT_PROJECT_ID, id);
 		prefEditor.commit();
 	}
 	
@@ -273,6 +271,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// sort out the spinners
 		// can't use switch because not constants
 		if (parent.getId() == projSpinner.getId()) {
+			projectId = id;
+			// save in app Preferences as the default Project
+			saveDefaultProjectId(projectId);
+/*			
 			Toast.makeText(parent.getContext(),
 					"Selected Project position: " + position
 					+ ", Id: " + id, 
@@ -280,6 +282,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			Cursor cur = (Cursor)mProjAdapter.getItem(position);
 			String strSel = cur.getString(cur.getColumnIndex("ProjCode"));
 			Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
+*/
 		}
 		// write code for other spinner(s) here
 	}

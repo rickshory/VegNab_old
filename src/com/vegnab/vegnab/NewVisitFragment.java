@@ -256,49 +256,32 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-/*		switch (view.getId() ) {
-		case R.id.sel_plot_type_spinner:
-			Toast.makeText(this.getActivity(),
-					"Selected Project position: " + projSpinner.getSelectedItemPosition()
-					+ ", Id: " + projSpinner.getSelectedItemId(), 
+		// 'parent' is the spinner
+		// 'view' is one of the internal Android constants (e.g. text1=16908307, text2=16908308)
+		//    in the item layout, unless set up otherwise
+		// 'position' is the zero-based index in the list
+		// 'id' is the (one-based) database record '_id' of the item
+		// get the text by:
+		//Cursor cur = (Cursor)mProjAdapter.getItem(position);
+		//String strSel = cur.getString(cur.getColumnIndex("ProjCode"));
+		//Log.v(LOG_TAG, strSel);
+		// if spinner is filled by Content Provider, can't get text by:
+		//String strSel = parent.getItemAtPosition(position).toString();
+		// that returns something like below, which there is no way to get text out of:
+		// "android.content.ContentResolver$CursorWrapperInner@42041b40"
+		
+		// sort out the spinners
+		// can't use switch because not constants
+		if (parent.getId() == projSpinner.getId()) {
+			Toast.makeText(parent.getContext(),
+					"Selected Project position: " + position
+					+ ", Id: " + id, 
 					Toast.LENGTH_LONG).show();
-			break;
-		} */
-
-//		String strSel = parent.getItemAtPosition(position).toString();
-//		Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
-
-		Toast.makeText(parent.getContext(), 
-				"R.id.sel_plot_type_spinner: " + R.id.sel_plot_type_spinner, 
-				Toast.LENGTH_LONG).show();
-		
-		Toast.makeText(parent.getContext(), 
-				"projSpinner.getId(): " + projSpinner.getId() , 
-				Toast.LENGTH_LONG).show();
-		
-		Toast.makeText(parent.getContext(), 
-				"parent id: " + parent.getId(), 
-				Toast.LENGTH_LONG).show(); // seems to match 'projSpinner.getId()' when that was the one selected
-
-		Toast.makeText(parent.getContext(), 
-				"android.R.layout.simple_spinner_dropdown_item: " + android.R.layout.simple_spinner_dropdown_item , 
-				Toast.LENGTH_LONG).show();
-
-		Toast.makeText(parent.getContext(), 
-				"android.R.layout.simple_spinner_item: " + android.R.layout.simple_spinner_item , 
-				Toast.LENGTH_LONG).show();
-
-		Toast.makeText(parent.getContext(), 
-				"ViewId: " + view.getId(), 
-				Toast.LENGTH_LONG).show();
-
-		Toast.makeText(parent.getContext(), 
-				"Position: " + position, 
-				Toast.LENGTH_LONG).show();		
-		Toast.makeText(parent.getContext(), 
-				"id: " + id, 
-				Toast.LENGTH_LONG).show();		
-		
+			Cursor cur = (Cursor)mProjAdapter.getItem(position);
+			String strSel = cur.getString(cur.getColumnIndex("ProjCode"));
+			Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
+		}
+		// write code for other spinner(s) here
 	}
 
 	@Override

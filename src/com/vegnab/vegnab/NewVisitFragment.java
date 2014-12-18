@@ -231,12 +231,18 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			int rowCt = finishedCursor.getCount();
 			if (rowCt > 0) {
 				projSpinner.setEnabled(true);
-//				finishedCursor.moveToPosition(1); // test, does not work
-				projSpinner.setSelection(1); // test something other than the default
+				// for a generalized fn, try: projSpinner.getAdapter().getCount()
+				for (int i=0; i<rowCt; i++) {
+					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
+					if (projSpinner.getItemIdAtPosition(i) == projectId) {
+						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
+						projSpinner.setSelection(i);
+						break;
+					}
+				}
 			} else {
 				projSpinner.setEnabled(false);
 			}
-			
 			break;
 		case LOADER_FOR_PLOTTYPES:
 			// still to be written

@@ -198,19 +198,26 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// This is called when a new Loader needs to be created.
-		// So far, there is only one loader so don't need to switch
-		// based on the id.
-		// First, create the base URI
-		Uri baseUri;
-		// could test here, based on e.g. filters
-		baseUri = ContentProvider_Projects.CONTENT_URI; // get the whole list
-		// Now create and return a CursorLoader that will take care of
-		// creating a Cursor for the dataset being displayed
-		// Could build a WHERE clause such as
-		// String select = "(Default = true)";
-		String select = null;
-		return new CursorLoader(getActivity(), baseUri,
-				PROJECTS_PROJCODES, select, null, null);
+		// switch out based on id
+		CursorLoader cl = null;
+		switch (id) {
+		case LOADER_FOR_PROJECTS:
+			// First, create the base URI
+			Uri baseUri;
+			// could test here, based on e.g. filters
+			baseUri = ContentProvider_Projects.CONTENT_URI; // get the whole list
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the dataset being displayed
+			// Could build a WHERE clause such as
+			// String select = "(Default = true)";
+			String select = null;
+			cl = new CursorLoader(getActivity(), baseUri,
+					PROJECTS_PROJCODES, select, null, null);
+//		case LOADER_FOR_PLOTTYPES:
+			// still to be written
+//			break;
+		}
+		return cl;
 	}
 
 	@Override

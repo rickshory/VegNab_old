@@ -38,6 +38,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	private static final String LOG_TAG = "NewVisitFragment";
 	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
 	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
+	public static final int TEST_SQL_LOADER = 0; // test loading from raw SQL
 	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
 	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types
 	long projectId;
@@ -200,19 +201,26 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// This is called when a new Loader needs to be created.
 		// switch out based on id
 		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 		case LOADER_FOR_PROJECTS:
 			// First, create the base URI
-			Uri baseUri;
 			// could test here, based on e.g. filters
 			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
 			// String select = "(Default = true)";
-			String select = null;
 			cl = new CursorLoader(getActivity(), baseUri,
 					PROJECTS_PROJCODES, select, null, null);
+			break;
+		case TEST_SQL_LOADER:
+			baseUri = ContentProvider_VegNab.CONTENT_URI;
+			select = "SELECT StartDate FROM Projects WHERE _id = 1;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;
 //		case LOADER_FOR_PLOTTYPES:
 			// still to be written
 //			break;

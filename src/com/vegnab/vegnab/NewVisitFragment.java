@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -26,7 +25,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -148,7 +146,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// test of using the Content Provider for direct SQL
 			getLoaderManager().initLoader(TEST_SQL_LOADER, null, this);
 			
-			Toast.makeText(this.getActivity(), 
+/*			Toast.makeText(this.getActivity(), 
 					"Selected Project position: " + projSpinner.getSelectedItemPosition() 
 					+ ", Id: " + projSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
@@ -157,7 +155,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					"Selected PlotType position: " + plotTypeSpinner.getSelectedItemPosition() 
 					+ ", Id: " + plotTypeSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
-			
+*/			
 			if (projSpinner.getSelectedItemPosition() == -1) {
 				Toast.makeText(this.getActivity(),
 						"" + getResources().getString(R.string.missing_project),
@@ -222,9 +220,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			finishedCursor.moveToFirst();
 			String d = finishedCursor.getString(0);
 			Log.v(LOG_TAG, "TEST_SQL_LOADER value returned: " + d);
-			Toast.makeText(this.getActivity(),
+/*			Toast.makeText(this.getActivity(),
 					"Date: " + d,
 					Toast.LENGTH_LONG).show();
+*/
 			break;
 		case LOADER_FOR_PROJECTS:
 			// Swap the new cursor in.
@@ -242,9 +241,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				projectId = sharedPref.getLong(PREF_DEFAULT_PROJECT_ID, 1);
 				if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
 					// this will only happen once, when the app is first installed
-					Toast.makeText(this.getActivity(), 
+/*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
 							Toast.LENGTH_LONG).show();
+*/
 					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
 					// update the create time in the database from when the DB file was created to 'now'
 					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
@@ -253,14 +253,16 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					Uri uri = ContentProvider_VegNab.SQL_URI;
 					int numUpdated = resolver.update(uri, null, sql, null);
 					saveDefaultProjectId(projectId);
-					Toast.makeText(this.getActivity(), 
+/*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.", 
 							Toast.LENGTH_LONG).show();
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.");
+*/
+					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time."); 
 				} else {
-					Toast.makeText(this.getActivity(), 
+/*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
 							Toast.LENGTH_LONG).show();
+*/
 					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId);
 				}
 				// set the default Project to show in its spinner

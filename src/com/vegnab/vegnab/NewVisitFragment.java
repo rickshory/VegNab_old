@@ -58,24 +58,6 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 			Bundle savedInstanceState) {
-		// first time, set default preferences
-		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-		// database comes pre-loaded with one Project record that has _id = 1
-		// default ProjCode = "MyProject', but may be renamed
-		projectId = sharedPref.getLong(PREF_DEFAULT_PROJECT_ID, 1);
-		if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
-			Toast.makeText(this.getActivity(), 
-					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
-					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
-			// update the create time in the database
-			
-		} else {
-			Toast.makeText(this.getActivity(), 
-					"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
-					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId);
-		}
 		// if the activity was re-created (e.g. from a screen rotate)
 		// restore the previous screen, remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts
@@ -136,7 +118,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			mButtonCallback = (OnButtonListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException (activity.toString() + " must implement OnButtonListener");
-		}
+		}	
 	}
 	
 	public void updateSubplotViews(int subplotNum) {
@@ -248,9 +230,40 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mProjAdapter.swapCursor(finishedCursor);
+			
 			int rowCt = finishedCursor.getCount();
 			if (rowCt > 0) {
 				projSpinner.setEnabled(true);
+				// get default Project from app Preferences, to set spinner
+				// this must wait till the spinner is populated
+				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+				// database comes pre-loaded with one Project record that has _id = 1
+				// default ProjCode = "MyProject', but may be renamed
+				projectId = sharedPref.getLong(PREF_DEFAULT_PROJECT_ID, 1);
+				if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
+					// this will only happen once, when the app is first installed
+					Toast.makeText(this.getActivity(), 
+							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
+							Toast.LENGTH_LONG).show();
+					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
+					// update the create time in the database from when the DB file was created to 'now'
+					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
+					ContentResolver resolver = getActivity().getContentResolver();
+					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
+					Uri uri = ContentProvider_VegNab.SQL_URI;
+					int numUpdated = resolver.update(uri, null, sql, null);
+					saveDefaultProjectId(projectId);
+					Toast.makeText(this.getActivity(), 
+							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.", 
+							Toast.LENGTH_LONG).show();
+					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.");
+				} else {
+					Toast.makeText(this.getActivity(), 
+							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
+							Toast.LENGTH_LONG).show();
+					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId);
+				}
+				// set the default Project to show in its spinner
 				// for a generalized fn, try: projSpinner.getAdapter().getCount()
 				for (int i=0; i<rowCt; i++) {
 					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);

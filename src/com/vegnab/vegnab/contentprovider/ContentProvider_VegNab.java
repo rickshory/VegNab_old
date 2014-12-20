@@ -132,6 +132,14 @@ public class ContentProvider_VegNab extends ContentProvider {
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		int rowsUpdated = 0;
 		switch (uriType) {
+		case RAW_SQL:
+			// SQL to run is in 'selection', any parameters in 'selectionArgs'
+			sqlDB.execSQL(selection); // run SQL that creates no cursor and returns no results
+			// then use SQLite internal 'Changes' fn to retrieve number of rows changed
+			Cursor cur = sqlDB.rawQuery("SELECT Changes() AS C;", null);
+			cur.moveToFirst();
+			rowsUpdated = cur.getInt(0);
+			break;
 		case PROJECTS:
 			rowsUpdated = sqlDB.update("Projects", values, selection, selectionArgs);
 			break;

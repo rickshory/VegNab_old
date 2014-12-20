@@ -163,6 +163,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.new_visit_go_button:
+			// test of using the Content Provider for direct SQL
+			getLoaderManager().initLoader(TEST_SQL_LOADER, null, this);
+			
 			Toast.makeText(this.getActivity(), 
 					"Selected Project position: " + projSpinner.getSelectedItemPosition() 
 					+ ", Id: " + projSpinner.getSelectedItemId() , 
@@ -232,6 +235,15 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
 		// there will be various loaders, switch them out here
 		switch (loader.getId()) {
+		case TEST_SQL_LOADER:
+			Log.v(LOG_TAG, "TEST_SQL_LOADER returned cursor ");
+			finishedCursor.moveToFirst();
+			String d = finishedCursor.getString(0);
+			Log.v(LOG_TAG, "TEST_SQL_LOADER value returned: " + d);
+			Toast.makeText(this.getActivity(),
+					"Date: " + d,
+					Toast.LENGTH_LONG).show();
+			break;
 		case LOADER_FOR_PROJECTS:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.

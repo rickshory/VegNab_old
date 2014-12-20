@@ -19,10 +19,10 @@ import android.text.TextUtils;
 public class ContentProvider_VegNab extends ContentProvider {
 	
 	// database
-	private VegNabDbHelper database;
+	private VegNabDbHelper database; // = null; // to initialize ?
 	
 	// used for the UriMatcher
-	private static final int RAW_SQL = 0;
+	private static final int RAW_SQL = 1;
 	private static final int PROJECTS = 10;
 	private static final int PROJECT_ID = 20;
 	
@@ -30,12 +30,14 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final String BASE_PATH = "data";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
+	public static final Uri SQL_URI = Uri.parse("content://" + AUTHORITY
+			+ "/sql");
 	private static final String CONTENT_SUBTYPE = "vnd.vegnab.data";
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_SUBTYPE;
 	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_SUBTYPE;
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH, RAW_SQL);
+		sURIMatcher.addURI(AUTHORITY, "sql", RAW_SQL);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PROJECTS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PROJECT_ID);
 	}
@@ -52,6 +54,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 		Cursor cursor = null;
 		int uriType = sURIMatcher.match(uri);
 		if (uriType == RAW_SQL) { // use rawQuery
+			// the full SQL statement is in 'selection' and any needed parameters in 'selectionArgs'
 			cursor = database.getReadableDatabase().rawQuery(selection, selectionArgs);
 		} else {
 			// fix up the following to work with all tables

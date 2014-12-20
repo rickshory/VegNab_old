@@ -216,7 +216,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					PROJECTS_PROJCODES, select, null, null);
 			break;
 		case TEST_SQL_LOADER:
-			baseUri = ContentProvider_VegNab.CONTENT_URI;
+			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT StartDate FROM Projects WHERE _id = 1;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);

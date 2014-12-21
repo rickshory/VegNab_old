@@ -4,9 +4,39 @@
     tools:context="com.vegnab.vegnab.NewVisit" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_app_info"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_app_info"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_edit_proj"
+        android:orderInCategory="110"
+        android:title="@string/action_edit_proj"
+        app:showAsAction="ifRoom"/>
+    
+    <item
+        android:id="@+id/action_new_proj"
+        android:orderInCategory="120"
+        android:title="@string/action_new_proj"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_new_plottype"
+        android:orderInCategory="130"
+        android:title="@string/action_new_plottype"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_old_visit"
+        android:orderInCategory="140"
+        android:title="@string/action_old_visit"
+        app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="150"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+    
 </menu>

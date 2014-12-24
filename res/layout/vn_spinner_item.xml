@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:background="@drawable/spinner_background_holo_light"
+    android:background="@drawable/vn_spinner_background_holo_light"
     android:ellipsize="marquee" />
 
 <!--     android:typeface="monospace" -->

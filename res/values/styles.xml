@@ -122,7 +122,7 @@
  -->    
     
     <style name="SpinnerTheme" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/spinner_background_holo_light</item>
+        <item name="android:background">@drawable/vn_spinner_background_holo_light</item>
     </style>
     
     <!--

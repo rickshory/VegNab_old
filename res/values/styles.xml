@@ -1,20 +1,33 @@
 <resources>
 
+    <style name="SpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/spinner_background_holo_light</item>
+    </style>
+    
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+        <item name="android:spinnerStyle">@style/SpinnerTheme</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
     </style>
-
+	    
+<!--
+	<style name="SpinnerTheme" parent="android:Base_Widget_AppCompat_Spinner">
+	        <item name="android:background">@drawable/spinner_background_holo_light</item>
+	        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+	</style>
+ -->    
+    
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    
 </resources>

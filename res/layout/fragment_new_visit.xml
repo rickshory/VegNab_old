@@ -47,8 +47,9 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/project_label_text"
         android:layout_toRightOf="@id/project_label_text"
-        android:prompt="@string/new_visit_project_prompt" />
-    
+        android:prompt="@string/new_visit_project_prompt"
+         />
+  
     <Button
         android:id="@+id/new_visit_go_button"
         android:layout_width="wrap_content"

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Many generated using http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-<!-- 
+
   <style name="VN" parent="@style/_VN"/>
 
   <style name="_VN" parent="Theme.AppCompat.Light">
+<!-- 
     <item name="android:editTextStyle">@style/EditTextVN</item>
     <item name="android:textColorHighlight">#997744cc</item>
     <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewVN</item>
@@ -23,6 +24,7 @@
     <item name="android:listViewStyle">@style/ListViewVN</item>
     <item name="android:listViewWhiteStyle">@style/ListViewVN.White</item>
     <item name="android:spinnerItemStyle">@style/SpinnerItemVN</item>
-  </style>
  -->
+  </style>
+
 </resources>

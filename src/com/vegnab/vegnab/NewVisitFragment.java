@@ -72,18 +72,18 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// Create an empty adapter we will use to display the list of Projects
 		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
 		projSpinner.setEnabled(false); // will enable when data ready
-
+/*
 		mProjAdapter = new SimpleCursorAdapter(getActivity(),
 				R.layout.vn_spinner_item, null,
 				new String[] {"ProjCode"},
 				new int[] {android.R.id.text1}, 0);
-
-/*		
+*/
+		
 		mProjAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"ProjCode"},
 				new int[] {android.R.id.text1}, 0);		
-*/	
+
 		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //		mProjAdapter.setDropDownViewResource(android.R.layout.support_simple_spinner_dropdown_item);
 		projSpinner.setAdapter(mProjAdapter);

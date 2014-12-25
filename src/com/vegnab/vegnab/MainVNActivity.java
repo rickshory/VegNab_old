@@ -62,22 +62,22 @@ public class MainVNActivity extends ActionBarActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 		case R.id.action_app_info:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''App Info'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_edit_proj:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''Edit Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_new_proj:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''New Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_new_plottype:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''New Plot Type'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_old_visit:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_settings:
-			Toast.makeText(getApplicationContext(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''Settings'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

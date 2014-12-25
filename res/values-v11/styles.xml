@@ -25,12 +25,12 @@
   <style name="ImageButtonVN" parent="android:Widget.Holo.Light.ImageButton">
 	  <item name="android:background">@drawable/vn_btn_default_holo_light</item>
   </style>
-
+-->
   <style name="SpinnerVN" parent="android:Widget.Holo.Light.Spinner">
       <item name="android:background">@drawable/vn_spinner_background_holo_light</item>
       <item name="android:dropDownSelector">@drawable/vn_list_selector_holo_light</item>
   </style>
-
+<!--
   <style name="ProgressBarVN" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
       <item name="android:progressDrawable">@drawable/vn_progress_horizontal_holo_light</item>
       <item name="android:indeterminateDrawable">@drawable/vn_progress_indeterminate_horizontal_holo_light</item>

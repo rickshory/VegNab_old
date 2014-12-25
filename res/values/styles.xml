@@ -34,15 +34,16 @@
   <style name="ImageButtonVN" parent="android:Widget.ImageButton">
 	  <item name="android:background">@drawable/vn_btn_default_holo_light</item>
   </style>
-
+-->
   <style name="SpinnerVN" parent="android:Widget.Spinner">
       <item name="android:background">@drawable/vn_spinner_background_holo_light</item>
       <item name="android:dropDownSelector">@drawable/vn_list_selector_holo_light</item>
   </style>
-
+<!--
   <style name="SpinnerDropDownItemVN" parent="android:Widget.DropDownItem.Spinner">
       <item name="android:checkMark">@drawable/vn_btn_radio_holo_light</item>
   </style>
+
   <style name="TabVN">
       <item name="android:gravity">center_horizontal</item>
       <item name="android:paddingLeft">16dip</item>
@@ -105,7 +106,7 @@
       <item name="android:minHeight">48dip</item>
 	  <item name="android:textColor">#000000</item>
   </style>
-
+ -->
   <style name="ListViewVN" parent="android:Widget.ListView">
       <item name="android:listSelector">@drawable/vn_list_selector_holo_light</item>
   </style>
@@ -117,9 +118,6 @@
   <style name="SpinnerItemVN" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
       <item name="android:textColor">#000000</item>
   </style>
-
-
- -->    
     
     <style name="SpinnerTheme" parent="android:Widget.Spinner">
         <item name="android:background">@drawable/vn_spinner_background_holo_light</item>

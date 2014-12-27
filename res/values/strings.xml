@@ -32,6 +32,8 @@
     <string name="missing_plottype">Please select a Plot Type, or set up a new one.</string>
     <string name="missing_namer">Please select a Namer, or enter a new one.</string>
 
+    <string name="edit_proj_title_add">New Project</string>
+    <string name="edit_proj_title_edit">Edit Project</string>
     <string name="edit_proj_label_projcode">Project Code, up to 10 characters</string>
     <string name="edit_proj_hint_projcode">Brief code.</string>
     <string name="edit_proj_label_context">Overall context of this data set</string>

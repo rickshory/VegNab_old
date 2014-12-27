@@ -31,6 +31,18 @@
     <string name="missing_project">Please select a Project, or create a new one.</string>
     <string name="missing_plottype">Please select a Plot Type, or set up a new one.</string>
     <string name="missing_namer">Please select a Namer, or enter a new one.</string>
+
+    <string name="edit_proj_label_projcode">Project Code, up to 10 characters</string>
+    <string name="edit_proj_hint_projcode">Brief code.</string>
+    <string name="edit_proj_label_context">Overall context of this data set</string>
+    <string name="edit_proj_hint_context">Project context.</string>
+    <string name="edit_proj_label_caveats">Any caveats or warnings about data use</string>
+    <string name="edit_proj_hint_caveats">Data caveats</string>
+    <string name="edit_proj_label_timeframe">The timeframe of this data set. You can edit these on project completion.</string> 
+    <string name="edit_proj_label_start">Start</string>
+    <string name="edit_proj_hint_start">Start</string>
+    <string name="edit_proj_label_end">End</string>
+    <string name="edit_proj_hint_end">End</string>
     
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>

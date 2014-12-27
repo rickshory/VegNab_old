@@ -66,7 +66,6 @@ public class MainVNActivity extends ActionBarActivity
 			Toast.makeText(getApplicationContext(), "''App Info'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_edit_proj:
-			Toast.makeText(getApplicationContext(), "''Edit Project'' menu item", Toast.LENGTH_SHORT).show();
 			EditProjectDialog editProjDlg = new EditProjectDialog();
 			FragmentManager fm = getSupportFragmentManager();
 			editProjDlg.show(fm, "frg_edit_proj");

@@ -35,9 +35,14 @@
     <string name="edit_proj_title_add">New Project</string>
     <string name="edit_proj_title_edit">Edit Project</string>
     <string name="edit_proj_label_projcode">Project Code, up to 10 characters</string>
-    <string name="edit_proj_hint_projcode">Brief code.</string>
+    <string name="edit_proj_hint_projcode">Brief code</string>
+    <string name="edit_proj_label_overall">The following fields you can edit later:</string>
+    <string name="edit_proj_label_descr">Longer description of this project</string>
+    <string name="edit_proj_hint_descr">Project description</string>
+    <string name="edit_proj_label_person">Who to contact about this project</string>
+    <string name="edit_proj_hint_person">Contact person</string>
     <string name="edit_proj_label_context">Overall context of this data set</string>
-    <string name="edit_proj_hint_context">Project context.</string>
+    <string name="edit_proj_hint_context">Project context</string>
     <string name="edit_proj_label_caveats">Any caveats or warnings about data use</string>
     <string name="edit_proj_hint_caveats">Data caveats</string>
     <string name="edit_proj_label_timeframe">The timeframe of this data set. You can edit these on project completion.</string> 

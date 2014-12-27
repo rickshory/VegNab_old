@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -65,7 +66,10 @@ public class MainVNActivity extends ActionBarActivity
 			Toast.makeText(getApplicationContext(), "''App Info'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_edit_proj:
-			Toast.makeText(getApplicationContext(), "''Edit Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''Edit Project'' menu item", Toast.LENGTH_SHORT).show();
+			EditProjectDialog editProjDlg = new EditProjectDialog();
+			FragmentManager fm = getSupportFragmentManager();
+			editProjDlg.show(fm, "frg_edit_proj");
 			return true;
 		case R.id.action_new_proj:
 			Toast.makeText(getApplicationContext(), "''New Project'' is not implemented yet", Toast.LENGTH_SHORT).show();

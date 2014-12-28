@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
@@ -43,9 +44,10 @@ public class DatePickerFragment extends DialogFragment
 	}
 	
 	public void showDatePickerDialog(View v) {
-		DatePickerFragment newFragment = new DatePickerFragment();
-	    FragmentManager fm = myContext.getSupportFragmentManager();
-	    newFragment.show(fm, "datePicker");
+		Log.v("DatePick", "Event caught in DatePickerFragment");
+//		DatePickerFragment newFragment = new DatePickerFragment();
+//	    FragmentManager fm = myContext.getSupportFragmentManager();
+//	    newFragment.show(fm, "datePicker");
 	}	
 	/*			EditProjectDialog editProjDlg = new EditProjectDialog();
 			FragmentManager fm = getSupportFragmentManager();

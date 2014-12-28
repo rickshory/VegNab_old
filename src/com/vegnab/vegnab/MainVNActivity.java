@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -131,4 +132,10 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack("(start visit)");
 		transaction.commit();		
 	}
+
+	
+	public void showDatePickerDialog(View v) {
+		Log.v("MainActiv", "Event caught in MainVNActivity");
+	}
+
 }

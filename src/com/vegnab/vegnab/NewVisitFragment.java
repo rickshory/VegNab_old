@@ -416,4 +416,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 	}
+
+	
+	public void showDatePickerDialog(View v) {
+		Log.v("NewVisit", "Event caught in NewVisitFragment");
+	}
+
 }

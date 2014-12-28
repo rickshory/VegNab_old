@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,9 @@ public class EditProjectDialog extends DialogFragment {
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
-
+	
+	public void showDatePickerDialog(View v) {
+		Log.v("EditProj", "Event caught in EditProjectFragment");
+	}
 
 }

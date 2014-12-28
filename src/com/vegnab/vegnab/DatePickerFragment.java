@@ -31,7 +31,7 @@ public class DatePickerFragment extends DialogFragment
 	@Override
 	public void onDateSet(DatePicker view, int year, int month, int day) {
 		Toast.makeText(this.getActivity(), 
-				"Year/Month/Day: " + year + "/" + month + "/" + day , 
+				"Year/Month/Day: " + year + "/" + (month + 1) + "/" + day , 
 				Toast.LENGTH_LONG).show();
 	}
 }

@@ -149,6 +149,7 @@
         android:layout_alignLeft="@id/lbl_date_from"
         android:layout_below="@id/lbl_date_from"
         android:hint="@string/edit_proj_hint_date_start"
+        android:focusable="false"
         android:inputType="date"
         android:maxLength="10" />
 

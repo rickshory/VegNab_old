@@ -134,12 +134,13 @@
         />
 
     <Button 
+        android:id="@+id/btn_set_date_start"
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
 	    android:layout_alignLeft="@id/lbl_timeframe"
         android:layout_below="@id/lbl_timeframe"
 	    android:text="@string/edit_proj_label_start" 
-	    android:onClick="showDatePickerDialog" 
+
 	    />
 </RelativeLayout>
 </ScrollView>

@@ -45,11 +45,11 @@
     <string name="edit_proj_hint_context">Project context</string>
     <string name="edit_proj_label_caveats">Any caveats or warnings about data use</string>
     <string name="edit_proj_hint_caveats">Data caveats</string>
-    <string name="edit_proj_label_timeframe">The timeframe of this data set</string> 
-    <string name="edit_proj_label_start">Start</string>
-    <string name="edit_proj_hint_start">Start</string>
-    <string name="edit_proj_label_end">End</string>
-    <string name="edit_proj_hint_end">End</string>
+    <string name="edit_proj_label_timeframe">The timeframe of this data set:</string> 
+    <string name="edit_proj_label_date_start">From</string>
+    <string name="edit_proj_hint_date_start">Start date</string>
+    <string name="edit_proj_label_date_end">To</string>
+    <string name="edit_proj_hint_date_end">End date</string>
     
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>

@@ -15,6 +15,7 @@ import android.widget.EditText;
 public class EditProjectDialog extends DialogFragment implements OnClickListener {
 	Button buttonSetDateStart;
 	private EditText mEditProjCode;
+	EditText mEditDateFrom;
 	
 	public EditProjectDialog() {
 		// Empty constructor required for DialogFragment
@@ -24,8 +25,9 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
 		mEditProjCode = (EditText) view.findViewById(R.id.txt_projcode);
-		buttonSetDateStart = (Button) view.findViewById(R.id.btn_set_date_start);
-		buttonSetDateStart.setOnClickListener(new View.OnClickListener() {
+		// txt_date_from
+		mEditDateFrom = (EditText) view.findViewById(R.id.txt_date_from);
+		mEditDateFrom.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Log.v("EditProj", "Event caught in EditProjectFragment, anonymous onClick");

@@ -132,6 +132,14 @@
         android:layout_below="@id/txt_caveats"
         android:text="@string/edit_proj_label_timeframe"
         />
-    
+
+    <Button 
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@id/lbl_timeframe"
+        android:layout_below="@id/lbl_timeframe"
+	    android:text="@string/edit_proj_label_start" 
+	    android:onClick="showDatePickerDialog" 
+	    />
 </RelativeLayout>
 </ScrollView>

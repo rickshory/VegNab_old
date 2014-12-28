@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -130,6 +131,9 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack("(start visit)");
 		transaction.commit();		
 	}
-
-
+	
+	public void showDatePickerDialog(View v) {
+	    DialogFragment newFragment = new DatePickerFragment();
+	    newFragment.show(getSupportFragmentManager(), "datePicker");
+	}
 }

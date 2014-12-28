@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,12 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		mEditProjCode = (EditText) view.findViewById(R.id.txt_projcode);
 		buttonSetDateStart = (Button) view.findViewById(R.id.btn_set_date_start);
 		buttonSetDateStart.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				Log.v("EditProj", "Event caught in EditProjectFragment, anonymous onClick");
-				
+				DatePickerFragment newFragment = new DatePickerFragment();
+				FragmentManager fm = getChildFragmentManager();
+				newFragment.show(fm, "datePicker");			
 			}
 		});
 		getDialog().setTitle(R.string.edit_proj_title_edit);

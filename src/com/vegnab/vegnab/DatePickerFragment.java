@@ -17,8 +17,6 @@ import android.widget.Toast;
 public class DatePickerFragment extends DialogFragment 
 		implements DatePickerDialog.OnDateSetListener {
 	
-	private FragmentActivity myContext;
-	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// use the current date as the default date in the picker
@@ -36,21 +34,4 @@ public class DatePickerFragment extends DialogFragment
 				"Year/Month/Day: " + year + "/" + month + "/" + day , 
 				Toast.LENGTH_LONG).show();
 	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-	    myContext=(FragmentActivity) activity;
-	    super.onAttach(activity);
-	}
-	
-	public void showDatePickerDialog(View v) {
-		Log.v("DatePick", "Event caught in DatePickerFragment");
-//		DatePickerFragment newFragment = new DatePickerFragment();
-//	    FragmentManager fm = myContext.getSupportFragmentManager();
-//	    newFragment.show(fm, "datePicker");
-	}	
-	/*			EditProjectDialog editProjDlg = new EditProjectDialog();
-			FragmentManager fm = getSupportFragmentManager();
-			editProjDlg.show(fm, "frg_edit_proj");
-*/
 }

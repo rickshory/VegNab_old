@@ -131,9 +131,4 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack("(start visit)");
 		transaction.commit();		
 	}
-	
-	public void showDatePickerDialog(View v) {
-	    DialogFragment newFragment = new DatePickerFragment();
-	    newFragment.show(getSupportFragmentManager(), "datePicker");
-	}
 }

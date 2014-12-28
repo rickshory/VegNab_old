@@ -2,10 +2,12 @@ package com.vegnab.vegnab;
 
 import java.util.Calendar;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.DatePicker;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 public class DatePickerFragment extends DialogFragment 
 		implements DatePickerDialog.OnDateSetListener {
+	
+	private FragmentActivity myContext;
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -31,6 +35,20 @@ public class DatePickerFragment extends DialogFragment
 				"Year/Month/Day: " + year + "/" + month + "/" + day , 
 				Toast.LENGTH_LONG).show();
 	}
-
-
+	
+	@Override
+	public void onAttach(Activity activity) {
+	    myContext=(FragmentActivity) activity;
+	    super.onAttach(activity);
+	}
+	
+	public void showDatePickerDialog(View v) {
+		DatePickerFragment newFragment = new DatePickerFragment();
+	    FragmentManager fm = myContext.getSupportFragmentManager();
+	    newFragment.show(fm, "datePicker");
+	}	
+	/*			EditProjectDialog editProjDlg = new EditProjectDialog();
+			FragmentManager fm = getSupportFragmentManager();
+			editProjDlg.show(fm, "frg_edit_proj");
+*/
 }

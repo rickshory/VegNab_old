@@ -21,6 +21,6 @@ public class EditProjectDialog extends DialogFragment {
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
-	
+
 
 }

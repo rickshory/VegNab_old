@@ -35,10 +35,6 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
-	
-	public void showDatePickerDialog(View v) {
-		Log.v("EditProj", "Event caught in EditProjectFragment");
-	}
 
 	@Override
 	public void onClick(DialogInterface arg0, int arg1) {

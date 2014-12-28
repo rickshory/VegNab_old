@@ -132,10 +132,4 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack("(start visit)");
 		transaction.commit();		
 	}
-
-	
-	public void showDatePickerDialog(View v) {
-		Log.v("MainActiv", "Event caught in MainVNActivity");
-	}
-
 }

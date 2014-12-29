@@ -17,12 +17,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 public class EditProjectDialog extends DialogFragment implements OnClickListener {
-	Button buttonSetDateStart;
+	int projRecId = 0; // zero default means new or not specified yet
+//	Button buttonSetDateStart;
 	private EditText mEditProjCode;
 	EditText mEditDateFrom;
 	
-	public EditProjectDialog() {
-		// Empty constructor required for DialogFragment
+	static EditProjectDialog newInstance(int projRecId) {
+		EditProjectDialog f = new EditProjectDialog();
+		// supply projRecId as an argument
+		Bundle args = new Bundle();
+		args.putInt("projRecId", projRecId);
+		f.setArguments(args);
+		return f;
 	}
 	
 	@Override

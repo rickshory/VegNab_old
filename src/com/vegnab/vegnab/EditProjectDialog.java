@@ -32,6 +32,12 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	}
 	
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		projRecId = getArguments().getInt("projRecId");
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
 		mEditProjCode = (EditText) view.findViewById(R.id.txt_projcode);
@@ -82,5 +88,20 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		Log.v("EditProj", "Event caught in EditProjectFragment, DialogInterface onClick");
 		
 	}
+	@Override
+	public void onStart() {
+		super.onStart();
+		// during startup, check if arguments are passed to the fragment
+		// this is where to do this because the layout has been applied
+		// to the fragment
+		Bundle args = getArguments();
+		
+		if (args != null) {
+			projRecId = args.getInt("projRecId"); // redundant with onCreate; decide best & remove other
+			// will set up the screen based on arguments passed in
+			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
+		}
+	}
+
 
 }

@@ -17,16 +17,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 public class EditProjectDialog extends DialogFragment implements OnClickListener {
-	int projRecId = 0; // zero default means new or not specified yet
+	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
 	private EditText mEditProjCode;
 	EditText mEditDateFrom;
 	
-	static EditProjectDialog newInstance(int projRecId) {
+	static EditProjectDialog newInstance(long projRecId) {
 		EditProjectDialog f = new EditProjectDialog();
 		// supply projRecId as an argument
 		Bundle args = new Bundle();
-		args.putInt("projRecId", projRecId);
+		args.putLong("projRecId", projRecId);
 		f.setArguments(args);
 		return f;
 	}
@@ -34,7 +34,7 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		projRecId = getArguments().getInt("projRecId");
+		projRecId = getArguments().getLong("projRecId");
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			projRecId = args.getInt("projRecId"); // redundant with onCreate; decide best & remove other
+			projRecId = args.getLong("projRecId"); // redundant with onCreate; decide best & remove other
 			// will set up the screen based on arguments passed in
 			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
 		}

@@ -6,6 +6,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,13 +41,14 @@ public class MainVNActivity extends ActionBarActivity
 			
 			// create an instance of Visit Header fragment
 			NewVisitFragment newVisitFrag = new NewVisitFragment();
+			String tag = "NewVisitScreen";
 			
 			// in case this activity were started with special instructions from an Intent
 			// pass the Intent's Extras to the fragment as arguments
 			newVisitFrag.setArguments(getIntent().getExtras());
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, newVisitFrag);
+			transaction.add(R.id.fragment_container, newVisitFrag, tag);
 			transaction.commit();
 		}
 	}
@@ -69,8 +72,18 @@ public class MainVNActivity extends ActionBarActivity
 			return true;
 		case R.id.action_edit_proj:
 //			EditProjectDialog editProjDlg = new EditProjectDialog();
-			DialogFragment editProjDlg = EditProjectDialog.newInstance(2);
 			FragmentManager fm = getSupportFragmentManager();
+			/*
+			fm.executePendingTransactions(); // assure all are done
+			NewVisitFragment newVis = (NewVisitFragment) fm.findFragmentByTag("NewVisitScreen");
+			if (newVis == null) {
+				Toast.makeText(getApplicationContext(), "Can't get New Visit Screen fragment", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+			// wait, we don't need to regenerate the default project Id, it's stored in Preferences*/
+			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+			long defaultProjId = sharedPref.getLong("Default_Project_Id", 1); // fix this to use a standard
+			DialogFragment editProjDlg = EditProjectDialog.newInstance(defaultProjId);
 			editProjDlg.show(fm, "frg_edit_proj");
 			return true;
 		case R.id.action_new_proj:

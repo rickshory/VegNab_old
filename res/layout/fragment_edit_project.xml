@@ -30,13 +30,32 @@
         android:hint="@string/edit_proj_hint_projcode"
         android:inputType="text"
         android:maxLength="10" />
-
+	<LinearLayout
+	    android:id="@+id/wrapper_cancel_save"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/txt_projcode"
+	    android:weightSum="2"
+	    >
+	    <Button
+	        android:id="@+id/btn_editproj_cancel"
+	        android:text="@string/action_cancel"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+	    <Button
+	        android:id="@+id/btn_editproj_save"
+	        android:text="@string/action_save"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+	</LinearLayout>
     <TextView
         android:id="@+id/lbl_overall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/txt_projcode"
-        android:layout_below="@id/txt_projcode"
+        android:layout_alignLeft="@id/wrapper_cancel_save"
+        android:layout_below="@id/wrapper_cancel_save"
         android:text="@string/edit_proj_label_overall"
         />
 

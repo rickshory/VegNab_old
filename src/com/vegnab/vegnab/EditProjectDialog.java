@@ -24,8 +24,7 @@ import android.widget.EditText;
 public class EditProjectDialog extends DialogFragment implements OnClickListener {
 	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
-	private EditText mEditProjCode;
-	EditText eProjCode, eDescription, eContext, eCaveats, eContactPerson, eStartDate, eEndDate, mEditDateFrom;
+	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	
 	static EditProjectDialog newInstance(long projRecId) {
 		EditProjectDialog f = new EditProjectDialog();
@@ -45,17 +44,14 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
-		mEditProjCode = (EditText) view.findViewById(R.id.txt_projcode);
-		// txt_date_from
 		final Calendar myCalendar = Calendar.getInstance();
-		mEditDateFrom = (EditText) view.findViewById(R.id.txt_date_from);
-		eProjCode = (EditText) view.findViewById(R.id.txt_projcode);
-		eDescription = (EditText) view.findViewById(R.id.txt_descr);
-		eContext = (EditText) view.findViewById(R.id.txt_context);
-		eCaveats = (EditText) view.findViewById(R.id.txt_caveats);
-		eContactPerson = (EditText) view.findViewById(R.id.txt_person);
-		eStartDate = (EditText) view.findViewById(R.id.txt_date_from);
-//		eEndDate = (EditText) view.findViewById(R.id.txt_date_to);
+		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
+		mDescription = (EditText) view.findViewById(R.id.txt_descr);
+		mContext = (EditText) view.findViewById(R.id.txt_context);
+		mCaveats = (EditText) view.findViewById(R.id.txt_caveats);
+		mContactPerson = (EditText) view.findViewById(R.id.txt_person);
+		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
+		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 		
 		
 		final DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
@@ -68,7 +64,7 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		        myCalendar.set(Calendar.MONTH, monthOfYear);
 		        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 //		        updateLabel();
-		        mEditDateFrom.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+		        mStartDate.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 		    }
 
 		};
@@ -82,7 +78,7 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 				newFragment.show(fm, "datePicker");			
 			}
 		}); */
-		mEditDateFrom.setOnClickListener(new View.OnClickListener() {
+		mStartDate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Log.v("EditProj", "Event caught in EditProjectFragment, anonymous onClick");
@@ -121,16 +117,14 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 			Uri uri = ContentProvider_VegNab.SQL_URI;
 			Cursor c = rs.query(uri, null, selection, selectionArgs, null);
 			if (c.moveToFirst()) {
-				eProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				eDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				eContext.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				eCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
-				eContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
-				eStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
-//				eEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mContext.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
+				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
+				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
+				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
 			}
 		}
 	}
-
-
 }

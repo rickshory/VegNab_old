@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import com.vegnab.vegnab.database.VNContract.Prefs;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
+
 
 public class MainVNActivity extends ActionBarActivity 
 		implements NewVisitFragment.OnButtonListener, 
@@ -82,7 +85,7 @@ public class MainVNActivity extends ActionBarActivity
 			}
 			// wait, we don't need to regenerate the default project Id, it's stored in Preferences*/
 			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-			long defaultProjId = sharedPref.getLong("Default_Project_Id", 1); // fix this to use a standard
+			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
 			DialogFragment editProjDlg = EditProjectDialog.newInstance(defaultProjId);
 			editProjDlg.show(fm, "frg_edit_proj");
 			return true;

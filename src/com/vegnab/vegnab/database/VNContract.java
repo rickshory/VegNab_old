@@ -12,7 +12,13 @@ import android.provider.BaseColumns;
 public final class VNContract {
 	// empty constructor to prevent accidental instantiation
 	public VNContract() {}
-	// inner classes define tables
+	// inner class to define preferences
+	public static abstract class Prefs {
+		public static final String DEFAULT_PROJECT_ID = "Default_Project_Id";
+		public static final String DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
+	}
+	
+	// inner classes to define tables
 	public static abstract class Project implements BaseColumns {
 		public static final String TABLE_NAME = "Projects";
 		public static final String COLUMN_NAME_PROJCODE = "ProjCode";

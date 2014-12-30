@@ -3,6 +3,8 @@ package com.vegnab.vegnab;
 import java.util.List;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
+import com.vegnab.vegnab.database.VNContract.Prefs;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -33,10 +35,7 @@ import android.widget.Toast;
 public class NewVisitFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
-//	, OnItemSelectedListener
 	private static final String LOG_TAG = "NewVisitFragment";
-	public static final String PREF_DEFAULT_PROJECT_ID = "Default_Project_Id";
-	public static final String PREF_DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
 	public static final int TEST_SQL_LOADER = 0; // test loading from raw SQL
 	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
 	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types
@@ -138,14 +137,14 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void saveDefaultProjectId(long id) {
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sharedPref.edit();
-		prefEditor.putLong(PREF_DEFAULT_PROJECT_ID, id);
+		prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, id);
 		prefEditor.commit();
 	}
 
 	public void saveDefaultPlotTypeId(long id) {
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefEditor = sharedPref.edit();
-		prefEditor.putLong(PREF_DEFAULT_PLOTTYPE_ID, id);
+		prefEditor.putLong(Prefs.DEFAULT_PLOTTYPE_ID, id);
 		prefEditor.commit();
 	}
 	
@@ -257,14 +256,14 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 				// database comes pre-loaded with one Project record that has _id = 1
 				// default ProjCode = "MyProject', but may be renamed
-				projectId = sharedPref.getLong(PREF_DEFAULT_PROJECT_ID, 1);
-				if (!sharedPref.contains(PREF_DEFAULT_PROJECT_ID)) {
+				projectId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
+				if (!sharedPref.contains(Prefs.DEFAULT_PROJECT_ID)) {
 					// this will only happen once, when the app is first installed
 /*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.");
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' does not exist yet.");
 					// update the create time in the database from when the DB file was created to 'now'
 					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
 					ContentResolver resolver = getActivity().getContentResolver();
@@ -276,13 +275,13 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.", 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time."); 
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' set for the first time."); 
 				} else {
 /*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + projectId);
 				}
 				// set the default Project to show in its spinner
 				// for a generalized fn, try: projSpinner.getAdapter().getCount()
@@ -309,26 +308,26 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 				// database comes pre-loaded with one Plot Type record that has _id = 1
 				// default PlotTypeDescr = "Species List'
-				plotTypeId = sharedPref.getLong(PREF_DEFAULT_PLOTTYPE_ID, 1);
-				if (!sharedPref.contains(PREF_DEFAULT_PLOTTYPE_ID)) {
+				plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 1);
+				if (!sharedPref.contains(Prefs.DEFAULT_PLOTTYPE_ID)) {
 					// this will only happen once, when the app is first installed
 /*					Toast.makeText(this.getActivity(), 
-							"Prefs key '" + PREF_DEFAULT_PLOTTYPE_ID + "' does not exist yet.", 
+							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' does not exist yet.", 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PLOTTYPE_ID + "' does not exist yet.");
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' does not exist yet.");
 					saveDefaultPlotTypeId(plotTypeId);
 /*					Toast.makeText(this.getActivity(), 
-							"Prefs key '" + PREF_DEFAULT_PLOTTYPE_ID + "' set for the first time.", 
+							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' set for the first time.", 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PLOTTYPE_ID + "' set for the first time."); 
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' set for the first time."); 
 				} else {
 /*					Toast.makeText(this.getActivity(), 
-							"Prefs key '" + PREF_DEFAULT_PLOTTYPE_ID + "' = " + plotTypeId, 
+							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' = " + plotTypeId, 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + plotTypeId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + plotTypeId);
 				}
 				// set the default Plot Type to show in its spinner
 				// for a generalized fn, try: mySpinner.getAdapter().getCount()

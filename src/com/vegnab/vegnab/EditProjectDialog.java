@@ -2,9 +2,14 @@ package com.vegnab.vegnab;
 
 import java.util.Calendar;
 
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +25,7 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
 	private EditText mEditProjCode;
-	EditText mEditDateFrom;
+	EditText eProjCode, eDescription, eContext, eCaveats, eContactPerson, eStartDate, eEndDate, mEditDateFrom;
 	
 	static EditProjectDialog newInstance(long projRecId) {
 		EditProjectDialog f = new EditProjectDialog();
@@ -44,6 +49,14 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		// txt_date_from
 		final Calendar myCalendar = Calendar.getInstance();
 		mEditDateFrom = (EditText) view.findViewById(R.id.txt_date_from);
+		eProjCode = (EditText) view.findViewById(R.id.txt_projcode);
+		eDescription = (EditText) view.findViewById(R.id.txt_descr);
+		eContext = (EditText) view.findViewById(R.id.txt_context);
+		eCaveats = (EditText) view.findViewById(R.id.txt_caveats);
+		eContactPerson = (EditText) view.findViewById(R.id.txt_person);
+		eStartDate = (EditText) view.findViewById(R.id.txt_date_from);
+//		eEndDate = (EditText) view.findViewById(R.id.txt_date_to);
+		
 		
 		final DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -100,6 +113,22 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 			projRecId = args.getLong("projRecId"); // redundant with onCreate; decide best & remove other
 			// will set up the screen based on arguments passed in
 			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
+			String selection = "SELECT ProjCode, Description, Context, Caveats, " + 
+					"ContactPerson, StartDate, EndDate FROM Projects WHERE _id = ?;";
+			String selectionArgs[] = {"" + projRecId};
+			ContentResolver rs = getActivity().getContentResolver();
+			// use raw SQL, may change to use CursorLoader
+			Uri uri = ContentProvider_VegNab.SQL_URI;
+			Cursor c = rs.query(uri, null, selection, selectionArgs, null);
+			if (c.moveToFirst()) {
+				eProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				eDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				eContext.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				eCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
+				eContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
+				eStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
+//				eEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+			}
 		}
 	}
 

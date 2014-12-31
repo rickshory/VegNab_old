@@ -217,7 +217,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
 			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), baseUri,
+			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
 					PROJECTS_PROJCODES, select, null, null);
 			break;
 		case LOADER_FOR_PLOTTYPES:

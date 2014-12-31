@@ -38,8 +38,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
 		sURIMatcher.addURI(AUTHORITY, "sql", RAW_SQL);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH, PROJECTS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", PROJECT_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects", PROJECTS);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/project/#", PROJECT_ID);
 	}
 	
 	@Override

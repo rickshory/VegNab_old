@@ -1,6 +1,8 @@
 package com.vegnab.vegnab;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 
@@ -21,9 +23,9 @@ import android.widget.Toast;
 
 public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener {
 	long projRecId = 0; // zero default means new or not specified yet
-//	Button buttonSetDateStart;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -93,6 +95,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			break;
 		case R.id.txt_date_from:
 			mActiveDateView = mStartDate;
+			String s = mActiveDateView.getText().toString();
+	        try {
+	        	myCalendar.setTime(dateFormat.parse(s));
+			} catch (java.text.ParseException e) {
+				myCalendar = Calendar.getInstance();
+			}
 			new DatePickerDialog(getActivity(), myDateListener,
 					myCalendar.get(Calendar.YEAR),
 					myCalendar.get(Calendar.MONTH),

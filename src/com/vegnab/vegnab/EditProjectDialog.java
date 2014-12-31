@@ -6,13 +6,10 @@ import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +23,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
+	private EditText mActiveDateView;
 	private Calendar myCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -37,7 +35,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	        myCalendar.set(Calendar.MONTH, monthOfYear);
 	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 //	        updateLabel();
-	        mStartDate.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+	        mActiveDateView.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 	    }
 	};
 	
@@ -93,6 +91,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.txt_date_from:
+			mActiveDateView = mStartDate;
 			new DatePickerDialog(getActivity(), myDateListener,
 					myCalendar.get(Calendar.YEAR),
 					myCalendar.get(Calendar.MONTH),

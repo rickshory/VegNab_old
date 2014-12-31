@@ -71,6 +71,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 		
 		mStartDate.setOnClickListener(this);
+		mEndDate.setOnClickListener(this);
 		
 
 		getDialog().setTitle(R.string.edit_proj_title_edit);
@@ -92,6 +93,13 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			break;
 		case R.id.txt_date_from:
 			mActiveDateView = mStartDate;
+			new DatePickerDialog(getActivity(), myDateListener,
+					myCalendar.get(Calendar.YEAR),
+					myCalendar.get(Calendar.MONTH),
+					myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+			break;
+		case R.id.txt_date_to:
+			mActiveDateView = mEndDate;
 			new DatePickerDialog(getActivity(), myDateListener,
 					myCalendar.get(Calendar.YEAR),
 					myCalendar.get(Calendar.MONTH),

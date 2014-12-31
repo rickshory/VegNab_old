@@ -23,7 +23,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
-		android.view.View.OnFocusChangeListener {
+		android.view.View.OnFocusChangeListener,
+		android.view.View.OnKeyListener{
 	long projRecId = 0; // zero default means new or not specified yet
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
@@ -86,24 +87,19 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		view.setFocusableInTouchMode(true);
 		view.requestFocus();
 		view.setOnKeyListener(new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-        	Log.v("EditProject", "In EditProjectDialog, keyCode: " + keyCode);
-            if( keyCode == KeyEvent.KEYCODE_BACK ) {
-            	Log.v("EditProject", "In EditProjectDialog, caught 'onBackPressed'");
-//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    });
+	        @Override
+	        public boolean onKey(View v, int keyCode, KeyEvent event) {
+	        	Log.v("EditProject", "In EditProjectDialog, keyCode: " + keyCode);
+	            if( keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+	            	Log.v("EditProject", "In EditProjectDialog, caught 'onBackPressed'");
+	//                getSupportFragmentManager().popBackStack(null, SupportFragmentManager.POP_BACK_STACK_INCLUSIVE);
+	                return true;
+	            } else {
+	                return false;
+	            }
+	        }
+	    });
 
-/*
-
-*/		
-		
-		
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
@@ -204,5 +200,11 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
 		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 */
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	}
 

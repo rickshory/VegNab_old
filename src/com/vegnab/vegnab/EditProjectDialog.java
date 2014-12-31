@@ -21,7 +21,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener {
+public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
+		android.view.View.OnFocusChangeListener {
 	long projRecId = 0; // zero default means new or not specified yet
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
@@ -73,6 +74,13 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mStartDate.setOnClickListener(this);
 		mEndDate.setOnClickListener(this);
 		
+		mProjCode.setOnFocusChangeListener(this);
+		mDescription.setOnFocusChangeListener(this);
+		mContext.setOnFocusChangeListener(this);
+		mCaveats.setOnFocusChangeListener(this);
+		mContactPerson.setOnFocusChangeListener(this);
+		mStartDate.setOnFocusChangeListener(this);
+		mEndDate.setOnFocusChangeListener(this);
 
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
@@ -145,4 +153,45 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			}
 		}
 	}
-}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if(!hasFocus) { // something lost focus
+			switch (v.getId()) {
+			case R.id.txt_projcode:
+				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Project Code' lost focus");
+				Toast.makeText(this.getActivity(), 
+						"'Project Code' lost focus" , 
+						Toast.LENGTH_SHORT).show();
+				break;
+			case R.id.txt_descr:
+				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Description' lost focus");
+				Toast.makeText(this.getActivity(), 
+						"'Description' lost focus" , 
+						Toast.LENGTH_SHORT).show();
+				break;
+			case R.id.txt_date_from: // this one is not focusable
+				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Start Date' lost focus");
+				Toast.makeText(this.getActivity(), 
+						"'Start Data' lost focus" , 
+						Toast.LENGTH_SHORT).show();
+				break;
+			case R.id.txt_date_to: // this one is not focusable
+				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'End Date' lost focus");
+				Toast.makeText(this.getActivity(), 
+						"'End Data' lost focus" , 
+						Toast.LENGTH_SHORT).show();            
+				break;
+				}
+			}		
+		}
+/*		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
+		mDescription = (EditText) view.findViewById(R.id.txt_descr);
+		mContext = (EditText) view.findViewById(R.id.txt_context);
+		mCaveats = (EditText) view.findViewById(R.id.txt_caveats);
+		mContactPerson = (EditText) view.findViewById(R.id.txt_person);
+		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
+		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
+*/
+	}
+

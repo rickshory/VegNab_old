@@ -415,13 +415,13 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 	}
-
+/*
 	// no Override
 	public static void onBackPressed() {
 		Log.v("NewVist", "In NewVisitFragment, caught 'onBackPressed'");
 	return;
 	}
-	
+*/	
 	public void showDatePickerDialog(View v) {
 		Log.v("NewVisit", "Event caught in NewVisitFragment");
 	}

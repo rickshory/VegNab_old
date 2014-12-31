@@ -27,6 +27,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		android.view.View.OnFocusChangeListener //, android.view.View.OnKeyListener
 		{
 	long projRecId = 0; // zero default means new or not specified yet
+	String sql;
+	String[] params;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -180,6 +182,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			switch (v.getId()) {
 			case R.id.txt_projcode:
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Project Code' lost focus");
+//				sql = "UPDATE Projects SET ProjCode = ? WHERE _id = ?;";
+//				params = {mProjCode.getText().toString(), };
 				break;
 			case R.id.txt_descr:
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Description' lost focus");
@@ -211,6 +215,17 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onCancel (DialogInterface dialog) {
 		Log.v("EditProj", "In EditProjectFragment, onCancel");
+		Log.v("EditProj", "Test in EditProjectFragment, onCancel, mProjCode: " + mProjCode.getText().toString());
+		// update the project record in the database, if everything valid
+		
+		/*					
+					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
+					ContentResolver resolver = getActivity().getContentResolver();
+					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
+					Uri uri = ContentProvider_VegNab.SQL_URI;
+					int numUpdated = resolver.update(uri, null, sql, null);
+					saveDefaultProjectId(projectId);
+*/
 	}
 	
 }

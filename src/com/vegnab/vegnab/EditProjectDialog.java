@@ -95,27 +95,28 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			break;
 		case R.id.txt_date_from:
 			mActiveDateView = mStartDate;
-			String s = mActiveDateView.getText().toString();
-	        try {
-	        	myCalendar.setTime(dateFormat.parse(s));
-			} catch (java.text.ParseException e) {
-				myCalendar = Calendar.getInstance();
-			}
-			new DatePickerDialog(getActivity(), myDateListener,
-					myCalendar.get(Calendar.YEAR),
-					myCalendar.get(Calendar.MONTH),
-					myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+			fireOffDatePicker();
 			break;
 		case R.id.txt_date_to:
 			mActiveDateView = mEndDate;
-			new DatePickerDialog(getActivity(), myDateListener,
-					myCalendar.get(Calendar.YEAR),
-					myCalendar.get(Calendar.MONTH),
-					myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+			fireOffDatePicker();
 			break;
+		}
 	}
-
+		
+	private void fireOffDatePicker() {
+		String s = mActiveDateView.getText().toString();
+        try {
+        	myCalendar.setTime(dateFormat.parse(s));
+		} catch (java.text.ParseException e) {
+			myCalendar = Calendar.getInstance();
+		}
+		new DatePickerDialog(getActivity(), myDateListener,
+				myCalendar.get(Calendar.YEAR),
+				myCalendar.get(Calendar.MONTH),
+				myCalendar.get(Calendar.DAY_OF_MONTH)).show();	
 	}
+	
 	@Override
 	public void onStart() {
 		super.onStart();

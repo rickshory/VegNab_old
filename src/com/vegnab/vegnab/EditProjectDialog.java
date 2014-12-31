@@ -26,6 +26,21 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
+	private Calendar myCalendar = Calendar.getInstance();
+	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+
+	    @Override
+	    public void onDateSet(DatePicker view, int year, int monthOfYear,
+	            int dayOfMonth) {
+	        Log.v("EditProj", "Event caught in EditProjectDialog, anonymous onDateSet");
+	        myCalendar.set(Calendar.YEAR, year);
+	        myCalendar.set(Calendar.MONTH, monthOfYear);
+	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//	        updateLabel();
+	        mStartDate.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+	    }
+
+	};
 	
 	static EditProjectDialog newInstance(long projRecId) {
 		EditProjectDialog f = new EditProjectDialog();
@@ -50,7 +65,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Button btnSave = (Button) view.findViewById(R.id.btn_editproj_save);
 		btnSave.setOnClickListener(this);
 
-		final Calendar myCalendar = Calendar.getInstance();
+//		final Calendar myCalendar = Calendar.getInstance();
 		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
 		mDescription = (EditText) view.findViewById(R.id.txt_descr);
 		mContext = (EditText) view.findViewById(R.id.txt_context);
@@ -59,7 +74,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
 		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 		
-		
+/*		
 		final DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
 		    @Override
@@ -74,8 +89,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		    }
 
 		};
-		
-		mStartDate.setOnClickListener(this);
+*/		
+//		mStartDate.setOnClickListener(this);
 		
 /*		mEditDateFrom.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -86,7 +101,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				newFragment.show(fm, "datePicker");			
 			}
 		}); */
-/*
+
 		mStartDate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -97,7 +112,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
-		*/
+		
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}

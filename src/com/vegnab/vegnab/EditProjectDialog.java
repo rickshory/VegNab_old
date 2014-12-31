@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,28 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mContactPerson.setOnFocusChangeListener(this);
 		mStartDate.setOnFocusChangeListener(this);
 		mEndDate.setOnFocusChangeListener(this);
+		
+		view.setFocusableInTouchMode(true);
+		view.requestFocus();
+		view.setOnKeyListener(new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+        	Log.v("EditProject", "In EditProjectDialog, keyCode: " + keyCode);
+            if( keyCode == KeyEvent.KEYCODE_BACK ) {
+            	Log.v("EditProject", "In EditProjectDialog, caught 'onBackPressed'");
+//                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    });
 
+/*
+
+*/		
+		
+		
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
@@ -151,6 +173,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
 				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
 			}
+			c.close();
 		}
 	}
 
@@ -160,27 +183,15 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			switch (v.getId()) {
 			case R.id.txt_projcode:
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Project Code' lost focus");
-				Toast.makeText(this.getActivity(), 
-						"'Project Code' lost focus" , 
-						Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.txt_descr:
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Description' lost focus");
-				Toast.makeText(this.getActivity(), 
-						"'Description' lost focus" , 
-						Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.txt_date_from: // this one is not focusable
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Start Date' lost focus");
-				Toast.makeText(this.getActivity(), 
-						"'Start Data' lost focus" , 
-						Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.txt_date_to: // this one is not focusable
 				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'End Date' lost focus");
-				Toast.makeText(this.getActivity(), 
-						"'End Data' lost focus" , 
-						Toast.LENGTH_SHORT).show();            
 				break;
 				}
 			}		

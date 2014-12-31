@@ -416,7 +416,13 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// TODO Auto-generated method stub
 	}
 
-	
+/*	
+	@Override
+	public void onBackPressed() {
+		Log.v("NewVist", "In NewVisitFragment, caught 'onBackPressed'");
+	return;
+	}
+*/	
 	public void showDatePickerDialog(View v) {
 		Log.v("NewVisit", "Event caught in NewVisitFragment");
 	}

@@ -105,6 +105,13 @@ public class MainVNActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@Override
+	public void onBackPressed() {
+		Log.v("Main", "In MainActivity, caught 'onBackPressed'");
+		super.onBackPressed();
+	return;
+	}
+	
 	public void onNextSubplotButtonClicked(int subpNum) {
 		Toast.makeText(getApplicationContext(), "Received value " + subpNum + ", going to " + (subpNum + 1), Toast.LENGTH_SHORT).show();
 		// swap new Subplot frag in place of existing one

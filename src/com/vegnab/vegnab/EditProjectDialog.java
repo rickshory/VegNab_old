@@ -90,7 +90,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 
 		};
 */		
-//		mStartDate.setOnClickListener(this);
+		mStartDate.setOnClickListener(this);
 		
 /*		mEditDateFrom.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -101,7 +101,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				newFragment.show(fm, "datePicker");			
 			}
 		}); */
-
+/*
 		mStartDate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -112,7 +112,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 			}
 		});
-		
+*/
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
@@ -137,9 +137,13 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.txt_date_from:
-			Toast.makeText(this.getActivity(), 
-					"'Start Date' EditText clicked" , 
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this.getActivity(), 
+//					"'Start Date' EditText clicked" , 
+//					Toast.LENGTH_SHORT).show();
+			new DatePickerDialog(getActivity(), myDateListener,
+					myCalendar.get(Calendar.YEAR),
+					myCalendar.get(Calendar.MONTH),
+					myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 			break;
 	}
 

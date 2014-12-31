@@ -39,7 +39,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 //	        updateLabel();
 	        mStartDate.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
 	    }
-
 	};
 	
 	static EditProjectDialog newInstance(long projRecId) {
@@ -54,7 +53,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		projRecId = getArguments().getLong("projRecId");
 	}
 	
 	@Override
@@ -74,54 +72,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
 		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 		
-/*		
-		final DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
-
-		    @Override
-		    public void onDateSet(DatePicker view, int year, int monthOfYear,
-		            int dayOfMonth) {
-		        Log.v("EditProj", "Event caught in EditProjectDialog, anonymous onDateSet");
-		        myCalendar.set(Calendar.YEAR, year);
-		        myCalendar.set(Calendar.MONTH, monthOfYear);
-		        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//		        updateLabel();
-		        mStartDate.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-		    }
-
-		};
-*/		
 		mStartDate.setOnClickListener(this);
 		
-/*		mEditDateFrom.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.v("EditProj", "Event caught in EditProjectDialog, anonymous onClick");
-				DatePickerFragment newFragment = new DatePickerFragment();
-				FragmentManager fm = getChildFragmentManager();
-				newFragment.show(fm, "datePicker");			
-			}
-		}); */
-/*
-		mStartDate.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.v("EditProj", "Event caught in EditProjectFragment, anonymous onClick");
-				new DatePickerDialog(getActivity(), myDateListener,
-						myCalendar.get(Calendar.YEAR),
-						myCalendar.get(Calendar.MONTH),
-						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-			}
-		});
-*/
+
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
-
-//	@Override
-//	public void onClick(DialogInterface arg0, int arg1) {
-//		Log.v("EditProj", "Event caught in EditProjectFragment, DialogInterface onClick");
-//		
-//	}
 
 	@Override	
 	public void onClick(View v) {
@@ -137,9 +93,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.txt_date_from:
-//			Toast.makeText(this.getActivity(), 
-//					"'Start Date' EditText clicked" , 
-//					Toast.LENGTH_SHORT).show();
 			new DatePickerDialog(getActivity(), myDateListener,
 					myCalendar.get(Calendar.YEAR),
 					myCalendar.get(Calendar.MONTH),
@@ -157,7 +110,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			projRecId = args.getLong("projRecId"); // redundant with onCreate; decide best & remove other
+			projRecId = args.getLong("projRecId");
 			// will set up the screen based on arguments passed in
 			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
 			String selection = "SELECT ProjCode, Description, Context, Caveats, " + 

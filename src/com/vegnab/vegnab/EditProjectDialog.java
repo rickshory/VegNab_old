@@ -32,12 +32,10 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	    @Override
 	    public void onDateSet(DatePicker view, int year, int monthOfYear,
 	            int dayOfMonth) {
-	        Log.v("EditProj", "Event caught in EditProjectDialog, anonymous onDateSet");
 	        myCalendar.set(Calendar.YEAR, year);
 	        myCalendar.set(Calendar.MONTH, monthOfYear);
 	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//	        updateLabel();
-	        mActiveDateView.setText("" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+	        mActiveDateView.setText(dateFormat.format(myCalendar.getTime()));
 	    }
 	};
 	

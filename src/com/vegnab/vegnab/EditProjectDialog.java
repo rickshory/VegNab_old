@@ -20,8 +20,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class EditProjectDialog extends DialogFragment implements OnClickListener {
+public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener {
 	long projRecId = 0; // zero default means new or not specified yet
 //	Button buttonSetDateStart;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
@@ -44,6 +45,11 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
+		Button btnCancel = (Button) view.findViewById(R.id.btn_editproj_cancel);
+		btnCancel.setOnClickListener(this);
+		Button btnSave = (Button) view.findViewById(R.id.btn_editproj_save);
+		btnSave.setOnClickListener(this);
+
 		final Calendar myCalendar = Calendar.getInstance();
 		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
 		mDescription = (EditText) view.findViewById(R.id.txt_descr);
@@ -92,10 +98,26 @@ public class EditProjectDialog extends DialogFragment implements OnClickListener
 		return view;
 	}
 
-	@Override
-	public void onClick(DialogInterface arg0, int arg1) {
-		Log.v("EditProj", "Event caught in EditProjectFragment, DialogInterface onClick");
-		
+//	@Override
+//	public void onClick(DialogInterface arg0, int arg1) {
+//		Log.v("EditProj", "Event caught in EditProjectFragment, DialogInterface onClick");
+//		
+//	}
+
+	@Override	
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.btn_editproj_cancel:
+			Toast.makeText(this.getActivity(), 
+					"'Cancel' button clicked" , 
+					Toast.LENGTH_SHORT).show();
+			break;
+		case R.id.btn_editproj_save:
+			Toast.makeText(this.getActivity(), 
+					"'Save' button clicked" , 
+					Toast.LENGTH_SHORT).show();
+			break;
+		}
 	}
 	@Override
 	public void onStart() {

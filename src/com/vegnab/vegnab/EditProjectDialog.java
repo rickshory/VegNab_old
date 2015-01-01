@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -207,6 +206,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	}
 	
 	private int saveProjRecord () {
+		if ("" + mProjCode.getText().toString().trim() == "") {
+			Toast.makeText(this.getActivity(),
+					"Need Project Code",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
 		ContentResolver rs = getActivity().getContentResolver();
 		int numUpdated = rs.update(uri, values, null, null);
 		Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);

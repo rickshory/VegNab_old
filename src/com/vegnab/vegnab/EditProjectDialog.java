@@ -103,10 +103,10 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 	private void fireOffDatePicker() {
 		String s = mActiveDateView.getText().toString();
-        try {
-        	myCalendar.setTime(dateFormat.parse(s));
-		} catch (java.text.ParseException e) {
-			myCalendar = Calendar.getInstance();
+        try { // if the EditText view contains a valid date
+        	myCalendar.setTime(dateFormat.parse(s)); // use it
+		} catch (java.text.ParseException e) { // otherwise
+			myCalendar = Calendar.getInstance(); // use today's date
 		}
 		new DatePickerDialog(getActivity(), myDateListener,
 				myCalendar.get(Calendar.YEAR),
@@ -153,37 +153,37 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			values.clear();
 			switch (v.getId()) {
 			case R.id.txt_projcode:
-				values.put("ProjCode", mProjCode.getText().toString());
+				values.put("ProjCode", mProjCode.getText().toString().trim());
 				break;
 			case R.id.txt_descr:
-				values.put("Description", mDescription.getText().toString());
+				values.put("Description", mDescription.getText().toString().trim());
 				break;
 			case R.id.txt_context:
-				values.put("Context", mContext.getText().toString());
+				values.put("Context", mContext.getText().toString().trim());
 				break;
 			case R.id.txt_caveats:
-				values.put("Caveats", mCaveats.getText().toString());
+				values.put("Caveats", mCaveats.getText().toString().trim());
 				break;
 			case R.id.txt_person:
-				values.put("ContactPerson", mContactPerson.getText().toString());
+				values.put("ContactPerson", mContactPerson.getText().toString().trim());
 				break;			
 			case R.id.txt_date_from: // this one is not focusable
-				values.put("StartDate", mStartDate.getText().toString());
+				values.put("StartDate", mStartDate.getText().toString().trim());
 				break;
 			case R.id.txt_date_to: // this one is not focusable
-				values.put("EndDate", mEndDate.getText().toString());
+				values.put("EndDate", mEndDate.getText().toString().trim());
 				break;
 			default: // save everything
-				values.put("ProjCode", mProjCode.getText().toString());
-				values.put("Description", mDescription.getText().toString());
-				values.put("Context", mContext.getText().toString());
-				values.put("Caveats", mCaveats.getText().toString());
-				values.put("ContactPerson", mContactPerson.getText().toString());
-				values.put("StartDate", mStartDate.getText().toString());
-				values.put("EndDate", mEndDate.getText().toString());
+				values.put("ProjCode", mProjCode.getText().toString().trim());
+				values.put("Description", mDescription.getText().toString().trim());
+				values.put("Context", mContext.getText().toString().trim());
+				values.put("Caveats", mCaveats.getText().toString().trim());
+				values.put("ContactPerson", mContactPerson.getText().toString().trim());
+				values.put("StartDate", mStartDate.getText().toString().trim());
+				values.put("EndDate", mEndDate.getText().toString().trim());
 				}
-			Log.v("EditProj", "Saving record in onFocusChange; values: " + values.toString());
-			int numUpdated = updateProjRecord();
+			Log.v("EditProj", "Saving record in onFocusChange; values: " + values.toString().trim());
+			int numUpdated = saveProjRecord();
 			}		
 		}
 
@@ -192,24 +192,24 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	public void onCancel (DialogInterface dialog) {
 		// update the project record in the database, if everything valid
 //		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
-		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString());
+		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString().trim());
 		
 		values.clear();
-		values.put("ProjCode", mProjCode.getText().toString());
-		values.put("Description", mDescription.getText().toString());
-		values.put("Context", mContext.getText().toString());
-		values.put("Caveats", mCaveats.getText().toString());
-		values.put("ContactPerson", mContactPerson.getText().toString());
-		values.put("StartDate", mStartDate.getText().toString());
-		values.put("EndDate", mEndDate.getText().toString());
+		values.put("ProjCode", mProjCode.getText().toString().trim());
+		values.put("Description", mDescription.getText().toString().trim());
+		values.put("Context", mContext.getText().toString().trim());
+		values.put("Caveats", mCaveats.getText().toString().trim());
+		values.put("ContactPerson", mContactPerson.getText().toString().trim());
+		values.put("StartDate", mStartDate.getText().toString().trim());
+		values.put("EndDate", mEndDate.getText().toString().trim());
 		Log.v("EditProj", "Saving record in onCancel; values: " + values.toString());
-		int numUpdated = updateProjRecord();
+		int numUpdated = saveProjRecord();
 	}
 	
-	private int updateProjRecord () {
+	private int saveProjRecord () {
 		ContentResolver rs = getActivity().getContentResolver();
 		int numUpdated = rs.update(uri, values, null, null);
-		Log.v("EditProj", "Saved record in updateProjRecord; numUpdated: " + numUpdated);
+		Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 		return numUpdated;
 	}
 }

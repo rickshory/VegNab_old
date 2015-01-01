@@ -90,17 +90,19 @@ public class ContentProvider_VegNab extends ContentProvider {
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		int uriType = sURIMatcher.match(uri);
+		Uri uriToReturn;
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		long id = 0;
 		switch (uriType) {
 		case PROJECTS:
 			id = sqlDB.insert("Projects", null, values);
+			uriToReturn = Uri.parse(BASE_PATH + "/projects/" + id);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(BASE_PATH + "/" + id);
+		return uriToReturn;
 	}
 	
 	@Override

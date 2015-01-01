@@ -213,9 +213,18 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			return 0;
 		}
 		ContentResolver rs = getActivity().getContentResolver();
-		int numUpdated = rs.update(uri, values, null, null);
-		Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
-		return numUpdated;
+		if (projRecId == 0) { // new record
+			uri = rs.insert(baseUri, values);
+			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + uri.toString());
+			projRecId = Long.parseLong(uri.getLastPathSegment());
+			uri = ContentUris.withAppendedId(baseUri, projRecId);
+			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + uri.toString());
+			return 1;
+		} else {
+			int numUpdated = rs.update(uri, values, null, null);
+			Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
+			return numUpdated;
+		}
 	}
 }
 

@@ -5,12 +5,15 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -219,7 +222,11 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			projRecId = Long.parseLong(uri.getLastPathSegment());
 			uri = ContentUris.withAppendedId(baseUri, projRecId);
 			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + uri.toString());
-//			NewVisitFragment.saveDefaultPlotTypeId(projRecId);
+			// set default project; redundant with fn in NewVisitFragment; low priority fix
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			SharedPreferences.Editor prefEditor = sharedPref.edit();
+			prefEditor.putLong(Prefs.DEFAULT_PLOTTYPE_ID, projRecId);
+			prefEditor.commit();
 			return 1;
 		} else {
 			int numUpdated = rs.update(uri, values, null, null);

@@ -91,7 +91,6 @@ public class MainVNActivity extends ActionBarActivity
 			editProjDlg.show(fm, "frg_edit_proj");
 			return true;
 		case R.id.action_new_proj:
-//			Toast.makeText(getApplicationContext(), "''New Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			editProjDlg = EditProjectDialog.newInstance(0);
 			editProjDlg.show(fm, "frg_new_proj");
 			return true;

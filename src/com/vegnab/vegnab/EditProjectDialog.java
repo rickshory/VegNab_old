@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		{
 	long projRecId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
-	String sql;
-	String[] params;
+	ContentValues values = new ContentValues();
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -183,42 +181,51 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		if(!hasFocus) { // something lost focus
+			values.clear();
 			switch (v.getId()) {
 			case R.id.txt_projcode:
-				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Project Code' lost focus");
-//				sql = "UPDATE Projects SET ProjCode = ? WHERE _id = ?;";
-//				params = {mProjCode.getText().toString(), };
+				values.put("ProjCode", mProjCode.getText().toString());
 				break;
 			case R.id.txt_descr:
-				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Description' lost focus");
+				values.put("Description", mDescription.getText().toString());
 				break;
+			case R.id.txt_context:
+				values.put("Context", mContext.getText().toString());
+				break;
+			case R.id.txt_caveats:
+				values.put("Caveats", mCaveats.getText().toString());
+				break;
+			case R.id.txt_person:
+				values.put("ContactPerson", mContactPerson.getText().toString());
+				break;			
 			case R.id.txt_date_from: // this one is not focusable
-				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'Start Date' lost focus");
+				values.put("StartDate", mStartDate.getText().toString());
 				break;
 			case R.id.txt_date_to: // this one is not focusable
-				Log.v("EditProj", "In EditProjectFragment, onFocusChange, 'End Date' lost focus");
+				values.put("EndDate", mEndDate.getText().toString());
 				break;
+			default: // save everything
+				values.put("ProjCode", mProjCode.getText().toString());
+				values.put("Description", mDescription.getText().toString());
+				values.put("Context", mContext.getText().toString());
+				values.put("Caveats", mCaveats.getText().toString());
+				values.put("ContactPerson", mContactPerson.getText().toString());
+				values.put("StartDate", mStartDate.getText().toString());
+				values.put("EndDate", mEndDate.getText().toString());
 				}
+			Log.v("EditProj", "Saving record in onFocusChange; values: " + values.toString());
+			int numUpdated = updateProjRecord();
 			}		
 		}
-/*		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
-		mDescription = (EditText) view.findViewById(R.id.txt_descr);
-		mContext = (EditText) view.findViewById(R.id.txt_context);
-		mCaveats = (EditText) view.findViewById(R.id.txt_caveats);
-		mContactPerson = (EditText) view.findViewById(R.id.txt_person);
-		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
-		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
-*/
+
 
 	@Override
 	public void onCancel (DialogInterface dialog) {
-		Log.v("EditProj", "In EditProjectFragment, onCancel");
-		Log.v("EditProj", "Test in EditProjectFragment, onCancel, mProjCode: " + mProjCode.getText().toString());
 		// update the project record in the database, if everything valid
 //		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
 		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString());
 		
-		ContentValues values = new ContentValues();
+		values.clear();
 		values.put("ProjCode", mProjCode.getText().toString());
 		values.put("Description", mDescription.getText().toString());
 		values.put("Context", mContext.getText().toString());
@@ -227,18 +234,14 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		values.put("StartDate", mStartDate.getText().toString());
 		values.put("EndDate", mEndDate.getText().toString());
 		Log.v("EditProj", "Saving record in onCancel; values: " + values.toString());
-
-//		String where = null;
-//		String[] selectionArgs = null;
-		
-		ContentResolver rs = getActivity().getContentResolver();
-//		int numUpdated = rs.update(uri, values, where, selectionArgs);
-		int numUpdated = rs.update(uri, values, null, null);
-		Log.v("EditProj", "Saving record in onCancel; numUpdated: " + numUpdated);
+		int numUpdated = updateProjRecord();
 	}
 	
 	private int updateProjRecord () {
-		return 1;
+		ContentResolver rs = getActivity().getContentResolver();
+		int numUpdated = rs.update(uri, values, null, null);
+		Log.v("EditProj", "Saved record in updateProjRecord; numUpdated: " + numUpdated);
+		return numUpdated;
 	}
 }
 

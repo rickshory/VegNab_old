@@ -63,12 +63,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
-		Button btnCancel = (Button) view.findViewById(R.id.btn_editproj_cancel);
-		btnCancel.setOnClickListener(this);
-		Button btnSave = (Button) view.findViewById(R.id.btn_editproj_save);
-		btnSave.setOnClickListener(this);
 
-//		final Calendar myCalendar = Calendar.getInstance();
 		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
 		mDescription = (EditText) view.findViewById(R.id.txt_descr);
 		mContext = (EditText) view.findViewById(R.id.txt_context);
@@ -87,23 +82,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mContactPerson.setOnFocusChangeListener(this);
 		mStartDate.setOnFocusChangeListener(this);
 		mEndDate.setOnFocusChangeListener(this);
-/*		
-		view.setFocusableInTouchMode(true);
-		view.requestFocus();
-		view.setOnKeyListener(new View.OnKeyListener() {
-	        @Override
-	        public boolean onKey(View v, int keyCode, KeyEvent event) {
-	        	Log.v("EditProject", "In EditProjectDialog, keyCode: " + keyCode);
-	            if( keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-	            	Log.v("EditProject", "In EditProjectDialog, caught 'onBackPressed'");
-	//                getSupportFragmentManager().popBackStack(null, SupportFragmentManager.POP_BACK_STACK_INCLUSIVE);
-	                return false;
-	            } else {
-	                return false;
-	            }
-	        }
-	    });
-*/
+
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
@@ -111,16 +90,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override	
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.btn_editproj_cancel:
-			Toast.makeText(this.getActivity(), 
-					"'Cancel' button clicked" , 
-					Toast.LENGTH_SHORT).show();
-			break;
-		case R.id.btn_editproj_save:
-			Toast.makeText(this.getActivity(), 
-					"'Save' button clicked" , 
-					Toast.LENGTH_SHORT).show();
-			break;
 		case R.id.txt_date_from:
 			mActiveDateView = mStartDate;
 			fireOffDatePicker();

@@ -29,6 +29,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		android.view.View.OnFocusChangeListener //, android.view.View.OnKeyListener
 		{
 	long projRecId = 0; // zero default means new or not specified yet
+	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	String sql;
 	String[] params;
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
@@ -157,6 +158,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		if (args != null) {
 			projRecId = args.getLong("projRecId");
 			// will set up the screen based on arguments passed in
+			uri = ContentUris.withAppendedId(baseUri, projRecId);
 			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
 			String selection = "SELECT ProjCode, Description, Context, Caveats, " + 
 					"ContactPerson, StartDate, EndDate FROM Projects WHERE _id = ?;";
@@ -213,7 +215,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Log.v("EditProj", "In EditProjectFragment, onCancel");
 		Log.v("EditProj", "Test in EditProjectFragment, onCancel, mProjCode: " + mProjCode.getText().toString());
 		// update the project record in the database, if everything valid
-		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
+//		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
 		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString());
 		
 		ContentValues values = new ContentValues();
@@ -235,5 +237,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Log.v("EditProj", "Saving record in onCancel; numUpdated: " + numUpdated);
 	}
 	
+	private int updateProjRecord () {
+		return 1;
+	}
 }
 

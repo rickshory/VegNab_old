@@ -69,13 +69,14 @@ public class MainVNActivity extends ActionBarActivity
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
+		FragmentManager fm = getSupportFragmentManager();
+		DialogFragment editProjDlg;
 		switch (item.getItemId()) {
 		case R.id.action_app_info:
 			Toast.makeText(getApplicationContext(), "''App Info'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_edit_proj:
 //			EditProjectDialog editProjDlg = new EditProjectDialog();
-			FragmentManager fm = getSupportFragmentManager();
 			/*
 			fm.executePendingTransactions(); // assure all are done
 			NewVisitFragment newVis = (NewVisitFragment) fm.findFragmentByTag("NewVisitScreen");
@@ -86,11 +87,13 @@ public class MainVNActivity extends ActionBarActivity
 			// wait, we don't need to regenerate the default project Id, it's stored in Preferences*/
 			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
-			DialogFragment editProjDlg = EditProjectDialog.newInstance(defaultProjId);
+			editProjDlg = EditProjectDialog.newInstance(defaultProjId);
 			editProjDlg.show(fm, "frg_edit_proj");
 			return true;
 		case R.id.action_new_proj:
-			Toast.makeText(getApplicationContext(), "''New Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(getApplicationContext(), "''New Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			editProjDlg = EditProjectDialog.newInstance(0);
+			editProjDlg.show(fm, "frg_new_proj");
 			return true;
 		case R.id.action_new_plottype:
 			Toast.makeText(getApplicationContext(), "''New Plot Type'' is not implemented yet", Toast.LENGTH_SHORT).show();

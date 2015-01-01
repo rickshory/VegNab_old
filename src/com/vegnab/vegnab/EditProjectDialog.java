@@ -219,6 +219,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			projRecId = Long.parseLong(uri.getLastPathSegment());
 			uri = ContentUris.withAppendedId(baseUri, projRecId);
 			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + uri.toString());
+//			NewVisitFragment.saveDefaultPlotTypeId(projRecId);
 			return 1;
 		} else {
 			int numUpdated = rs.update(uri, values, null, null);

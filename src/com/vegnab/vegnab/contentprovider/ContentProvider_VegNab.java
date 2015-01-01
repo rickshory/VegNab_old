@@ -39,7 +39,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 	static {
 		sURIMatcher.addURI(AUTHORITY, "sql", RAW_SQL);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects", PROJECTS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/project/#", PROJECT_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects/#", PROJECT_ID);
 	}
 	
 	@Override
@@ -60,13 +60,14 @@ public class ContentProvider_VegNab extends ContentProvider {
 			// fix up the following to work with all tables
 			// check if the caller has requested a column that does not exist
 			checkColumns(projection);
-			// assign the table
-			queryBuilder.setTables("Projects");
 			
 			switch (uriType) {
 			case PROJECTS:
+				// assign the table
+				queryBuilder.setTables("Projects");
 				break;
 			case PROJECT_ID:
+				queryBuilder.setTables("Projects");
 				// add the ID to the original query
 				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
 				break;

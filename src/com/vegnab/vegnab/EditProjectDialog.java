@@ -8,6 +8,8 @@ import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -166,7 +168,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			if (c.moveToFirst()) {
 				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				mContext.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
 				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
 				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
 				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
@@ -205,27 +207,32 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
 		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
 */
-/*
-	@Override
-	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-*/	
+
 	@Override
 	public void onCancel (DialogInterface dialog) {
 		Log.v("EditProj", "In EditProjectFragment, onCancel");
 		Log.v("EditProj", "Test in EditProjectFragment, onCancel, mProjCode: " + mProjCode.getText().toString());
 		// update the project record in the database, if everything valid
+		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
+		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString());
 		
-		/*					
-					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
-					ContentResolver resolver = getActivity().getContentResolver();
-					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
-					Uri uri = ContentProvider_VegNab.SQL_URI;
-					int numUpdated = resolver.update(uri, null, sql, null);
-					saveDefaultProjectId(projectId);
-*/
+		ContentValues values = new ContentValues();
+		values.put("ProjCode", mProjCode.getText().toString());
+		values.put("Description", mDescription.getText().toString());
+		values.put("Context", mContext.getText().toString());
+		values.put("Caveats", mCaveats.getText().toString());
+		values.put("ContactPerson", mContactPerson.getText().toString());
+		values.put("StartDate", mStartDate.getText().toString());
+		values.put("EndDate", mEndDate.getText().toString());
+		Log.v("EditProj", "Saving record in onCancel; values: " + values.toString());
+
+//		String where = null;
+//		String[] selectionArgs = null;
+		
+		ContentResolver rs = getActivity().getContentResolver();
+//		int numUpdated = rs.update(uri, values, where, selectionArgs);
+		int numUpdated = rs.update(uri, values, null, null);
+		Log.v("EditProj", "Saving record in onCancel; numUpdated: " + numUpdated);
 	}
 	
 }

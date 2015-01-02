@@ -225,7 +225,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PLOTTYPE_ID, projRecId);
+			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, projRecId);
 			prefEditor.commit();
 			return 1;
 		} else {

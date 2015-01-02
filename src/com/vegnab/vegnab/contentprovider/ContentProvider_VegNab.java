@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import com.vegnab.vegnab.database.VegNabDbHelper;
-//import com.vegnab.vegnab.database.VegNabDbContract;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;

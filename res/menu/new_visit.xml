@@ -16,6 +16,12 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_del_proj"
+        android:orderInCategory="122"
+        android:title="@string/action_delete_proj"
+        app:showAsAction="never"/>
+    
+    <item
         android:id="@+id/action_new_plottype"
         android:orderInCategory="130"
         android:title="@string/action_new_plottype"

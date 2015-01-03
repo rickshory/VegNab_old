@@ -94,6 +94,9 @@ public class MainVNActivity extends ActionBarActivity
 			editProjDlg = EditProjectDialog.newInstance(0);
 			editProjDlg.show(fm, "frg_new_proj");
 			return true;
+		case R.id.action_del_proj:
+			Toast.makeText(getApplicationContext(), "''Delete Project'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
 		case R.id.action_new_plottype:
 			Toast.makeText(getApplicationContext(), "''New Plot Type'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;

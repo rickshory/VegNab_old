@@ -7,6 +7,7 @@
     <string name="action_app_info">App info</string>
     <string name="action_edit_proj">Edit Project</string>
     <string name="action_new_proj">New Project</string>
+    <string name="action_delete_proj">Delete Project</string>
     <string name="action_new_plottype">New Plot Type</string>
     <string name="action_old_visit">Re-open a Visit</string>
    

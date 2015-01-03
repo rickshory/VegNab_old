@@ -60,7 +60,7 @@ public class MainVNActivity extends ActionBarActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.new_visit, menu);
+		inflater.inflate(R.menu.vn_activity, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -71,7 +71,7 @@ public class MainVNActivity extends ActionBarActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		FragmentManager fm = getSupportFragmentManager();
 		DialogFragment editProjDlg;
-		switch (item.getItemId()) {
+		switch (item.getItemId()) { // some of these are from Fragments, but handled here in the Activity
 		case R.id.action_app_info:
 			Toast.makeText(getApplicationContext(), "''App Info'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;

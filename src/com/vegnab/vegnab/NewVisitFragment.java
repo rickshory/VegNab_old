@@ -24,6 +24,8 @@ import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -52,6 +54,18 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
 		public void onNewVisitGoButtonClicked();
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.new_visit, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 	
 	@Override

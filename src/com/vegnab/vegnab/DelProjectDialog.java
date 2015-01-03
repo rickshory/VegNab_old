@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -50,7 +51,10 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 				Toast.makeText(getActivity(), 
 						"projCd: " + projCd, 
 						Toast.LENGTH_LONG).show();
-				dismiss();
+				FragmentManager fm = getChildFragmentManager();
+				ConfirmDelProjDialog confDelProjDlg = new ConfirmDelProjDialog();
+				confDelProjDlg.show(fm, "frg_conf_del_proj");
+//				dismiss();
 			}
 		});
 

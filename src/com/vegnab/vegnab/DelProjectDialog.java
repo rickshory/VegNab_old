@@ -13,15 +13,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class DelProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	public static final int LOADER_FOR_VALID_DEL_PROJECTS = 4; // Loader Id for the list of Projects valid to delete
 	VegNabDbHelper mDbHelper;
-	List<?> mValidProjList;
+	ListView mValidProjList;
 	SimpleCursorAdapter mListAdapter; // to link the list's data
 /*
 	@Override
@@ -37,7 +40,17 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_del_project, root);
-		
+		mValidProjList = (ListView) view.findViewById(R.id.list_del_projects_valid);
+		String[] fromColumns = {"ProjCode"};
+		int[] toViews = {android.R.id.text1};
+		mListAdapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_list_item_1, null,
+				fromColumns, toViews, 0);
+		mValidProjList.setAdapter(mListAdapter);
+		getLoaderManager().initLoader(LOADER_FOR_VALID_DEL_PROJECTS, null, this);
+
+
+
 		getDialog().setTitle(R.string.action_delete_proj);
 		return view;
 	}

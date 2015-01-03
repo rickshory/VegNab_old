@@ -17,7 +17,7 @@
         />
     
     <ListView 
-        android:id="@+id/list_projects_valid_to_delete"
+        android:id="@+id/list_del_projects_valid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/lbl_del_proj_details"

@@ -50,6 +50,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 				Toast.makeText(getActivity(), 
 						"projCd: " + projCd, 
 						Toast.LENGTH_LONG).show();
+				dismiss();
 			}
 		});
 

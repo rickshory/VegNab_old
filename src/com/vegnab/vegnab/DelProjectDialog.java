@@ -9,7 +9,7 @@ public class DelProjectDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setMessage(R.string.action_delete_proj);
+		builder.setTitle(R.string.action_delete_proj).setMessage("Can't delete current Project, or Projects with any Visits");
 		return builder.create();
 	}
 }

@@ -16,9 +16,13 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class DelProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
@@ -41,6 +45,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_del_project, root);
 		mValidProjList = (ListView) view.findViewById(R.id.list_del_projects_valid);
+		
 		String[] fromColumns = {"ProjCode"};
 		int[] toViews = {android.R.id.text1};
 		mListAdapter = new SimpleCursorAdapter(getActivity(),
@@ -48,17 +53,20 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 				fromColumns, toViews, 0);
 		mValidProjList.setAdapter(mListAdapter);
 		getLoaderManager().initLoader(LOADER_FOR_VALID_DEL_PROJECTS, null, this);
+		mValidProjList.setOnItemClickListener(new OnItemClickListener () {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View v, int position,
+					long id) {
+				Toast.makeText(getActivity(), 
+						"Clicked item " + position + ", Id = " + id, 
+						Toast.LENGTH_LONG).show();
+			}
+		});
 
 
 
 		getDialog().setTitle(R.string.action_delete_proj);
 		return view;
-	}
-	
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -93,5 +101,11 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 			mListAdapter.swapCursor(null);
 			break;
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		
 	}
 }

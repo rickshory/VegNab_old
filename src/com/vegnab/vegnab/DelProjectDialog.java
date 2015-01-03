@@ -13,15 +13,12 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class DelProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
@@ -30,16 +27,6 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 	VegNabDbHelper mDbHelper;
 	ListView mValidProjList;
 	SimpleCursorAdapter mListAdapter; // to link the list's data
-/*
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(R.string.action_delete_proj)
-			.setAdapter(mListAdapter, null);
-		// getLoaderManager().initLoader(LOADER_FOR_PROJECTS, null, this);
-		return builder.create();
-	}
-*/
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
@@ -57,13 +44,14 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position,
 					long id) {
+				Cursor cr = ((SimpleCursorAdapter) mValidProjList.getAdapter()).getCursor();
+				cr.moveToPosition(position);
+				String projCd = cr.getString(cr.getColumnIndexOrThrow("ProjCode"));
 				Toast.makeText(getActivity(), 
-						"Clicked item " + position + ", Id = " + id, 
+						"projCd: " + projCd, 
 						Toast.LENGTH_LONG).show();
 			}
 		});
-
-
 
 		getDialog().setTitle(R.string.action_delete_proj);
 		return view;

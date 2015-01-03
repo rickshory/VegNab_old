@@ -54,6 +54,8 @@
     <string name="edit_proj_label_date_end">To</string>
     <string name="edit_proj_hint_date_end">End date</string>
     
+    <string name="del_proj_details">Can\'t delete current Project, or Projects with Visits</string>
+    
     <string name="visit_header_title">You would put in header information here</string>
     <string name="visit_header_go_button_msg">Start subplots</string>
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>

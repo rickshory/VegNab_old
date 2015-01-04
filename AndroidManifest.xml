@@ -7,6 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
+    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,7 @@
             android:name=".contentprovider.ContentProvider_VegNab"
             android:authorities="com.vegnab.provider" >
         </provider>
+ 
     </application>
-
+    
 </manifest>

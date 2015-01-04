@@ -32,15 +32,22 @@ public class ConfirmDelProjDialog extends DialogFragment {
 			Log.v("ConfirmDelProj", "In ConfirmDelProjDialog DialogFragment, onCreateDialog, mProjCode: " + mProjCode);
 		}
 		AlertDialog.Builder bld = new AlertDialog.Builder(getActivity());
-		bld.setTitle("Delete Project?").setMessage(mProjCode)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		bld.setTitle(R.string.del_proj_confirm).setMessage(mProjCode)
+			.setPositiveButton(R.string.action_affirm, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog DialogFragment, onCreateDialog, Positive button clicked");
 					// TODO Auto-generated method stub
-					
+					// 
 				}
 				
-			});
+			})
+			.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            	Log.v("ConfirmDelProj", "In ConfirmDelProjDialog DialogFragment, onCreateDialog, Negative button clicked");
+                // User cancelled the dialog
+            }
+        });
 		return bld.create();
 	}
 }

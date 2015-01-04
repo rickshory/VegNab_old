@@ -4,7 +4,10 @@ import java.util.List;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
+import com.vegnab.vegnab.database.VNContract.Prefs;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -70,9 +73,16 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 		switch (id) {
 		case LOADER_FOR_VALID_DEL_PROJECTS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id, ProjCode FROM Projects;";
+			// complex use-once query: disallow the first Project,
+			// the current Default project, and any Projects that have Visits
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
+			select = "SELECT _id, ProjCode FROM Projects " + 
+			"WHERE ((_id != 1) AND (_id != ?) " + 
+			"AND (_id NOT IN (SELECT ProjId FROM Visits)));";
+			String[] qryArgs = {"" + defaultProjId};
 			cl = new CursorLoader(getActivity(), baseUri,
-					null, select, null, null);
+					null, select, qryArgs, null);
 			break;
 		}
 		return cl;

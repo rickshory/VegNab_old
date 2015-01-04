@@ -29,7 +29,8 @@
         android:layout_below="@id/lbl_projcode"
         android:hint="@string/edit_proj_hint_projcode"
         android:inputType="text"
-        android:maxLength="10" />
+        android:maxLength="10"
+        android:imeOptions="actionNext" />
 
     <TextView
         android:id="@+id/lbl_overall"
@@ -58,7 +59,8 @@
         android:hint="@string/edit_proj_hint_descr"
         android:inputType="textMultiLine"
         android:gravity="top|left"
-        android:maxLength="255"      
+        android:maxLength="255"
+        android:imeOptions="actionNext"
          />
 
     <TextView
@@ -79,7 +81,8 @@
         android:hint="@string/edit_proj_hint_person"
         android:inputType="textMultiLine"
         android:gravity="top|left"
-        android:maxLength="255"      
+        android:maxLength="255"
+        android:imeOptions="actionNext"
          />
     
     <TextView

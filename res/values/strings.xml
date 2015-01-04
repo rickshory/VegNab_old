@@ -58,8 +58,25 @@
     <string name="del_proj_details">Can\'t delete first Project, current Project, or Projects with Visits</string>
     <string name="del_proj_confirm">Delete Project?</string>
     
-    <string name="visit_header_title">You would put in header information here</string>
+    <string name="visit_header_title">Visit Header Information</string>
+    <string name="visit_header_label_name">Memorable short name for this Visit, up to 16 characters</string>
+    <string name="visit_header_hint_name">Visit Name</string>
+    <string name="visit_header_label_date">Date</string>
+    <string name="visit_header_hint_date">Date</string>
+    <string name="visit_header_label_namer">Person naming the species</string>
+    <string name="visit_header_hint_namer">Namer</string>
+    <string name="visit_header_label_scribe">Optional: if someone besides the Namer is entering data</string>
+    <string name="visit_header_hint_scribe">Scribe</string>
+    <string name="visit_header_label_location">Reference location</string>
+    <string name="visit_header_hint_location">Location</string>
+    <string name="visit_header_label_azimuth">If azimuth is relevent to this visit</string>
+    <string name="visit_header_hint_azimuth">Azimuth</string>
+    <string name="visit_header_label_notes">Notes</string>
+    <string name="visit_header_hint_notes">Notes</string>
+    
     <string name="visit_header_go_button_msg">Start subplots</string>
+    <string name="visit_header_map_button_msg">Map more locations</string>
+    <string name="visit_header_photo_button_msg">Take visit pictures</string>
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>
     <string name="veg_subplot_name_msg">Subplot: </string>

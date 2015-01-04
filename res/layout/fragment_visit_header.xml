@@ -19,6 +19,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/visit_header_title" />
+    
+    <TextView
+        android:id="@+id/lbl_visit_name"
+        android:text="@string/visit_header_label_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/visit_header_title_text"
+        android:layout_below="@id/visit_header_title_text"
+        />
+
+    <EditText
+        android:id="@+id/txt_visit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/lbl_visit_name"
+        android:layout_below="@id/lbl_visit_name"
+        android:hint="@string/visit_header_hint_name"
+        android:inputType="text"
+        android:maxLength="16" />
+    
+    
+    
     <Button
         android:id="@+id/visit_header_go_button"
         android:layout_width="wrap_content"

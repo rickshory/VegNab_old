@@ -62,9 +62,9 @@
     <string name="visit_header_label_name">Memorable short name for this Visit, up to 16 characters</string>
     <string name="visit_header_hint_name">Visit Name</string>
     <string name="visit_header_label_date">Date</string>
-    <string name="visit_header_hint_date">Date</string>
+    <string name="visit_header_hint_date">Visit Date</string>
     <string name="visit_header_label_namer">Person naming the species</string>
-    <string name="visit_header_hint_namer">Namer</string>
+    <string name="visit_header_hint_namer">Species namer</string>
     <string name="visit_header_label_scribe">Optional: if someone besides the Namer is entering data</string>
     <string name="visit_header_hint_scribe">Scribe</string>
     <string name="visit_header_label_location">Reference location</string>

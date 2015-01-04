@@ -18,6 +18,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +30,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class EditProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
-		android.view.View.OnFocusChangeListener //, android.view.View.OnKeyListener
+		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
+		//, android.view.View.OnKeyListener
 		{
+	public static final int LOADER_FOR_PROJECT_TO_EDIT = 3; // Loader Id
 	long projRecId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues values = new ContentValues();
@@ -84,7 +89,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mContactPerson.setOnFocusChangeListener(this);
 		mStartDate.setOnFocusChangeListener(this);
 		mEndDate.setOnFocusChangeListener(this);
-
+		
 		getDialog().setTitle(R.string.edit_proj_title_edit);
 		return view;
 	}
@@ -126,26 +131,9 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			projRecId = args.getLong("projRecId");
-			// will set up the screen based on arguments passed in
 			uri = ContentUris.withAppendedId(baseUri, projRecId);
-			Log.v("EditProj", "In EditProjectFragment, onStart, projRecId=" + projRecId);
-			String selection = "SELECT ProjCode, Description, Context, Caveats, " + 
-					"ContactPerson, StartDate, EndDate FROM Projects WHERE _id = ?;";
-			String selectionArgs[] = {"" + projRecId};
-			ContentResolver rs = getActivity().getContentResolver();
-			// use raw SQL, may change to use CursorLoader
-			Uri uri = ContentProvider_VegNab.SQL_URI;
-			Cursor c = rs.query(uri, null, selection, selectionArgs, null);
-			if (c.moveToFirst()) {
-				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
-				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
-				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
-				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
-				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
-			}
-			c.close();
+			getLoaderManager().initLoader(LOADER_FOR_PROJECT_TO_EDIT, null, this);
+			// will insert values into screen when cursor is finished
 		}
 	}
 
@@ -192,10 +180,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 
 	@Override
 	public void onCancel (DialogInterface dialog) {
-		// update the project record in the database, if everything valid
-//		Uri uri = ContentUris.withAppendedId(Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
-		Log.v("EditProj", "Saving record in onCancel; uri: " + uri.toString().trim());
-		
+		// update the project record in the database, if everything valid		
 		values.clear();
 		values.put("ProjCode", mProjCode.getText().toString().trim());
 		values.put("Description", mDescription.getText().toString().trim());
@@ -234,5 +219,58 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			return numUpdated;
 		}
 	}
-}
+	
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.
+		// switch out based on id
+		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
+		switch (id) {
+		case LOADER_FOR_PROJECT_TO_EDIT:
+			// First, create the base URI
+			// could test here, based on e.g. filters
+			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			Uri uri = ContentUris.withAppendedId(
+							Uri.withAppendedPath(
+							ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the dataset being displayed
+			// Could build a WHERE clause such as
+			// String select = "(Default = true)";
+			cl = new CursorLoader(getActivity(), uri,
+					null, select, null, null);
+			break;
 
+		}
+		return cl;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+		switch (loader.getId()) {
+		case LOADER_FOR_PROJECT_TO_EDIT:
+			Log.v("EditProj", "onLoadFinished, records: " + c.getCount());
+			if (c.moveToFirst()) {
+				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
+				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
+				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
+				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
+				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+			}
+			break;
+		}	
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		switch (loader.getId()) {
+		case LOADER_FOR_PROJECT_TO_EDIT:
+			// maybe nothing to do here since no adapter
+			break;
+		}
+	}
+}

@@ -52,7 +52,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 						"projCd: " + projCd, 
 						Toast.LENGTH_LONG).show();
 				FragmentManager fm = getChildFragmentManager();
-				ConfirmDelProjDialog confDelProjDlg = new ConfirmDelProjDialog();
+				ConfirmDelProjDialog  confDelProjDlg = ConfirmDelProjDialog.newInstance(id, projCd);
 				confDelProjDlg.show(fm, "frg_conf_del_proj");
 //				dismiss();
 			}

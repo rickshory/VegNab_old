@@ -51,13 +51,13 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 				Cursor cr = ((SimpleCursorAdapter) mValidProjList.getAdapter()).getCursor();
 				cr.moveToPosition(position);
 				String projCd = cr.getString(cr.getColumnIndexOrThrow("ProjCode"));
-				Toast.makeText(getActivity(), 
-						"projCd: " + projCd, 
-						Toast.LENGTH_LONG).show();
-				FragmentManager fm = getChildFragmentManager();
+//				Toast.makeText(getActivity(), 
+//						"projCd: " + projCd, 
+//						Toast.LENGTH_LONG).show();
+				FragmentManager fm = getActivity().getSupportFragmentManager();
 				ConfirmDelProjDialog  confDelProjDlg = ConfirmDelProjDialog.newInstance(id, projCd);
 				confDelProjDlg.show(fm, "frg_conf_del_proj");
-//				dismiss();
+				dismiss();
 			}
 		});
 

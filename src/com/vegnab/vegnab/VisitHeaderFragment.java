@@ -292,12 +292,36 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 
-
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		// TODO Auto-generated method stub
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+		// 'parent' is the spinner
+		// 'view' is one of the internal Android constants (e.g. text1=16908307, text2=16908308)
+		//    in the item layout, unless set up otherwise
+		// 'position' is the zero-based index in the list
+		// 'id' is the (one-based) database record '_id' of the item
+		// get the text by:
+		//Cursor cur = (Cursor)mNamerAdapter.getItem(position);
+		//String strSel = cur.getString(cur.getColumnIndex("NamerName"));
+		//Log.v(LOG_TAG, strSel);
+		// if spinner is filled by Content Provider, can't get text by:
+		//String strSel = parent.getItemAtPosition(position).toString();
+		// that returns something like below, which there is no way to get text out of:
+		// "android.content.ContentResolver$CursorWrapperInner@42041b40"
 		
+		// sort out the spinners
+		// can't use switch because not constants
+		if (parent.getId() == namerSpinner.getId()) {
+			namerId = id;
+			if (namerId == 0) { // picked '(add new)'
+				Log.v(LOG_TAG, "Starting 'add new' for Namer");
+			}
+			if (namerId != 0) {
+				// save in app Preferences as the default Project
+				saveDefaultNamerId(namerId);
+			}
+		}
+		// write code for any other spinner(s) here
 	}
 
 	@Override

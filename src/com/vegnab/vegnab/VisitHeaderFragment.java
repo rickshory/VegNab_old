@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class VisitHeaderFragment extends Fragment implements OnClickListener {
+	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface

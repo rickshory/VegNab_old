@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
-	public static final int LOADER_FOR_NAMER = 6;
+	public static final int LOADER_FOR_NAMERS = 6;
 	long visitId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
@@ -89,7 +90,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
-		getLoaderManager().initLoader(LOADER_FOR_NAMER, null, this);
+		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
 
 		return rootView;
 	}
@@ -146,9 +147,35 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.
+		// switch out based on id
+		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
+		switch (id) {
+
+/*		case LOADER_FOR_VISIT:
+			// First, create the base URI
+			// could test here, based on e.g. filters
+			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the dataset being displayed
+			// Could build a WHERE clause such as
+			// String select = "(Default = true)";
+			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
+					PROJECTS_PROJCODES, select, null, null);
+			break; */
+		case LOADER_FOR_NAMERS:
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT _id, NamerName FROM Namers "
+					+ "UNION SELECT 0, '(add new)'' "
+					+ "ORDER BY _id;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;
+		}
+		return cl;
 	}
 
 	@Override

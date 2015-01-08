@@ -1,6 +1,15 @@
 package com.vegnab.vegnab;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +19,30 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 public class VisitHeaderFragment extends Fragment implements OnClickListener {
+	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
+	public static final int LOADER_FOR_NAMER = 6;
+	long visitId = 0; // zero default means new or not specified yet
+	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
+	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
+	private EditText mActiveDateView;
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	private Calendar myCalendar = Calendar.getInstance();
+	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+	    @Override
+	    public void onDateSet(DatePicker view, int year, int monthOfYear,
+	            int dayOfMonth) {
+	        myCalendar.set(Calendar.YEAR, year);
+	        myCalendar.set(Calendar.MONTH, monthOfYear);
+	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+	        mActiveDateView.setText(dateFormat.format(myCalendar.getTime()));
+	    }
+	};
+
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface

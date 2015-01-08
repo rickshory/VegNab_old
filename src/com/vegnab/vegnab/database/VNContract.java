@@ -16,6 +16,7 @@ public final class VNContract {
 	public static abstract class Prefs {
 		public static final String DEFAULT_PROJECT_ID = "Default_Project_Id";
 		public static final String DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
+		public static final String DEFAULT_NAMER_ID = "Default_Namer_Id";
 	}
 	
 	// inner classes to define tables

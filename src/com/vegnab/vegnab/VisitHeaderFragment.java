@@ -5,10 +5,14 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +23,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,14 +37,15 @@ import android.widget.Spinner;
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
+	private static final String LOG_TAG = "VisitHeaderFragment";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
-	long visitId = 0; // zero default means new or not specified yet
+	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
 	private Spinner namerSpinner;
-	SimpleCursorAdapter mNamerAdapter;
+	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
@@ -52,7 +58,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
 	    }
 	};
-
+	int rowCt;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
@@ -145,6 +151,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			break;
 		}
 	}
+	
+	public void saveDefaultNamerId(long id) {
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sharedPref.edit();
+		prefEditor.putLong(Prefs.DEFAULT_NAMER_ID, id);
+		prefEditor.commit();
+	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -169,7 +182,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case LOADER_FOR_NAMERS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT _id, NamerName FROM Namers "
-					+ "UNION SELECT 0, '(add new)'' "
+					+ "UNION SELECT 0, '(add new)' "
 					+ "ORDER BY _id;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
@@ -179,16 +192,106 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		// TODO Auto-generated method stub
-		
+	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
+		// there will be various loaders, switch them out here
+		rowCt = finishedCursor.getCount();
+		switch (loader.getId()) {
+		/*
+		case LOADER_FOR_VISIT:
+			// Swap the new cursor in.
+			// The framework will take care of closing the old cursor once we return.
+			mVisitAdapter.swapCursor(finishedCursor);
+			if (rowCt > 0) {
+				projSpinner.setEnabled(true);
+				// get default Project from app Preferences, to set spinner
+				// this must wait till the spinner is populated
+				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+				// database comes pre-loaded with one Project record that has _id = 1
+				// default ProjCode = "MyProject', but may be renamed
+				projectId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
+				if (!sharedPref.contains(Prefs.DEFAULT_PROJECT_ID)) {
+					// this will only happen once, when the app is first installed
+//					Toast.makeText(this.getActivity(), 
+//							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
+//							Toast.LENGTH_LONG).show();
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' does not exist yet.");
+					// update the create time in the database from when the DB file was created to 'now'
+					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
+					ContentResolver resolver = getActivity().getContentResolver();
+					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
+					Uri uri = ContentProvider_VegNab.SQL_URI;
+					int numUpdated = resolver.update(uri, null, sql, null);
+					saveDefaultProjectId(projectId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' set for the first time."); 
+				} else {
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + projectId);
+				}
+				// set the default Project to show in its spinner
+				// for a generalized fn, try: projSpinner.getAdapter().getCount()
+				for (int i=0; i<rowCt; i++) {
+					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
+					if (projSpinner.getItemIdAtPosition(i) == projectId) {
+						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
+						projSpinner.setSelection(i);
+						break;
+					}
+				}
+			} else {
+				projSpinner.setEnabled(false);
+			}
+			break;
+			*/
+		case LOADER_FOR_NAMERS:
+			// Swap the new cursor in.
+			// The framework will take care of closing the old cursor once we return.
+			mNamerAdapter.swapCursor(finishedCursor);
+			if (rowCt > 0) {
+				namerSpinner.setEnabled(true);
+				// get default Namer from app Preferences, to set spinner
+				// this must wait till the spinner is populated
+				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+				// if none yet, use _id = 0, generated in query as '(add new)'
+				namerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
+				if (!sharedPref.contains(Prefs.DEFAULT_NAMER_ID)) {
+					// this will only happen once, when the app is first installed
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' does not exist yet.");
+					saveDefaultNamerId(namerId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' set for the first time."); 
+				} else {
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' = " + namerId);
+				}
+				// set the default Namer to show in its spinner
+				// for a generalized fn, try: mySpinner.getAdapter().getCount()
+				for (int i=0; i<rowCt; i++) {
+					Log.v(LOG_TAG, "Setting namerSpinner default; testing index " + i);
+					if (namerSpinner.getItemIdAtPosition(i) == namerId) {
+						Log.v(LOG_TAG, "Setting namerSpinner default; found matching index " + i);
+						namerSpinner.setSelection(i);
+						break;
+					}
+				}
+			} else {
+				namerSpinner.setEnabled(false);
+			}
+			break;
+		}
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// is about to be closed. Need to make sure it is no longer is use.
+		switch (loader.getId()) {
+/*		case LOADER_FOR_VISIT:
+			mVisitAdapter.swapCursor(null);
+			break;
+			*/
+		case LOADER_FOR_NAMERS:
+			mNamerAdapter.swapCursor(null);
+			break;
+		}
 	}
+
 
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,

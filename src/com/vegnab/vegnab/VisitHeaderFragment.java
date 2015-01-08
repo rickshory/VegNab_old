@@ -9,27 +9,36 @@ import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 
-public class VisitHeaderFragment extends Fragment implements OnClickListener {
+public class VisitHeaderFragment extends Fragment implements OnClickListener,
+		android.widget.AdapterView.OnItemSelectedListener,
+		LoaderManager.LoaderCallbacks<Cursor> {
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMER = 6;
 	long visitId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
-	private EditText mActiveDateView;
+	private Spinner namerSpinner;
+	SimpleCursorAdapter mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
@@ -39,7 +48,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener {
 	        myCalendar.set(Calendar.YEAR, year);
 	        myCalendar.set(Calendar.MONTH, monthOfYear);
 	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-	        mActiveDateView.setText(dateFormat.format(myCalendar.getTime()));
+	        mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
 	    }
 	};
 
@@ -68,6 +77,20 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener {
 		b.setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
+
+		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
+		namerSpinner.setEnabled(false); // will enable when data ready		
+		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_spinner_item, null,
+				new String[] {"NamerName"},
+				new int[] {android.R.id.text1}, 0);		
+
+		mNamerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		namerSpinner.setAdapter(mNamerAdapter);
+		namerSpinner.setOnItemSelectedListener(this);
+		// Prepare the loader. Either re-connect with an existing one or start a new one
+		getLoaderManager().initLoader(LOADER_FOR_NAMER, null, this);
+
 		return rootView;
 	}
 	
@@ -120,6 +143,37 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener {
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

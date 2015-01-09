@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Prefs;
+import com.vegnab.vegnab.ClickAnything;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -29,6 +30,7 @@ import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListen
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.AccessibilityDelegate;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,6 +43,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
+	AccessibilityDelegate cl;
 	private static final String LOG_TAG = "VisitHeaderFragment";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
@@ -48,7 +51,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
-	private NDSpinner namerSpinner;
+	private Spinner namerSpinner;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
@@ -89,7 +92,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 
-		namerSpinner = (NDSpinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
+		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		namerSpinner.setEnabled(false); // will enable when data ready		
 		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
@@ -101,6 +104,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		namerSpinner.setOnItemSelectedListener(this);
 		// also need click, if no names & therefore selection cannot be changed
 //		namerSpinner.setOnFocusChangeListener(this);
+		// try using Accessibility to capture the click
+//		namerSpinner.setAccessibilityDelegate(cl);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
 

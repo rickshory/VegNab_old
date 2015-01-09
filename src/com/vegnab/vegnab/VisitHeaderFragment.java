@@ -25,9 +25,14 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat;
+import android.support.v7.internal.widget.AdapterViewCompat.AdapterContextMenuInfo;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.AccessibilityDelegate;
 import android.view.View.OnClickListener;
@@ -43,10 +48,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
-	AccessibilityDelegate cl;
 	private static final String LOG_TAG = "VisitHeaderFragment";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
+    private static final int MENU_ADD = 1;
+    private static final int MENU_EDIT = 2;
+    private static final int MENU_DELETE = 3;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
@@ -103,6 +110,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mNamerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
+		registerForContextMenu(namerSpinner); // enable long-press
+		
 		// also need click, if no names & therefore selection cannot be changed
 //		namerSpinner.setOnFocusChangeListener(this); // does not work
 		// try a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
@@ -110,6 +119,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		lblNewNamerSpinnerCover.setOnClickListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
+		
+		// for testing context menu:
+		namerSpinner.bringToFront();
 
 		return rootView;
 	}
@@ -374,5 +386,29 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 //			break;
 		}
 	}
+	// here you create de conext menu
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, 
+	   ContextMenuInfo menuInfo) {
+	  menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
+	  menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+	}
 
+	// This is executed when the user select an option
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	switch (item.getItemId()) {
+	    case MENU_EDIT:
+	    	Log.v(LOG_TAG, "MENU_EDIT selected");
+//	        mark_item(info.id);
+	        return true;
+	    case MENU_DELETE:
+	    	Log.v(LOG_TAG, "MENU_DELETE selected");
+//	        delete_item(info.id);
+	        return true;
+	    default:
+	        return super.onContextItemSelected(item);
+	   }
+	}
 }

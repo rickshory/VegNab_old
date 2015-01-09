@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Prefs;
-import com.vegnab.vegnab.ClickAnything;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -105,11 +104,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
 		// also need click, if no names & therefore selection cannot be changed
-//		namerSpinner.setOnFocusChangeListener(this);
-		// try using Accessibility to capture the click
-		// only works on API 11+
-//		namerSpinner.setAccessibilityDelegate(cl);
-		
+//		namerSpinner.setOnFocusChangeListener(this); // does not work
 		// try a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
 		lblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
 		lblNewNamerSpinnerCover.setOnClickListener(this);
@@ -359,7 +354,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

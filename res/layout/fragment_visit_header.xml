@@ -68,7 +68,7 @@
         android:text="@string/visit_header_label_namer"
         />
 
-    <Spinner
+    <NDSpinner
         android:id="@+id/sel_spp_namer_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

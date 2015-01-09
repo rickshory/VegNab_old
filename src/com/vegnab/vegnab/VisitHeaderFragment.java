@@ -24,6 +24,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.internal.widget.AdapterViewCompat;
+import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +48,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
-	private Spinner namerSpinner;
+	private NDSpinner namerSpinner;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
@@ -87,7 +89,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 
-		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
+		namerSpinner = (NDSpinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		namerSpinner.setEnabled(false); // will enable when data ready		
 		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
@@ -98,7 +100,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
 		// also need click, if no names & therefore selection cannot be changed
-		namerSpinner.setOnFocusChangeListener(this);
+//		namerSpinner.setOnFocusChangeListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
 

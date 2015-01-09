@@ -78,8 +78,9 @@
     <string name="visit_header_map_button_msg">Map more locations</string>
     <string name="visit_header_photo_button_msg">Add pictures</string>
     
-    <string name="add_namer_title">Person\'s name who will be deciding the species</string>
-    <string name="add_namer_msg">This should be an identifiable human, not something untraceable like \"team1\"</string>
+    <string name="add_namer_title">Species Namer</string>
+    <string name="add_namer_header">Person\'s name who will be deciding the species</string>
+    <string name="add_namer_msg">This should be an identifiable human, not something untraceable like \"team two\"</string>
     <string name="add_namer_hint">Person\'s Name</string>
     
     

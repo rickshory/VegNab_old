@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -311,10 +312,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		
 		// sort out the spinners
 		// can't use switch because not constants
+		FragmentManager fm = getActivity().getSupportFragmentManager();
 		if (parent.getId() == namerSpinner.getId()) {
 			namerId = id;
 			if (namerId == 0) { // picked '(add new)'
 				Log.v(LOG_TAG, "Starting 'add new' for Namer");
+				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+				addSppNamerDlg.show(fm, "");
+
 			}
 			if (namerId != 0) {
 				// save in app Preferences as the default Project

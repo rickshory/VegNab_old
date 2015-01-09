@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/title_new_namer"
-        android:text="@string/add_namer_title"
+        android:text="@string/add_namer_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -36,5 +36,24 @@
         android:inputType="text"
         android:maxLength="16"
         />
-        
+	<LinearLayout
+	    android:id="@+id/wrapper_cancel_save"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/txt_new_namer"
+	    android:weightSum="2"
+	    >
+	    <Button
+	        android:id="@+id/btn_new_namer_cancel"
+	        android:text="@string/action_cancel"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+	    <Button
+	        android:id="@+id/btn_new_namer_save"
+	        android:text="@string/action_save"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+	</LinearLayout>
 </RelativeLayout>

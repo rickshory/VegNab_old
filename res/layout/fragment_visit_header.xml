@@ -78,6 +78,17 @@
         />
 
     <TextView
+        android:id="@+id/lbl_spp_namer_spinner_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/sel_spp_namer_spinner"
+        android:layout_alignRight="@id/sel_spp_namer_spinner"
+        android:layout_alignTop="@id/sel_spp_namer_spinner"
+        android:layout_alignBottom="@id/sel_spp_namer_spinner"
+        android:text="@string/empty_string"
+        />
+
+    <TextView
         android:id="@+id/lbl_visit_scribe"
         android:text="@string/visit_header_label_scribe"
         android:layout_width="wrap_content"

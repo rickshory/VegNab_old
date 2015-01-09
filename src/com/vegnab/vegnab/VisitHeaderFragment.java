@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
@@ -51,6 +52,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
+	private TextView lblNewNamerSpinnerCover;
 	private Spinner namerSpinner;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -105,7 +107,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// also need click, if no names & therefore selection cannot be changed
 //		namerSpinner.setOnFocusChangeListener(this);
 		// try using Accessibility to capture the click
+		// only works on API 11+
 //		namerSpinner.setAccessibilityDelegate(cl);
+		
+		// try a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
+		lblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
+		lblNewNamerSpinnerCover.setOnClickListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
 
@@ -156,16 +163,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
+		AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+		FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId()) {
 		case R.id.sel_spp_namer_spinner:
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick");
-			AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
-			FragmentManager fm = getActivity().getSupportFragmentManager();
 			addSppNamerDlg.show(fm, "");
-
-//			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
-		
+		case R.id.lbl_spp_namer_spinner_cover:
+			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick of 'lbl_spp_namer_spinner_cover'");
+			addSppNamerDlg.show(fm, "");
+			break;
 		case R.id.visit_header_go_button:
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;

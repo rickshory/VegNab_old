@@ -37,6 +37,7 @@ import android.widget.Spinner;
 
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
+		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = "VisitHeaderFragment";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
@@ -96,6 +97,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mNamerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
+		// also need click, if no names & therefore selection cannot be changed
+		namerSpinner.setOnFocusChangeListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
 
@@ -147,6 +150,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.sel_spp_namer_spinner:
+			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick");
+			AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+			addSppNamerDlg.show(fm, "");
+
+//			mButtonCallback.onVisitHeaderGoButtonClicked();
+			break;
+		
 		case R.id.visit_header_go_button:
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
@@ -312,12 +324,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		
 		// sort out the spinners
 		// can't use switch because not constants
-		FragmentManager fm = getActivity().getSupportFragmentManager();
 		if (parent.getId() == namerSpinner.getId()) {
 			namerId = id;
 			if (namerId == 0) { // picked '(add new)'
-				Log.v(LOG_TAG, "Starting 'add new' for Namer");
+				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");
 				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addSppNamerDlg.show(fm, "");
 
 			}
@@ -333,6 +345,25 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		switch (v.getId()) {
+		case R.id.sel_spp_namer_spinner:
+			if (hasFocus) {
+				Log.v(LOG_TAG, "Starting 'add new' for Namer from onFocusChange");
+				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+				FragmentManager fm = getActivity().getSupportFragmentManager();
+				addSppNamerDlg.show(fm, "");
+			}
+			
+
+			break;
+//		case R.id.txt_descr:
+//			values.put("Description", mDescription.getText().toString().trim());
+//			break;
+		}
 	}
 
 }

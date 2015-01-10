@@ -127,12 +127,32 @@
         android:maxLength="16" />
 
     <TextView
-        android:id="@+id/lbl_visit_notes"
-        android:text="@string/visit_header_label_notes"
+        android:id="@+id/lbl_visit_azimuth"
+        android:text="@string/visit_header_label_azimuth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/txt_visit_location"
         android:layout_below="@id/txt_visit_location"
+        />
+
+    <EditText
+        android:id="@+id/txt_visit_azimuth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/lbl_visit_azimuth"
+        android:layout_below="@id/lbl_visit_azimuth"
+        android:gravity="top|left"
+        android:hint="@string/visit_header_hint_azimuth"
+        android:inputType="number"
+        />
+
+    <TextView
+        android:id="@+id/lbl_visit_notes"
+        android:text="@string/visit_header_label_notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/txt_visit_azimuth"
+        android:layout_below="@id/txt_visit_azimuth"
         />
 
     <EditText
@@ -151,7 +171,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/visit_header_go_button_msg"
-        android:padding="5dp"
+        android:padding="10dp"
+        android:layout_alignLeft="@id/txt_visit_notes"
         android:layout_below="@id/txt_visit_notes"
         />
 </RelativeLayout>

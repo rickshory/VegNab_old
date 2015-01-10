@@ -58,7 +58,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
-	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
+	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
 	private Spinner namerSpinner;
 	private TextView lblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
@@ -95,12 +95,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
-		// set click listener for the button in the view
-		Button b = (Button) rootView.findViewById(R.id.visit_header_go_button);
-		b.setOnClickListener(this);
-		// if more, loop through all the child items of the ViewGroup rootView and 
-		// set the onclicklistener for all the Button instances found
-
+		mVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
+		mVisitName.setOnFocusChangeListener(this);
+		mVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
+		mVisitDate.setOnClickListener(this);
 		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		namerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
 		namerSpinner.setEnabled(false); // will enable when data ready		
@@ -108,23 +106,34 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"NamerName"},
 				new int[] {android.R.id.text1}, 0);		
-
 		mNamerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		namerSpinner.setAdapter(mNamerAdapter);
 		namerSpinner.setOnItemSelectedListener(this);
 		registerForContextMenu(namerSpinner); // enable long-press
-		
 		// also need click, if no names & therefore selection cannot be changed
 //		namerSpinner.setOnFocusChangeListener(this); // does not work
-		// try a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
+		// use a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
 		lblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
 		lblNewNamerSpinnerCover.setOnClickListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
-		
-		// for testing context menu:
-		namerSpinner.bringToFront();
-
+		// in layout, TextView is in front of Spinner and takes precedence
+		// for testing context menu, bring spinner to front so it receives clicks
+//		namerSpinner.bringToFront();		
+		mVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
+		mVisitScribe.setOnFocusChangeListener(this);
+		// ultimately do Location completely differently
+		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
+		mVisitLocation.setOnFocusChangeListener(this);
+		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
+		mAzimuth.setOnFocusChangeListener(this);
+		mVisitNotes = (EditText) rootView.findViewById(R.id.txt_visit_notes);
+		mVisitNotes.setOnFocusChangeListener(this);
+		// set click listener for the button in the view
+		Button b = (Button) rootView.findViewById(R.id.visit_header_go_button);
+		b.setOnClickListener(this);
+		// if more, loop through all the child items of the ViewGroup rootView and 
+		// set the onclicklistener for all the Button instances found
 		return rootView;
 	}
 	

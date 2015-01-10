@@ -52,7 +52,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
-    private static final int MENU_ADD = 1;
+	private static final int MENU_HELP = 0;
+	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
@@ -97,6 +98,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
 		mVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
 		mVisitName.setOnFocusChangeListener(this);
+		registerForContextMenu(mVisitName); // enable long-press
 		mVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
 		mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
 		mVisitDate.setOnClickListener(this);
@@ -428,12 +430,30 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 //			break;
 		}
 	}
-	// here you create de conext menu
+	// create context menus
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, 
 	   ContextMenuInfo menuInfo) {
-	  menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
-	  menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+		switch (v.getId()) {
+		case R.id.txt_visit_name:
+			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
+			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			break;
+		case R.id.sel_spp_namer_spinner:
+			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
+			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			break;
+		case R.id.lbl_spp_namer_spinner_cover:
+			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
+			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			break;
+//		case R.id.visit_header_go_button:
+//			mButtonCallback.onVisitHeaderGoButtonClicked();
+//			break;
+		}
+		
+	  
+	  
 	}
 
 	// This is executed when the user select an option

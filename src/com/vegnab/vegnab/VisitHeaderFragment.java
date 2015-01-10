@@ -458,8 +458,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		}
-
-	  
 	}
 
 	// This is executed when the user select an option
@@ -477,7 +475,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        return true;
 	    case MENU_HELP:
 	    	Log.v(LOG_TAG, "MENU_HELP selected");
-//	        delete_item(info.id);
+	    	HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
+	    	hlpDlg.show(getFragmentManager(), null);
 	        return true;
 	    default:
 	        return super.onContextItemSelected(item);

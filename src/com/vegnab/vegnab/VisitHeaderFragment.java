@@ -49,6 +49,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = "VisitHeaderFragment";
+	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
     private static final int MENU_ADD = 1;
@@ -101,6 +102,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// set the onclicklistener for all the Button instances found
 
 		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
+		namerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
 		namerSpinner.setEnabled(false); // will enable when data ready		
 		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
@@ -281,7 +283,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			// The framework will take care of closing the old cursor once we return.
 			mNamerAdapter.swapCursor(finishedCursor);
 			if (rowCt > 0) {
-				namerSpinner.setEnabled(true);
 				// get default Namer from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -305,6 +306,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 						break;
 					}
 				}
+				namerSpinner.setEnabled(true);
 			} else {
 				namerSpinner.setEnabled(false);
 			}
@@ -357,6 +359,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// sort out the spinners
 		// can't use switch because not constants
 		if (parent.getId() == namerSpinner.getId()) {
+			if(((String)parent.getTag()).equalsIgnoreCase(TAG_SPINNER_FIRST_USE)) {
+	            parent.setTag("");
+	            return;
+	        }
 			namerId = id;
 			if (namerId == 0) { // picked '(add new)'
 				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");

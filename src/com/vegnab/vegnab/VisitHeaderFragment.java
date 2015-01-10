@@ -98,6 +98,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
 		mVisitName.setOnFocusChangeListener(this);
 		mVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
+		mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
 		mVisitDate.setOnClickListener(this);
 		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		namerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
@@ -184,6 +185,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
 		FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId()) {
+		case R.id.txt_visit_date:
+			fireOffDatePicker();
+			break;
 		case R.id.sel_spp_namer_spinner:
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick");
 			addSppNamerDlg.show(fm, "");
@@ -196,6 +200,19 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
+	}
+	
+	private void fireOffDatePicker() {
+		String s = mVisitDate.getText().toString();
+	    try { // if the EditText view contains a valid date
+	    	myCalendar.setTime(dateFormat.parse(s)); // use it
+		} catch (java.text.ParseException e) { // otherwise
+			myCalendar = Calendar.getInstance(); // use today's date
+		}
+		new DatePickerDialog(getActivity(), myDateListener,
+				myCalendar.get(Calendar.YEAR),
+				myCalendar.get(Calendar.MONTH),
+				myCalendar.get(Calendar.DAY_OF_MONTH)).show();	
 	}
 	
 	public void saveDefaultNamerId(long id) {

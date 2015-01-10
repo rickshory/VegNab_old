@@ -58,8 +58,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mVisitNotes;
-	private TextView lblNewNamerSpinnerCover;
 	private Spinner namerSpinner;
+	private TextView lblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar myCalendar = Calendar.getInstance();
@@ -308,6 +308,16 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			} else {
 				namerSpinner.setEnabled(false);
 			}
+			if (namerId == 0) {
+				// user sees '(add new)', blank TextView receives click;
+				lblNewNamerSpinnerCover.bringToFront();
+			} else {
+				// user can operate the spinner
+				namerSpinner.bringToFront();
+			}
+			/*
+			 * private TextView lblNewNamerSpinnerCover;
+	private Spinner ;*/
 			break;
 		}
 	}

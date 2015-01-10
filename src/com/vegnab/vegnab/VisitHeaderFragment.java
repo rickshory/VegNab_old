@@ -125,13 +125,16 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 //		namerSpinner.bringToFront();		
 		mVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
 		mVisitScribe.setOnFocusChangeListener(this);
+		registerForContextMenu(mVisitScribe); // enable long-press
 		// ultimately do Location completely differently
 		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
 		mVisitLocation.setOnFocusChangeListener(this);
 		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
 		mAzimuth.setOnFocusChangeListener(this);
+		registerForContextMenu(mAzimuth); // enable long-press
 		mVisitNotes = (EditText) rootView.findViewById(R.id.txt_visit_notes);
 		mVisitNotes.setOnFocusChangeListener(this);
+		registerForContextMenu(mVisitNotes); // enable long-press
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.visit_header_go_button);
 		b.setOnClickListener(this);
@@ -436,23 +439,26 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	   ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 		case R.id.txt_visit_name:
-			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
-			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.sel_spp_namer_spinner:
 			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
 			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
 			break;
 		case R.id.lbl_spp_namer_spinner_cover:
-			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
-			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
-//		case R.id.visit_header_go_button:
-//			mButtonCallback.onVisitHeaderGoButtonClicked();
-//			break;
+		case R.id.txt_visit_scribe:
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			break;
+		case R.id.txt_visit_azimuth:
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			break;
+		case R.id.txt_visit_notes:
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			break;
 		}
-		
-	  
+
 	  
 	}
 
@@ -467,6 +473,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        return true;
 	    case MENU_DELETE:
 	    	Log.v(LOG_TAG, "MENU_DELETE selected");
+//	        delete_item(info.id);
+	        return true;
+	    case MENU_HELP:
+	    	Log.v(LOG_TAG, "MENU_HELP selected");
 //	        delete_item(info.id);
 	        return true;
 	    default:

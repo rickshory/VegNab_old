@@ -460,7 +460,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 
-	// This is executed when the user select an option
+	// This is executed when the user selects an option
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();

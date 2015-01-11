@@ -4,6 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
@@ -14,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,7 +53,8 @@ import android.widget.TextView;
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
-		LoaderManager.LoaderCallbacks<Cursor> {
+		LoaderManager.LoaderCallbacks<Cursor>,
+		ConnectionCallbacks, OnConnectionFailedListener{
 	private static final String LOG_TAG = "VisitHeaderFragment";
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
@@ -56,10 +63,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
+    protected GoogleApiClient mGoogleApiClient;
+    protected Location mLastLocation;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
+	protected TextView mLatitudeText, mLongitudeText;
 	private Spinner namerSpinner;
 	private TextView lblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
@@ -129,6 +139,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// ultimately do Location completely differently
 		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
 		mVisitLocation.setOnFocusChangeListener(this);
+        mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
+        mLongitudeText = (TextView) rootView.findViewById((R.id.longitude_text));
+        
+//        getActivity().buildGoogleApiClient();
+
 		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
 		mAzimuth.setOnFocusChangeListener(this);
 		registerForContextMenu(mAzimuth); // enable long-press
@@ -482,4 +497,34 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        return super.onContextItemSelected(item);
 	   }
 	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnected(Bundle arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectionSuspended(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+    
+     // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+/*     
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+*/
 }

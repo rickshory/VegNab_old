@@ -125,14 +125,50 @@
         android:layout_below="@id/lbl_visit_location"
         android:inputType="text"
         android:maxLength="16" />
+    
+    <TextView
+        android:id="@+id/latitude_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/txt_visit_location"
+        android:layout_below="@id/txt_visit_location"
+        android:text="@string/latitude_label"
+        />
+    
+    <TextView
+        android:id="@+id/latitude_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/latitude_label"
+        android:layout_below="@id/latitude_label"
+        android:textIsSelectable="true"
+        />
 
+    <TextView
+        android:id="@+id/longitude_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/latitude_text"
+        android:layout_below="@id/latitude_text"
+        android:text="@string/longitude_label"
+        />
+
+    <TextView
+        android:id="@+id/longitude_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/longitude_label"
+        android:layout_below="@id/longitude_label"
+        android:textIsSelectable="true"
+        />
+    
     <TextView
         android:id="@+id/lbl_visit_azimuth"
         android:text="@string/visit_header_label_azimuth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/txt_visit_location"
-        android:layout_below="@id/txt_visit_location"
+        android:layout_alignLeft="@id/longitude_text"
+        android:layout_below="@id/longitude_text"
         />
 
     <EditText

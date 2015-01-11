@@ -77,6 +77,9 @@
     <string name="visit_header_hint_azimuth">Azimuth</string>
     <string name="visit_header_label_notes">Notes</string>
     <string name="visit_header_hint_notes">Notes</string>
+
+    <string name="latitude_label">Latitude: </string>
+    <string name="longitude_label">Longitude: </string>
     
     <string name="visit_header_go_button_msg">Start subplots</string>
     <string name="visit_header_map_button_msg">Map more locations</string>

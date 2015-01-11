@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -142,7 +143,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) rootView.findViewById((R.id.longitude_text));
         
-//        getActivity().buildGoogleApiClient();
+        buildGoogleApiClient();
 
 		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
 		mAzimuth.setOnFocusChangeListener(this);
@@ -518,13 +519,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	
     
      // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-/*     
+
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
     }
-*/
+
 }

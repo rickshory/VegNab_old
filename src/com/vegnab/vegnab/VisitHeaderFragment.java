@@ -162,6 +162,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onStart() {
 		super.onStart();
+        mGoogleApiClient.connect();
 		// during startup, check if arguments are passed to the fragment
 		// this is where to do this because the layout has been applied
 		// to the fragment
@@ -176,6 +177,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			updateSubplotViews(-1); // figure out what to do for default state 
 		}
 	}
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -499,27 +508,43 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	   }
 	}
 
-	@Override
-	public void onConnectionFailed(ConnectionResult arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.v(LOG_TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
 
-	@Override
-	public void onConnected(Bundle arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+    // Runs when a GoogleApiClient object successfully connects.
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Provides a simple way of getting a device's location and is well suited for
+        // applications that do not require a fine-grained location and that do not need location
+        // updates. Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        }
+    }
 
-	@Override
-	public void onConnectionSuspended(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-    
+
+    // Called by Google Play services if the connection to GoogleApiClient drops because of an error.
+
+    public void onDisconnected() {
+        Log.v(LOG_TAG, "Disconnected");
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.v(LOG_TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
      // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)

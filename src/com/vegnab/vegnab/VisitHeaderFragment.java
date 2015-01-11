@@ -5,10 +5,12 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -65,7 +67,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
     protected GoogleApiClient mGoogleApiClient;
-    protected Location mLastLocation;
+    protected Location mLastLocation, mBestLocation;
+    private LocationRequest mLocationRequest;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
@@ -544,7 +547,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         mGoogleApiClient.connect();
     }
 
-     // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+    // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+    // documented under FusedLocationProviderApi
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -553,4 +557,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
                 .build();
     }
 
+	private boolean servicesAvailable() {
+	    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
+	
+	    if (ConnectionResult.SUCCESS == resultCode) {
+	        return true;
+	    }
+	    else {
+	        GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(), 0).show();
+	        return false;
+	    }
+	}
 }

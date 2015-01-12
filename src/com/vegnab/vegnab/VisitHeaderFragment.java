@@ -62,6 +62,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
 	public static final int LOADER_FOR_NAMERS = 6;
+	public static final int LOADER_FOR_LOCATIONS = 7;
 	private static final int MENU_HELP = 0;
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;

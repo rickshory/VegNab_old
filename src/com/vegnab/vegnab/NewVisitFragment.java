@@ -1,6 +1,7 @@
 package com.vegnab.vegnab;
 
 import java.util.List;
+
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -37,7 +38,7 @@ import android.widget.Toast;
 public class NewVisitFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
-	private static final String LOG_TAG = "NewVisitFragment";
+	private static final String LOG_TAG = NewVisitFragment.class.getSimpleName();
 	public static final int TEST_SQL_LOADER = 0; // test loading from raw SQL
 	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
 	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types

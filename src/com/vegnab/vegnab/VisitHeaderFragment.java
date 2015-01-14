@@ -20,6 +20,7 @@ import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -70,6 +71,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation, mBestLocation;
     private LocationRequest mLocationRequest;
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
@@ -528,10 +530,19 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(ConnectionResult connectionResult) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
-        Log.v(LOG_TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(getActivity(), CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.v(LOG_TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
+        }
     }
 
     // Runs when a GoogleApiClient object successfully connects.

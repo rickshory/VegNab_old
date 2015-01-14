@@ -166,7 +166,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onStart() {
 		super.onStart();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
 		// during startup, check if arguments are passed to the fragment
 		// this is where to do this because the layout has been applied
 		// to the fragment
@@ -181,13 +181,28 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			updateSubplotViews(-1); // figure out what to do for default state 
 		}
 	}
+	
+	@Override
+	public void onResume() {
+	    super.onResume();
+//	    do other setup here if needed
+	    mGoogleApiClient.connect();
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    if (mGoogleApiClient.isConnected()) {
+	        mGoogleApiClient.disconnect();
+	    }
+	}
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
+//        if (mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
     }
 
 	@Override

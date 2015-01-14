@@ -123,8 +123,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/lbl_visit_location"
         android:layout_below="@id/lbl_visit_location"
-        android:inputType="text"
-        android:maxLength="16" />
+        android:inputType="textMultiLine"
+        />
     
     <TextView
         android:id="@+id/latitude_label"

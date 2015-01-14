@@ -530,6 +530,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         if (mLastLocation != null) {
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+            mVisitLocation.setText(mLastLocation.toString());
         }
     }
 
@@ -569,4 +570,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        return false;
 	    }
 	}
+	
+	// if Google Play Services not available, would Location Services be?
+	// requestSingleUpdate
 }

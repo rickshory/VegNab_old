@@ -73,6 +73,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation, mBestLocation;
     private LocationRequest mLocationRequest;
+    private float mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
@@ -145,7 +146,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
 		mVisitScribe.setOnFocusChangeListener(this);
 		registerForContextMenu(mVisitScribe); // enable long-press
-		// ultimately do Location completely differently
+		// set up the visit Location
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		mAccuracyTargetForVisitLoc = sharedPref.getFloat(Prefs.TARGET_ACCURACY_OF_VISIT_LOCATIONS, 7.0f);
 		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
 		mVisitLocation.setOnFocusChangeListener(this);
         mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
@@ -610,7 +613,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onLocationChanged(Location newLoc) {
-		mVisitLocation.setText(newLoc.toString());
+		handleLocation(newLoc);
+	}
+	
+	public void handleLocation(Location loc) {
+		mVisitLocation.setText(loc.toString());
+		// mAccuracyTargetForVisitLoc
 	}
 	
 	// if Google Play Services not available, would Location Services be?

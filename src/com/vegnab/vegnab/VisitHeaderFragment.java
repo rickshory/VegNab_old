@@ -10,6 +10,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
@@ -58,7 +59,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
-		ConnectionCallbacks, OnConnectionFailedListener{
+		ConnectionCallbacks, OnConnectionFailedListener, 
+        LocationListener{
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
@@ -148,8 +150,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mVisitLocation.setOnFocusChangeListener(this);
         mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) rootView.findViewById((R.id.longitude_text));
-        
+        // should the following go in onCreate() ?
         buildGoogleApiClient();
+    	mLocationRequest = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+            .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
 		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
 		mAzimuth.setOnFocusChangeListener(this);
@@ -195,6 +201,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onPause() {
 	    super.onPause();
 	    if (mGoogleApiClient.isConnected()) {
+	    	LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 	        mGoogleApiClient.disconnect();
 	    }
 	}
@@ -542,12 +549,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
             }
         } else {
             Log.v(LOG_TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
+            mVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
         }
     }
 
     // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {
+    	LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    	/*
         // Provides a simple way of getting a device's location and is well suited for
         // applications that do not require a fine-grained location and that do not need location
         // updates. Gets the best and most recent location currently available, which may be null
@@ -558,6 +568,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
             mVisitLocation.setText(mLastLocation.toString());
         }
+        */
     }
 
 
@@ -595,6 +606,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	        GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(), 0).show();
 	        return false;
 	    }
+	}
+
+	@Override
+	public void onLocationChanged(Location newLoc) {
+		mVisitLocation.setText(newLoc.toString());
 	}
 	
 	// if Google Play Services not available, would Location Services be?

@@ -30,6 +30,18 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// set up some default Preferences
+		SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+		if (!sharedPref.contains(Prefs.TARGET_ACCURACY_OF_VISIT_LOCATIONS)) {
+			SharedPreferences.Editor prefEditor = sharedPref.edit();
+			prefEditor.putFloat(Prefs.TARGET_ACCURACY_OF_VISIT_LOCATIONS, (float) 7.0);
+			prefEditor.commit();
+		}
+		if (!sharedPref.contains(Prefs.TARGET_ACCURACY_OF_MAPPED_LOCATIONS)) {
+			SharedPreferences.Editor prefEditor = sharedPref.edit();
+			prefEditor.putFloat(Prefs.TARGET_ACCURACY_OF_MAPPED_LOCATIONS, (float) 7.0);
+			prefEditor.commit();
+		}
 		setContentView(R.layout.activity_vn_main);
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout

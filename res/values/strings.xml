@@ -71,7 +71,7 @@
     <string name="visit_header_hint_namer">Species namer</string>
     <string name="visit_header_label_scribe">Optional: if someone besides the Namer is entering data</string>
     <string name="visit_header_hint_scribe">Scribe</string>
-    <string name="visit_header_label_location">Reference location</string>
+    <string name="visit_header_label_location">Reference location. Long-press for options.</string>
     <string name="visit_header_hint_location">Location</string>
     <string name="visit_header_label_azimuth">If azimuth is relevant to this visit</string>
     <string name="visit_header_hint_azimuth">Azimuth</string>

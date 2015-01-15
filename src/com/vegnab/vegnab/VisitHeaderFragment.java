@@ -152,6 +152,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mAccuracyTargetForVisitLoc = sharedPref.getFloat(Prefs.TARGET_ACCURACY_OF_VISIT_LOCATIONS, 7.0f);
 		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
 		mVisitLocation.setOnFocusChangeListener(this);
+		registerForContextMenu(mVisitLocation); // enable long-press
         mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) rootView.findViewById((R.id.longitude_text));
         // should the following go in onCreate() ?
@@ -508,6 +509,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case R.id.txt_visit_scribe:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
+		case R.id.txt_visit_location:
+			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			break;
 		case R.id.txt_visit_azimuth:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
@@ -630,8 +634,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
 			if (mGoogleApiClient.isConnected()) {
 		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-		        // overwrite the message
 		        mGoogleApiClient.disconnect();
+		        // overwrite the message
 				s = "" + mLatitude + ", " + mLongitude
 						+ "\naccuracy " + mAccuracy + "m";
 				mVisitLocation.setText(s);

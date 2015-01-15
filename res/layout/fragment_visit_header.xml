@@ -123,6 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/lbl_visit_location"
         android:layout_below="@id/lbl_visit_location"
+        android:focusable="false"
         android:inputType="textMultiLine"
         />
     

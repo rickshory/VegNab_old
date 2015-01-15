@@ -43,6 +43,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.AccessibilityDelegate;
@@ -508,7 +509,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.txt_visit_location:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			MenuInflater inflater = getActivity().getMenuInflater();
+			inflater.inflate(R.menu.context_visit_header_location, menu);
+//			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.txt_visit_azimuth:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
@@ -523,22 +526,33 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	if (info == null) {
+		Log.v(LOG_TAG, "onContextItemSelected info is null");
+	} else {
+		Log.v(LOG_TAG, "onContextItemSelected info: " + info.toString());
+	}
 	switch (item.getItemId()) {
-	    case MENU_EDIT:
-	    	Log.v(LOG_TAG, "MENU_EDIT selected");
+	case R.id.vis_hdr_loc_reacquire:
+		Log.v(LOG_TAG, "'Re-acquire' selected");
+		// re-acquire location
+		UnderConstrDialog msgDlg = new UnderConstrDialog();
+		msgDlg.show(getFragmentManager(), null);
+		return true;
+	case MENU_EDIT:
+		Log.v(LOG_TAG, "MENU_EDIT selected");
 //	        mark_item(info.id);
-	        return true;
-	    case MENU_DELETE:
-	    	Log.v(LOG_TAG, "MENU_DELETE selected");
+		return true;
+	case MENU_DELETE:
+	    Log.v(LOG_TAG, "MENU_DELETE selected");
 //	        delete_item(info.id);
-	        return true;
-	    case MENU_HELP:
-	    	Log.v(LOG_TAG, "MENU_HELP selected");
-	    	HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
-	    	hlpDlg.show(getFragmentManager(), null);
-	        return true;
-	    default:
-	        return super.onContextItemSelected(item);
+	    return true;
+	case MENU_HELP:
+		Log.v(LOG_TAG, "MENU_HELP selected");
+		HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
+		hlpDlg.show(getFragmentManager(), null);
+		return true;
+    default:
+    	return super.onContextItemSelected(item);
 	   }
 	}
 

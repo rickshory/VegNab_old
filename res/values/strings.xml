@@ -3,6 +3,7 @@
 
     <string name="app_name">VegNab</string>
     <string name="empty_string"></string>
+    <string name="under_construction">Not implemented yet</string>
     <string name="action_settings">Settings</string>
     <string name="action_app_info">App info</string>
     <string name="action_edit_proj">Edit Project</string>
@@ -84,6 +85,12 @@
     <string name="visit_header_go_button_msg">Start subplots</string>
     <string name="visit_header_map_button_msg">Map more locations</string>
     <string name="visit_header_photo_button_msg">Add pictures</string>
+    
+    <string name="vis_hdr_ctxmenu_loc_reacquire">Re-acquire</string>
+    <string name="vis_hdr_ctxmenu_loc_accept">Accept accuracy</string>
+    <string name="vis_hdr_ctxmenu_loc_manual">Enter manually</string>
+    <string name="vis_hdr_ctxmenu_loc_details">Details</string>
+    <string name="vis_hdr_ctxmenu_loc_help">Help</string>
     
     <string name="add_namer_title">Species Namer</string>
     <string name="add_namer_header">Person\'s name who will be deciding the species</string>

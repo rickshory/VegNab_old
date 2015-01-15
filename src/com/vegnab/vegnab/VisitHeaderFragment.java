@@ -73,7 +73,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation, mBestLocation;
     private LocationRequest mLocationRequest;
-    private float mAccuracyTargetForVisitLoc;
+    private double mLatitude, mLongitude;
+    private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long visitId = 0, namerId = 0; // zero default means new or not specified yet
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
@@ -618,11 +619,25 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	
 	public void handleLocation(Location loc) {
 		String s;
-		s = "" + loc.getLatitude() + ", " + loc.getLongitude() + "\naccuracy " + loc.getAccuracy() + "m"
-				+ "\ntarget accuracy " + mAccuracyTargetForVisitLoc + "m";
-//		mVisitLocation.setText(loc.toString());
+		mLatitude = loc.getLatitude();
+		mLongitude = loc.getLongitude();
+		mAccuracy = loc.getAccuracy();
+		s = "" + mLatitude + ", " + mLongitude
+				+ "\naccuracy " + mAccuracy + "m"
+				+ "\ntarget accuracy " + mAccuracyTargetForVisitLoc + "m"
+				+ "\ncontinuing to acquire";
 		mVisitLocation.setText(s);
-		// mAccuracyTargetForVisitLoc
+		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
+			if (mGoogleApiClient.isConnected()) {
+		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+		        // overwrite the message
+		        mGoogleApiClient.disconnect();
+				s = "" + mLatitude + ", " + mLongitude
+						+ "\naccuracy " + mAccuracy + "m";
+				mVisitLocation.setText(s);
+				// write to database here, or just flag?
+		    }
+		}
 	}
 	
 	// if Google Play Services not available, would Location Services be?

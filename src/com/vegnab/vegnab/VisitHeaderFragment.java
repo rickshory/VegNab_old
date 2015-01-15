@@ -492,6 +492,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, 
 	   ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (v.getId()) {
 		case R.id.txt_visit_name:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");

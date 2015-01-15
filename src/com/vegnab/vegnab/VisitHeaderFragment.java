@@ -531,11 +531,31 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	} else {
 		Log.v(LOG_TAG, "onContextItemSelected info: " + info.toString());
 	}
+	UnderConstrDialog msgDlg = new UnderConstrDialog();
 	switch (item.getItemId()) {
 	case R.id.vis_hdr_loc_reacquire:
 		Log.v(LOG_TAG, "'Re-acquire' selected");
 		// re-acquire location
-		UnderConstrDialog msgDlg = new UnderConstrDialog();
+		msgDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_loc_accept:
+		Log.v(LOG_TAG, "'Accept accuracy' selected");
+		// accept location even with poor accuracy
+		msgDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_loc_manual:
+		Log.v(LOG_TAG, "'Enter manually' selected");
+		// enter location manually
+		msgDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_loc_details:
+		Log.v(LOG_TAG, "'Details' selected");
+		// show location details
+		msgDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_loc_help:
+		Log.v(LOG_TAG, "'Help' selected");
+		// show help on locations
 		msgDlg.show(getFragmentManager(), null);
 		return true;
 	case MENU_EDIT:

@@ -617,7 +617,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 	
 	public void handleLocation(Location loc) {
-		mVisitLocation.setText(loc.toString());
+		String s;
+		s = "" + loc.getLatitude() + ", " + loc.getLongitude() + "\naccuracy " + loc.getAccuracy() + "m"
+				+ "\ntarget accuracy " + mAccuracyTargetForVisitLoc + "m";
+//		mVisitLocation.setText(loc.toString());
+		mVisitLocation.setText(s);
 		// mAccuracyTargetForVisitLoc
 	}
 	

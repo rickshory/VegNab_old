@@ -80,7 +80,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues values = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
-	protected TextView mLatitudeText, mLongitudeText;
 	private Spinner namerSpinner;
 	private TextView lblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
@@ -153,8 +152,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
 		mVisitLocation.setOnFocusChangeListener(this);
 		registerForContextMenu(mVisitLocation); // enable long-press
-        mLatitudeText = (TextView) rootView.findViewById((R.id.latitude_text));
-        mLongitudeText = (TextView) rootView.findViewById((R.id.longitude_text));
         // should the following go in onCreate() ?
         buildGoogleApiClient();
     	mLocationRequest = LocationRequest.create()

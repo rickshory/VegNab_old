@@ -72,7 +72,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
     protected GoogleApiClient mGoogleApiClient;
-    protected Location mLastLocation, mBestLocation;
     private LocationRequest mLocationRequest;
     private double mLatitude, mLongitude;
     private float mAccuracy, mAccuracyTargetForVisitLoc;
@@ -97,6 +96,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    }
 	};
 	int rowCt;
+	final static String ARG_VISIT_ID = "visitId";
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface

@@ -163,8 +163,18 @@ public class MainVNActivity extends ActionBarActivity
 
 	@Override
 	public void onNewVisitGoButtonClicked() {
+		goToVisitHeaderScreen(0);
+	}
+	
+	public void goToVisitHeaderScreen(long visitID) {
 		VisitHeaderFragment visHdrFrag = new VisitHeaderFragment();
 		Bundle args = new Bundle();
+		// visitID = 0 means new visit, not assigned or created yet
+		args.putLong(VisitHeaderFragment.ARG_VISIT_ID, visitID);
+		SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefEditor = sharedPref.edit();
+		prefEditor.putLong(Prefs.CURRENT_VISIT_ID, visitID);
+		prefEditor.commit();
 		args.putInt(VisitHeaderFragment.ARG_SUBPLOT, 0); // start with dummy value, subplot 0
 		visHdrFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

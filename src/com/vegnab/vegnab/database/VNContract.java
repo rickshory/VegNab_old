@@ -17,6 +17,7 @@ public final class VNContract {
 		public static final String DEFAULT_PROJECT_ID = "Default_Project_Id";
 		public static final String DEFAULT_PLOTTYPE_ID = "Default_PlotType_Id";
 		public static final String DEFAULT_NAMER_ID = "Default_Namer_Id";
+		public static final String CURRENT_VISIT_ID = "Current_Visit_Id";
 		public static final String TARGET_ACCURACY_OF_VISIT_LOCATIONS = "Target_Accuracy_VisitLocs";
 		public static final String TARGET_ACCURACY_OF_MAPPED_LOCATIONS = "Target_Accuracy_MappedLocs";
 		

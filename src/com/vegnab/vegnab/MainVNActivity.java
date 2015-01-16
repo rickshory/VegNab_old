@@ -180,8 +180,9 @@ public class MainVNActivity extends ActionBarActivity
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
-		transaction.replace(R.id.fragment_container, visHdrFrag);
-		transaction.addToBackStack("(start visit)");
-		transaction.commit();		
+		transaction.replace(R.id.fragment_container, visHdrFrag, "start_visit");
+		transaction.addToBackStack("start_visit");
+		transaction.commit();
+		getSupportFragmentManager().executePendingTransactions();
 	}
 }

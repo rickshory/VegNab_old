@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -126,7 +127,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-//		FragmentManager fm = getSupportFragmentManager();
+		FragmentManager fm = getActivity().getSupportFragmentManager();
 //		DialogFragment editProjDlg;
 		switch (item.getItemId()) { // the Activity has first opportunity to handle these
 		// any not handled come here to this Fragment
@@ -135,6 +136,20 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			return true;
 		case R.id.action_delete_visit:
 			Toast.makeText(getActivity(), "''Delete Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			fm.executePendingTransactions();
+			Fragment newVisFragment = fm.findFragmentByTag("start_visit");
+			if (newVisFragment == null) {
+				Log.v(LOG_TAG, "newVisFragment == null");
+			} else {
+				Log.v(LOG_TAG, "newVisFragment: " + newVisFragment.toString());
+			}
+			FragmentTransaction transaction = fm.beginTransaction();
+			// replace the fragment in the fragment container with the stored New Visit fragment
+			// we are deleting this record, so do not put the present fragment on the backstack
+			transaction.replace(R.id.fragment_container, newVisFragment);
+// do not add to back stack			transaction.addToBackStack("(start visit)");
+			transaction.commit();		
+
 //			DelProjectDialog delProjDlg = new DelProjectDialog();
 //			delProjDlg.show(fm, "frg_del_proj");
 			return true;

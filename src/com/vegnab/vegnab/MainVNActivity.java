@@ -54,16 +54,17 @@ public class MainVNActivity extends ActionBarActivity
 				return;
 			}
 			
-			// create an instance of Visit Header fragment
+			// create an instance of New Visit fragment
 			NewVisitFragment newVisitFrag = new NewVisitFragment();
-			String tag = "NewVisitScreen";
 			
 			// in case this activity were started with special instructions from an Intent
 			// pass the Intent's Extras to the fragment as arguments
 			newVisitFrag.setArguments(getIntent().getExtras());
 			
+			// the tag is for the fragment now being added
+			// it will stay with this fragment when put on the backstack
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, newVisitFrag, tag);
+			transaction.add(R.id.fragment_container, newVisitFrag, "new_visit");
 			transaction.commit();
 		}
 	}
@@ -141,8 +142,9 @@ public class MainVNActivity extends ActionBarActivity
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the existing Subplot fragment (in the container) with this new Subplot fragment
 		// and put the existing Subplot fragment on the backstack so the user can navigate back to it
-		transaction.replace(R.id.fragment_container, vegSbpFrag);
-		transaction.addToBackStack("Subplot " + subpNum);
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
+		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 
@@ -151,13 +153,15 @@ public class MainVNActivity extends ActionBarActivity
 		// swap Subplot fragment in place of Header fragment
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
 		Bundle args = new Bundle();
-		args.putInt(VegSubplotFragment.ARG_SUBPLOT, 1); // start with subplot 1
+		int subpNum = 1;
+		args.putInt(VegSubplotFragment.ARG_SUBPLOT, subpNum); // start with subplot 1
 		vegSbpFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
-		transaction.replace(R.id.fragment_container, vegSbpFrag);
-		transaction.addToBackStack("(header)");
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
+		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 
@@ -180,9 +184,9 @@ public class MainVNActivity extends ActionBarActivity
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
-		transaction.replace(R.id.fragment_container, visHdrFrag, "start_visit");
-		transaction.addToBackStack("start_visit");
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, visHdrFrag, "header");
+		transaction.addToBackStack(null);
 		transaction.commit();
-		getSupportFragmentManager().executePendingTransactions();
 	}
 }

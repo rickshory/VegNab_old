@@ -135,20 +135,18 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			Toast.makeText(getActivity(), "''App Info'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_delete_visit:
-			Toast.makeText(getActivity(), "''Delete Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
-			fm.executePendingTransactions();
-			Fragment newVisFragment = fm.findFragmentByTag("start_visit");
+			Toast.makeText(getActivity(), "''Delete Visit'' is not fully implemented yet", Toast.LENGTH_SHORT).show();
+			Fragment newVisFragment = fm.findFragmentByTag("new_visit");
 			if (newVisFragment == null) {
 				Log.v(LOG_TAG, "newVisFragment == null");
 			} else {
 				Log.v(LOG_TAG, "newVisFragment: " + newVisFragment.toString());
+				FragmentTransaction transaction = fm.beginTransaction();
+				// replace the fragment in the fragment container with the stored New Visit fragment
+				transaction.replace(R.id.fragment_container, newVisFragment);
+				// we are deleting this record, so do not put the present fragment on the backstack
+				transaction.commit();		
 			}
-			FragmentTransaction transaction = fm.beginTransaction();
-			// replace the fragment in the fragment container with the stored New Visit fragment
-			// we are deleting this record, so do not put the present fragment on the backstack
-			transaction.replace(R.id.fragment_container, newVisFragment);
-// do not add to back stack			transaction.addToBackStack("(start visit)");
-			transaction.commit();		
 
 //			DelProjectDialog delProjDlg = new DelProjectDialog();
 //			delProjDlg.show(fm, "frg_del_proj");

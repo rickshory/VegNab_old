@@ -30,7 +30,7 @@
         android:hint="@string/edit_proj_hint_projcode"
         android:inputType="text"
         android:maxLength="10"
-        android:imeOptions="actionNext" />
+		/>
 
     <TextView
         android:id="@+id/lbl_overall"
@@ -60,7 +60,6 @@
         android:inputType="textMultiLine"
         android:gravity="top|left"
         android:maxLength="255"
-        android:imeOptions="actionNext"
          />
 
     <TextView
@@ -82,7 +81,6 @@
         android:inputType="textMultiLine"
         android:gravity="top|left"
         android:maxLength="255"
-        android:imeOptions="actionNext"
          />
     
     <TextView

@@ -28,6 +28,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
@@ -55,6 +56,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
@@ -106,6 +108,46 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		public void onVisitHeaderGoButtonClicked();
 	}
 	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.visit_header, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+//		FragmentManager fm = getSupportFragmentManager();
+//		DialogFragment editProjDlg;
+		switch (item.getItemId()) { // the Activity has first opportunity to handle these
+		// any not handled come here to this Fragment
+		case R.id.action_app_info:
+			Toast.makeText(getActivity(), "''App Info'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.action_delete_visit:
+			Toast.makeText(getActivity(), "''Delete Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
+//			DelProjectDialog delProjDlg = new DelProjectDialog();
+//			delProjDlg.show(fm, "frg_del_proj");
+			return true;
+		case R.id.action_visit_help:
+			Toast.makeText(getActivity(), "''Visit Help'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.action_settings:
+			Toast.makeText(getActivity(), "''Settings'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 			Bundle savedInstanceState) {

@@ -11,6 +11,7 @@
     <string name="action_delete_proj">Delete Project</string>
     <string name="action_new_plottype">New Plot Type</string>
     <string name="action_old_visit">Re-open a Visit</string>
+    <string name="action_delete_visit">Delete Visit</string>
    
     <string name="default_project">MyProject</string>
     <string name="default_plottype">Species List</string>

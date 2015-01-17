@@ -22,6 +22,23 @@ public final class VNContract {
 		public static final String TARGET_ACCURACY_OF_MAPPED_LOCATIONS = "Target_Accuracy_MappedLocs";
 		
 	}
+	// inner class to define loader IDs
+	// putting them all together here helps avoid conflicts in various fragments
+	public static abstract class Loaders {
+		public static final int TEST_SQL = 0; // test loading from raw SQL
+		// in New Visit
+		public static final int PROJECTS = 1; // Loader Id for Projects
+		public static final int PLOTTYPES = 2; // Loader Id for Plot Types
+		// in Edit Project
+		public static final int EXISTING_PROJCODES = 11; // to disallow duplicates
+		public static final int PROJECT_TO_EDIT = 12; //
+		// in Visit Header
+		public static final int VISIT = 21;
+		public static final int NAMERS = 22;
+		public static final int LOCATIONS = 23;
+
+		
+	}
 	
 	// inner classes to define tables
 	public static abstract class Project implements BaseColumns {

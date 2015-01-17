@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.DatePickerDialog;
@@ -34,8 +35,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
 		//, android.view.View.OnKeyListener
 		{
-	public static final int LOADER_FOR_PROJECT_TO_EDIT = 3; // Loader Id
-	public static final int LOADER_FOR_EXISTING_PROJECTS = 13;
 	long mProjRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
@@ -135,8 +134,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
 			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
-			getLoaderManager().initLoader(LOADER_FOR_EXISTING_PROJECTS, null, this);
-			getLoaderManager().initLoader(LOADER_FOR_PROJECT_TO_EDIT, null, this);
+			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
+			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}
 	}
@@ -237,7 +236,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		CursorLoader cl = null;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
-		case LOADER_FOR_EXISTING_PROJECTS:
+		case Loaders.EXISTING_PROJCODES:
 			// get the existing ProjCodes, other than the current one, to disallow duplicates
 			Uri allProjsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "projects");
@@ -246,7 +245,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			cl = new CursorLoader(getActivity(), allProjsUri,
 					projection, select, null, null);
 			break;
-		case LOADER_FOR_PROJECT_TO_EDIT:
+		case Loaders.PROJECT_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
 //			mBaseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
@@ -268,14 +267,14 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		switch (loader.getId()) {
-		case LOADER_FOR_EXISTING_PROJECTS:
+		case Loaders.EXISTING_PROJCODES:
 			mExistingProjCodes.clear();
 			while (c.moveToNext()) {
 				Log.v("EditProj", "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mExistingProjCodes.add(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 			}
 			break;
-		case LOADER_FOR_PROJECT_TO_EDIT:
+		case Loaders.PROJECT_TO_EDIT:
 			Log.v("EditProj", "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
 				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
@@ -293,7 +292,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch (loader.getId()) {
-		case LOADER_FOR_PROJECT_TO_EDIT:
+		case Loaders.PROJECT_TO_EDIT:
 			// maybe nothing to do here since no adapter
 			break;
 		}

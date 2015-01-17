@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import java.util.List;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
@@ -40,12 +41,8 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>{
 	private static final String LOG_TAG = NewVisitFragment.class.getSimpleName();
-	public static final int TEST_SQL_LOADER = 0; // test loading from raw SQL
-	public static final int LOADER_FOR_PROJECTS = 1; // Loader Id for Projects
-	public static final int LOADER_FOR_PLOTTYPES = 2; // Loader Id for Plot Types
-	long projectId;
-	long plotTypeId;
-	int rowCt;
+	long mProjectId, mPlotTypeId;
+	int mRowCt;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	VegNabDbHelper DbHelper;
@@ -98,9 +95,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		projSpinner.setAdapter(mProjAdapter);
 		projSpinner.setOnItemSelectedListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
-		getLoaderManager().initLoader(LOADER_FOR_PROJECTS, null, this);
+		getLoaderManager().initLoader(Loaders.PROJECTS, null, this);
 		// If there in no Loader yet, this will call
-		// Loader<Cursor> onCreateLoader and pass it a first parameter of LOADER_FOR_PROJECTS
+		// Loader<Cursor> onCreateLoader and pass it a first parameter of Loaders.PROJECTS
 		plotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
 		plotTypeSpinner.setEnabled(false); // will enable when data ready
 		mPlotTypeAdapter = new SimpleCursorAdapter(getActivity(),
@@ -110,7 +107,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		mPlotTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		plotTypeSpinner.setAdapter(mPlotTypeAdapter);
 		plotTypeSpinner.setOnItemSelectedListener(this);
-		getLoaderManager().initLoader(LOADER_FOR_PLOTTYPES, null, this);
+		getLoaderManager().initLoader(Loaders.PLOTTYPES, null, this);
 		return rootView;
 	}
 	
@@ -176,7 +173,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		switch (v.getId()) {
 		case R.id.new_visit_go_button:
 			// test of using the Content Provider for direct SQL
-			getLoaderManager().initLoader(TEST_SQL_LOADER, null, this);
+			getLoaderManager().initLoader(Loaders.TEST_SQL, null, this);
 			
 /*			Toast.makeText(this.getActivity(), 
 					"Selected Project position: " + projSpinner.getSelectedItemPosition() 
@@ -219,13 +216,13 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		Uri baseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
-		case TEST_SQL_LOADER:
+		case Loaders.TEST_SQL:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT StartDate FROM Projects WHERE _id = 1;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;
-		case LOADER_FOR_PROJECTS:
+		case Loaders.PROJECTS:
 			// First, create the base URI
 			// could test here, based on e.g. filters
 			baseUri = ContentProvider_VegNab.CONTENT_URI;
@@ -236,7 +233,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
 					PROJECTS_PROJCODES, select, null, null);
 			break;
-		case LOADER_FOR_PLOTTYPES:
+		case Loaders.PLOTTYPES:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT _id, PlotTypeDescr FROM PlotTypes;";
 			cl = new CursorLoader(getActivity(), baseUri,
@@ -249,30 +246,30 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
 		// there will be various loaders, switch them out here
-		rowCt = finishedCursor.getCount();
+		mRowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
-		case TEST_SQL_LOADER:
-			Log.v(LOG_TAG, "TEST_SQL_LOADER returned cursor ");
+		case Loaders.TEST_SQL:
+			Log.v(LOG_TAG, "Loaders.TEST_SQL returned cursor ");
 			finishedCursor.moveToFirst();
 			String d = finishedCursor.getString(0);
-			Log.v(LOG_TAG, "TEST_SQL_LOADER value returned: " + d);
+			Log.v(LOG_TAG, "Loaders.TEST_SQL value returned: " + d);
 /*			Toast.makeText(this.getActivity(),
 					"Date: " + d,
 					Toast.LENGTH_LONG).show();
 */
 			break;
-		case LOADER_FOR_PROJECTS:
+		case Loaders.PROJECTS:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mProjAdapter.swapCursor(finishedCursor);
-			if (rowCt > 0) {
+			if (mRowCt > 0) {
 				projSpinner.setEnabled(true);
 				// get default Project from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 				// database comes pre-loaded with one Project record that has _id = 1
 				// default ProjCode = "MyProject', but may be renamed
-				projectId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
+				mProjectId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
 				if (!sharedPref.contains(Prefs.DEFAULT_PROJECT_ID)) {
 					// this will only happen once, when the app is first installed
 /*					Toast.makeText(this.getActivity(), 
@@ -286,7 +283,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
 					Uri uri = ContentProvider_VegNab.SQL_URI;
 					int numUpdated = resolver.update(uri, null, sql, null);
-					saveDefaultProjectId(projectId);
+					saveDefaultProjectId(mProjectId);
 /*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' set for the first time.", 
 							Toast.LENGTH_LONG).show();
@@ -294,16 +291,16 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' set for the first time."); 
 				} else {
 /*					Toast.makeText(this.getActivity(), 
-							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + projectId, 
+							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' = " + mProjectId, 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + projectId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + mProjectId);
 				}
 				// set the default Project to show in its spinner
 				// for a generalized fn, try: projSpinner.getAdapter().getCount()
-				for (int i=0; i<rowCt; i++) {
+				for (int i=0; i<mRowCt; i++) {
 					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
-					if (projSpinner.getItemIdAtPosition(i) == projectId) {
+					if (projSpinner.getItemIdAtPosition(i) == mProjectId) {
 						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
 						projSpinner.setSelection(i);
 						break;
@@ -313,18 +310,18 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 				projSpinner.setEnabled(false);
 			}
 			break;
-		case LOADER_FOR_PLOTTYPES:
+		case Loaders.PLOTTYPES:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mPlotTypeAdapter.swapCursor(finishedCursor);
-			if (rowCt > 0) {
+			if (mRowCt > 0) {
 				plotTypeSpinner.setEnabled(true);
 				// get default Plot Type from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 				// database comes pre-loaded with one Plot Type record that has _id = 1
 				// default PlotTypeDescr = "Species List'
-				plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 1);
+				mPlotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 1);
 				if (!sharedPref.contains(Prefs.DEFAULT_PLOTTYPE_ID)) {
 					// this will only happen once, when the app is first installed
 /*					Toast.makeText(this.getActivity(), 
@@ -332,7 +329,7 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 							Toast.LENGTH_LONG).show();
 */
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' does not exist yet.");
-					saveDefaultPlotTypeId(plotTypeId);
+					saveDefaultPlotTypeId(mPlotTypeId);
 /*					Toast.makeText(this.getActivity(), 
 							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' set for the first time.", 
 							Toast.LENGTH_LONG).show();
@@ -340,16 +337,16 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' set for the first time."); 
 				} else {
 /*					Toast.makeText(this.getActivity(), 
-							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' = " + plotTypeId, 
+							"Prefs key '" + Prefs.DEFAULT_PLOTTYPE_ID + "' = " + mPlotTypeId, 
 							Toast.LENGTH_LONG).show();
 */
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + plotTypeId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + mPlotTypeId);
 				}
 				// set the default Plot Type to show in its spinner
 				// for a generalized fn, try: mySpinner.getAdapter().getCount()
-				for (int i=0; i<rowCt; i++) {
+				for (int i=0; i<mRowCt; i++) {
 					Log.v(LOG_TAG, "Setting plotTypeSpinner default; testing index " + i);
-					if (plotTypeSpinner.getItemIdAtPosition(i) == plotTypeId) {
+					if (plotTypeSpinner.getItemIdAtPosition(i) == mPlotTypeId) {
 						Log.v(LOG_TAG, "Setting plotTypeSpinner default; found matching index " + i);
 						plotTypeSpinner.setSelection(i);
 						break;
@@ -367,10 +364,10 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
-		case LOADER_FOR_PROJECTS:
+		case Loaders.PROJECTS:
 			mProjAdapter.swapCursor(null);
 			break;
-		case LOADER_FOR_PLOTTYPES:
+		case Loaders.PLOTTYPES:
 			mPlotTypeAdapter.swapCursor(null);
 			break;
 		}
@@ -396,9 +393,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		// sort out the spinners
 		// can't use switch because not constants
 		if (parent.getId() == projSpinner.getId()) {
-			projectId = id;
+			mProjectId = id;
 			// save in app Preferences as the default Project
-			saveDefaultProjectId(projectId);
+			saveDefaultProjectId(mProjectId);
 /*			
 			Toast.makeText(parent.getContext(),
 					"Selected Project position: " + position
@@ -410,9 +407,9 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 */
 		}
 		if (parent.getId() == plotTypeSpinner.getId()) {
-			plotTypeId = id;
+			mPlotTypeId = id;
 			// save in app Preferences as the default Plot Type
-			saveDefaultPlotTypeId(plotTypeId);
+			saveDefaultPlotTypeId(mPlotTypeId);
 /*			
 			Toast.makeText(parent.getContext(),
 					"Selected Plot Type position: " + position

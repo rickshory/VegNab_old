@@ -14,6 +14,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.Activity;
@@ -67,9 +68,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         LocationListener{
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
-	public static final int LOADER_FOR_VISIT = 5; // Loader Ids
-	public static final int LOADER_FOR_NAMERS = 6;
-	public static final int LOADER_FOR_LOCATIONS = 7;
 	private static final int MENU_HELP = 0;
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
@@ -195,7 +193,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		lblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
 		lblNewNamerSpinnerCover.setOnClickListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
-		getLoaderManager().initLoader(LOADER_FOR_NAMERS, null, this);
+		getLoaderManager().initLoader(Loaders.NAMERS, null, this);
 		// in layout, TextView is in front of Spinner and takes precedence
 		// for testing context menu, bring spinner to front so it receives clicks
 //		namerSpinner.bringToFront();		
@@ -347,7 +345,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 
-/*		case LOADER_FOR_VISIT:
+/*		case Loaders.VISIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
 			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
@@ -358,7 +356,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
 					PROJECTS_PROJCODES, select, null, null);
 			break; */
-		case LOADER_FOR_NAMERS:
+		case Loaders.NAMERS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT _id, NamerName FROM Namers "
 					+ "UNION SELECT 0, '(add new)' "
@@ -376,7 +374,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		rowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
 		/*
-		case LOADER_FOR_VISIT:
+		case Loaders.VISIT:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mVisitAdapter.swapCursor(finishedCursor);
@@ -420,7 +418,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			}
 			break;
 			*/
-		case LOADER_FOR_NAMERS:
+		case Loaders.NAMERS:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mNamerAdapter.swapCursor(finishedCursor);
@@ -471,11 +469,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
-/*		case LOADER_FOR_VISIT:
+/*		case Loaders.VISIT:
 			mVisitAdapter.swapCursor(null);
 			break;
 			*/
-		case LOADER_FOR_NAMERS:
+		case Loaders.NAMERS:
 			mNamerAdapter.swapCursor(null);
 			break;
 		}

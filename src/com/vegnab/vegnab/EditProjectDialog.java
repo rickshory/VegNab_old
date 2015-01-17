@@ -34,30 +34,30 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	public static final int LOADER_FOR_PROJECT_TO_EDIT = 3; // Loader Id
-	long projRecId = 0; // zero default means new or not specified yet
-	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
-	ContentValues values = new ContentValues();
+	long mProjRecId = 0; // zero default means new or not specified yet
+	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
+	ContentValues mValues = new ContentValues();
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-	private Calendar myCalendar = Calendar.getInstance();
+	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	private Calendar mCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
 	    @Override
 	    public void onDateSet(DatePicker view, int year, int monthOfYear,
 	            int dayOfMonth) {
-	        myCalendar.set(Calendar.YEAR, year);
-	        myCalendar.set(Calendar.MONTH, monthOfYear);
-	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-	        mActiveDateView.setText(dateFormat.format(myCalendar.getTime()));
+	        mCalendar.set(Calendar.YEAR, year);
+	        mCalendar.set(Calendar.MONTH, monthOfYear);
+	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+	        mActiveDateView.setText(mDateFormat.format(mCalendar.getTime()));
 	    }
 	};
 	
-	static EditProjectDialog newInstance(long projRecId) {
+	static EditProjectDialog newInstance(long mProjRecId) {
 		EditProjectDialog f = new EditProjectDialog();
-		// supply projRecId as an argument
+		// supply mProjRecId as an argument
 		Bundle args = new Bundle();
-		args.putLong("projRecId", projRecId);
+		args.putLong("mProjRecId", mProjRecId);
 		f.setArguments(args);
 		return f;
 	}
@@ -111,14 +111,14 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	private void fireOffDatePicker() {
 		String s = mActiveDateView.getText().toString();
         try { // if the EditText view contains a valid date
-        	myCalendar.setTime(dateFormat.parse(s)); // use it
+        	mCalendar.setTime(mDateFormat.parse(s)); // use it
 		} catch (java.text.ParseException e) { // otherwise
-			myCalendar = Calendar.getInstance(); // use today's date
+			mCalendar = Calendar.getInstance(); // use today's date
 		}
 		new DatePickerDialog(getActivity(), myDateListener,
-				myCalendar.get(Calendar.YEAR),
-				myCalendar.get(Calendar.MONTH),
-				myCalendar.get(Calendar.DAY_OF_MONTH)).show();	
+				mCalendar.get(Calendar.YEAR),
+				mCalendar.get(Calendar.MONTH),
+				mCalendar.get(Calendar.DAY_OF_MONTH)).show();	
 	}
 	
 	@Override
@@ -130,8 +130,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			projRecId = args.getLong("projRecId");
-			uri = ContentUris.withAppendedId(baseUri, projRecId);
+			mProjRecId = args.getLong("mProjRecId");
+			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
 			getLoaderManager().initLoader(LOADER_FOR_PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}
@@ -140,39 +140,39 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		if(!hasFocus) { // something lost focus
-			values.clear();
+			mValues.clear();
 			switch (v.getId()) {
 			case R.id.txt_projcode:
-				values.put("ProjCode", mProjCode.getText().toString().trim());
+				mValues.put("ProjCode", mProjCode.getText().toString().trim());
 				break;
 			case R.id.txt_descr:
-				values.put("Description", mDescription.getText().toString().trim());
+				mValues.put("Description", mDescription.getText().toString().trim());
 				break;
 			case R.id.txt_context:
-				values.put("Context", mContext.getText().toString().trim());
+				mValues.put("Context", mContext.getText().toString().trim());
 				break;
 			case R.id.txt_caveats:
-				values.put("Caveats", mCaveats.getText().toString().trim());
+				mValues.put("Caveats", mCaveats.getText().toString().trim());
 				break;
 			case R.id.txt_person:
-				values.put("ContactPerson", mContactPerson.getText().toString().trim());
+				mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
 				break;			
 			case R.id.txt_date_from: // this one is not focusable
-				values.put("StartDate", mStartDate.getText().toString().trim());
+				mValues.put("StartDate", mStartDate.getText().toString().trim());
 				break;
 			case R.id.txt_date_to: // this one is not focusable
-				values.put("EndDate", mEndDate.getText().toString().trim());
+				mValues.put("EndDate", mEndDate.getText().toString().trim());
 				break;
 			default: // save everything
-				values.put("ProjCode", mProjCode.getText().toString().trim());
-				values.put("Description", mDescription.getText().toString().trim());
-				values.put("Context", mContext.getText().toString().trim());
-				values.put("Caveats", mCaveats.getText().toString().trim());
-				values.put("ContactPerson", mContactPerson.getText().toString().trim());
-				values.put("StartDate", mStartDate.getText().toString().trim());
-				values.put("EndDate", mEndDate.getText().toString().trim());
+				mValues.put("ProjCode", mProjCode.getText().toString().trim());
+				mValues.put("Description", mDescription.getText().toString().trim());
+				mValues.put("Context", mContext.getText().toString().trim());
+				mValues.put("Caveats", mCaveats.getText().toString().trim());
+				mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
+				mValues.put("StartDate", mStartDate.getText().toString().trim());
+				mValues.put("EndDate", mEndDate.getText().toString().trim());
 				}
-			Log.v("EditProj", "Saving record in onFocusChange; values: " + values.toString().trim());
+			Log.v("EditProj", "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
 			int numUpdated = saveProjRecord();
 			}		
 		}
@@ -181,15 +181,15 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onCancel (DialogInterface dialog) {
 		// update the project record in the database, if everything valid		
-		values.clear();
-		values.put("ProjCode", mProjCode.getText().toString().trim());
-		values.put("Description", mDescription.getText().toString().trim());
-		values.put("Context", mContext.getText().toString().trim());
-		values.put("Caveats", mCaveats.getText().toString().trim());
-		values.put("ContactPerson", mContactPerson.getText().toString().trim());
-		values.put("StartDate", mStartDate.getText().toString().trim());
-		values.put("EndDate", mEndDate.getText().toString().trim());
-		Log.v("EditProj", "Saving record in onCancel; values: " + values.toString());
+		mValues.clear();
+		mValues.put("ProjCode", mProjCode.getText().toString().trim());
+		mValues.put("Description", mDescription.getText().toString().trim());
+		mValues.put("Context", mContext.getText().toString().trim());
+		mValues.put("Caveats", mCaveats.getText().toString().trim());
+		mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
+		mValues.put("StartDate", mStartDate.getText().toString().trim());
+		mValues.put("EndDate", mEndDate.getText().toString().trim());
+		Log.v("EditProj", "Saving record in onCancel; mValues: " + mValues.toString());
 		int numUpdated = saveProjRecord();
 	}
 	
@@ -201,20 +201,20 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			return 0;
 		}
 		ContentResolver rs = getActivity().getContentResolver();
-		if (projRecId == 0) { // new record
-			uri = rs.insert(baseUri, values);
-			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + uri.toString());
-			projRecId = Long.parseLong(uri.getLastPathSegment());
-			uri = ContentUris.withAppendedId(baseUri, projRecId);
-			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + uri.toString());
+		if (mProjRecId == 0) { // new record
+			mUri = rs.insert(mBaseUri, mValues);
+			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + mUri.toString());
+			mProjRecId = Long.parseLong(mUri.getLastPathSegment());
+			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
+			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, projRecId);
+			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mProjRecId);
 			prefEditor.commit();
 			return 1;
 		} else {
-			int numUpdated = rs.update(uri, values, null, null);
+			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}
@@ -225,21 +225,21 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		// This is called when a new Loader needs to be created.
 		// switch out based on id
 		CursorLoader cl = null;
-		Uri baseUri;
+		Uri mBaseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 		case LOADER_FOR_PROJECT_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
-			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri uri = ContentUris.withAppendedId(
+			mBaseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			Uri mUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "projects"), projRecId);
+							ContentProvider_VegNab.CONTENT_URI, "projects"), mProjRecId);
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
 			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), uri,
+			cl = new CursorLoader(getActivity(), mUri,
 					null, select, null, null);
 			break;
 

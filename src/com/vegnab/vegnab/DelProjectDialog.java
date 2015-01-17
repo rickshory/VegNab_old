@@ -73,13 +73,14 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 		switch (id) {
 		case LOADER_FOR_VALID_DEL_PROJECTS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			// complex use-once query: disallow the first Project,
+			// complex use-once query: only use Project not marked deleted, and 
+			// disallow the first Project,
 			// the current Default project, and any Projects that have Visits
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
 			select = "SELECT _id, ProjCode FROM Projects " + 
-			"WHERE ((_id != 1) AND (_id != ?) " + 
-			"AND (_id NOT IN (SELECT ProjId FROM Visits)));";
+			"WHERE ((IsDeleted = 0) AND (_id != 1) AND (_id != ?) " + 
+			"AND (_id NOT IN (SELECT ProjId FROM Visits WHERE IsDeleted = 0)));";
 			String[] qryArgs = {"" + defaultProjId};
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, qryArgs, null);

@@ -7,6 +7,7 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.Log;
 public class ConfirmDelProjDialog extends DialogFragment {
 	long mProjRecId = 0;
 	String mProjCode = "";
+	ContentValues mValues = new ContentValues();
 	
 	static ConfirmDelProjDialog newInstance(long projRecId, String projCode) {
 		ConfirmDelProjDialog f = new ConfirmDelProjDialog();
@@ -44,14 +46,17 @@ public class ConfirmDelProjDialog extends DialogFragment {
 					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog DialogFragment, onCreateDialog, Positive button clicked");
 					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog about to delete Project record id=" + mProjRecId);
 					
-					//"DELETE FROM Projects WHERE _id = ?;" {"" + mProjRecId}
+					//old, not used any more: "DELETE FROM Projects WHERE _id = ?;" {"" + mProjRecId}
+					// "UPDATE Projects SET IsDeleted = 1 WHERE _id = ?;" {"" + mProjRecId}
+					mValues.clear();
+					mValues.put("IsDeleted", 1);
 					Uri uri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
 							ContentProvider_VegNab.CONTENT_URI, "projects"), mProjRecId);
 					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog URI: " + uri.toString());
 					ContentResolver rs = getActivity().getContentResolver();
-					int numDeleted = rs.delete(uri, null, null);
-					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog numDeleted: " + numDeleted);
+					int numUpdated = rs.update(uri, mValues, null, null);
+					Log.v("ConfirmDelProj", "In ConfirmDelProjDialog numUpdated: " + numUpdated);
 				}
 				
 			})

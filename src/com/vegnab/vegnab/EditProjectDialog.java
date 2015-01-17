@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
@@ -34,9 +35,11 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	public static final int LOADER_FOR_PROJECT_TO_EDIT = 3; // Loader Id
+	public static final int LOADER_FOR_EXISTING_PROJECTS = 13;
 	long mProjRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
+	HashSet<String> mExistingProjCodes = new HashSet<String>();
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -132,6 +135,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
 			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
+			getLoaderManager().initLoader(LOADER_FOR_EXISTING_PROJECTS, null, this);
 			getLoaderManager().initLoader(LOADER_FOR_PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}
@@ -200,6 +204,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
+		if (mExistingProjCodes.contains("" + mProjCode.getText().toString().trim())) {
+			Toast.makeText(this.getActivity(),
+					"Duplicate Project Code",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
 		ContentResolver rs = getActivity().getContentResolver();
 		if (mProjRecId == 0) { // new record
 			mUri = rs.insert(mBaseUri, mValues);
@@ -225,21 +235,29 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		// This is called when a new Loader needs to be created.
 		// switch out based on id
 		CursorLoader cl = null;
-		Uri mBaseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
+		case LOADER_FOR_EXISTING_PROJECTS:
+			// get the existing ProjCodes, other than the current one, to disallow duplicates
+			Uri allProjsUri = Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "projects");
+			String[] projection = {"ProjCode"};
+			select = "(_id <> " + mProjRecId + " AND IsDeleted = 0)";
+			cl = new CursorLoader(getActivity(), allProjsUri,
+					projection, select, null, null);
+			break;
 		case LOADER_FOR_PROJECT_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
-			mBaseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri mUri = ContentUris.withAppendedId(
+//			mBaseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			Uri oneProjUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
 							ContentProvider_VegNab.CONTENT_URI, "projects"), mProjRecId);
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
 			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), mUri,
+			cl = new CursorLoader(getActivity(), oneProjUri,
 					null, select, null, null);
 			break;
 
@@ -250,6 +268,13 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		switch (loader.getId()) {
+		case LOADER_FOR_EXISTING_PROJECTS:
+			mExistingProjCodes.clear();
+			while (c.moveToNext()) {
+				Log.v("EditProj", "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mExistingProjCodes.add(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+			}
+			break;
 		case LOADER_FOR_PROJECT_TO_EDIT:
 			Log.v("EditProj", "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {

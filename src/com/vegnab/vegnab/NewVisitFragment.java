@@ -8,6 +8,7 @@ import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -227,11 +228,11 @@ public class NewVisitFragment extends Fragment implements OnClickListener,
 		case LOADER_FOR_PROJECTS:
 			// First, create the base URI
 			// could test here, based on e.g. filters
-			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			baseUri = ContentProvider_VegNab.CONTENT_URI;
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
-			// Could build a WHERE clause such as
-			// String select = "(Default = true)";
+			// select is the WHERE clause
+			select = "(IsDeleted = 0)";
 			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
 					PROJECTS_PROJCODES, select, null, null);
 			break;

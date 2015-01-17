@@ -47,14 +47,23 @@ public class ContentProvider_VegNab extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		database = new VegNabDbHelper(getContext());
-		// can get list of tables by this query:
-		// SELECT tbl_name FROM sqlite_master WHERE (type='table') AND (sql LIKE '%_id%') AND (tbl_name <> 'android_metadata');
+		// get the list of fields from the table 'Projects' and populate a HashSet
 		String s = "pragma table_info(Projects);";
 		Cursor c = database.getReadableDatabase().rawQuery(s, null);
 		while (c.moveToNext()) {
-			Log.v(LOG_TAG, "Project field added to HashMap: " + c.getString(c.getColumnIndexOrThrow("name")));
+//			Log.v(LOG_TAG, "Project field added to HashMap: " + c.getString(c.getColumnIndexOrThrow("name")));
 			mFields_Projects.add(c.getString(c.getColumnIndexOrThrow("name")));
 		}
+		// could extend this to other tables, but is there any point?
+		// used below to check if a query is requesting non-existent fields but if so it
+		// causes an unrecoverable error.
+		// we would find these bugs during development; after that the queries would always
+		// work unless the DB structure changed, which would require a rewrite anyway
+		
+		// can get list of tables by this query:
+		// SELECT tbl_name FROM sqlite_master WHERE (type='table') AND (sql LIKE '%_id%') AND (tbl_name <> 'android_metadata');
+		
+		c.close();
 
 		return false;
 	}
@@ -68,16 +77,17 @@ public class ContentProvider_VegNab extends ContentProvider {
 			// the full SQL statement is in 'selection' and any needed parameters in 'selectionArgs'
 			cursor = database.getReadableDatabase().rawQuery(selection, selectionArgs);
 		} else {
-			// fix up the following to work with all tables
-			// check if the caller has requested a column that does not exist
-			checkColumns(projection);
 			
 			switch (uriType) {
 			case PROJECTS:
+				// fix up the following fn to work with all tables
+				// check if the caller has requested a field that does not exist
+				checkFields("Projects", projection);
 				// assign the table
 				queryBuilder.setTables("Projects");
 				break;
 			case PROJECT_ID:
+				checkFields("Projects", projection);
 				queryBuilder.setTables("Projects");
 				// add the ID to the original query
 				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
@@ -172,27 +182,19 @@ public class ContentProvider_VegNab extends ContentProvider {
 		return rowsUpdated;
 	}
 	
-	private void checkColumns(String[] projection) {
-
-		// figure out how to get these directly from the database
-		String[] available = {
-				"_id",
-				"ProjCode",
-				"Description",
-				"Context",
-				"Caveats",
-				"ContactPerson",
-				"StartDate",
-				"EndDate"
-		};
-
+	private void checkFields(String tableName, String[] projection) {
 		if (projection != null) {
-			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-//			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
+			HashSet<String> requestedFields = new HashSet<String>(Arrays.asList(projection));
 			// check if all columns requested are available
-//			if (!availableColumns.containsAll(requestedColumns)) {
-			if (!mFields_Projects.containsAll(requestedColumns)) {
-				throw new IllegalArgumentException("Unknown columns in projection");
+			switch (tableName) {
+			case "Projects":
+				// mFields_Projects is populated in onCreate
+				if (!mFields_Projects.containsAll(requestedFields)) {
+					throw new IllegalArgumentException("Unknown fields in projection");
+				}
+				break;
+			default:
+				break; // for now, let all other cases go by
 			}
 		}
 	}

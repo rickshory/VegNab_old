@@ -14,8 +14,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class ContentProvider_VegNab extends ContentProvider {
+	private static final String LOG_TAG = ContentProvider_VegNab.class.getSimpleName();
 	
 	// database
 	private VegNabDbHelper database; // = null; // to initialize ?
@@ -40,10 +42,20 @@ public class ContentProvider_VegNab extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects", PROJECTS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects/#", PROJECT_ID);
 	}
+	HashSet<String> mFields_Projects = new HashSet<String>();
 	
 	@Override
 	public boolean onCreate() {
 		database = new VegNabDbHelper(getContext());
+		// can get list of tables by this query:
+		// SELECT tbl_name FROM sqlite_master WHERE (type='table') AND (sql LIKE '%_id%') AND (tbl_name <> 'android_metadata');
+		String s = "pragma table_info(Projects);";
+		Cursor c = database.getReadableDatabase().rawQuery(s, null);
+		while (c.moveToNext()) {
+			Log.v(LOG_TAG, "Project field added to HashMap: " + c.getString(c.getColumnIndexOrThrow("name")));
+			mFields_Projects.add(c.getString(c.getColumnIndexOrThrow("name")));
+		}
+
 		return false;
 	}
 	
@@ -161,6 +173,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 	}
 	
 	private void checkColumns(String[] projection) {
+
 		// figure out how to get these directly from the database
 		String[] available = {
 				"_id",
@@ -172,13 +185,13 @@ public class ContentProvider_VegNab extends ContentProvider {
 				"StartDate",
 				"EndDate"
 		};
-		// (
 
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
+//			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
 			// check if all columns requested are available
-			if (!availableColumns.containsAll(requestedColumns)) {
+//			if (!availableColumns.containsAll(requestedColumns)) {
+			if (!mFields_Projects.containsAll(requestedColumns)) {
 				throw new IllegalArgumentException("Unknown columns in projection");
 			}
 		}

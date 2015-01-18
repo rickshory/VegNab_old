@@ -75,7 +75,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double mLatitude, mLongitude;
-    private boolean mLocGood = false; // default until retrieved or established true
+    private boolean mLocIsGood = false; // default until retrieved or established true
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, namerId = 0; // zero default means new or not specified yet
@@ -100,6 +100,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	int mRowCt;
 	final static String ARG_VISIT_ID = "visitId";
 	final static String ARG_SUBPLOT = "subplot";
+	final static String ARG_LOC_GOOD_FLAG = "locGood";
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
@@ -111,6 +112,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		/*			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
+			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
+			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
+*/
 		setHasOptionsMenu(true);
 	}
 	
@@ -167,7 +172,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// restore the previous screen, remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts
 		if (savedInstanceState != null) {
-			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT);
+			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
+			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
+			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
@@ -251,7 +258,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onResume() {
 	    super.onResume();
 //	    do other setup here if needed
-	    if (!mLocGood) {
+	    if (!mLocIsGood) {
 	    	mGoogleApiClient.connect();
 	    }
 	    
@@ -650,7 +657,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {
-    	if (!mLocGood) {
+    	if (!mLocIsGood) {
     		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     	}
     }
@@ -708,7 +715,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				+ "\ncontinuing to acquire";
 		mVisitLocation.setText(s);
 		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
-			mLocGood = true;
+			mLocIsGood = true;
 			if (mGoogleApiClient.isConnected()) {
 		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		        mGoogleApiClient.disconnect();

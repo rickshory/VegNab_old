@@ -77,26 +77,26 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private double mLatitude, mLongitude;
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-	long visitId = 0, namerId = 0; // zero default means new or not specified yet
-	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
-	ContentValues values = new ContentValues();
+	long mVisitId = 0, namerId = 0; // zero default means new or not specified yet
+	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
+	ContentValues mValues = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
-	private Spinner namerSpinner;
-	private TextView lblNewNamerSpinnerCover;
+	private Spinner mNamerSpinner;
+	private TextView mLblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-	private Calendar myCalendar = Calendar.getInstance();
+	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	private Calendar mCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 	    @Override
 	    public void onDateSet(DatePicker view, int year, int monthOfYear,
 	            int dayOfMonth) {
-	        myCalendar.set(Calendar.YEAR, year);
-	        myCalendar.set(Calendar.MONTH, monthOfYear);
-	        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-	        mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
+	        mCalendar.set(Calendar.YEAR, year);
+	        mCalendar.set(Calendar.MONTH, monthOfYear);
+	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+	        mVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
 	    }
 	};
-	int rowCt;
+	int mRowCt;
 	final static String ARG_VISIT_ID = "visitId";
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
@@ -174,29 +174,29 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mVisitName.setOnFocusChangeListener(this);
 		registerForContextMenu(mVisitName); // enable long-press
 		mVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
-		mVisitDate.setText(dateFormat.format(myCalendar.getTime()));
+		mVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
 		mVisitDate.setOnClickListener(this);
-		namerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
-		namerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
-		namerSpinner.setEnabled(false); // will enable when data ready		
+		mNamerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
+		mNamerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
+		mNamerSpinner.setEnabled(false); // will enable when data ready		
 		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"NamerName"},
 				new int[] {android.R.id.text1}, 0);		
 		mNamerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		namerSpinner.setAdapter(mNamerAdapter);
-		namerSpinner.setOnItemSelectedListener(this);
-		registerForContextMenu(namerSpinner); // enable long-press
+		mNamerSpinner.setAdapter(mNamerAdapter);
+		mNamerSpinner.setOnItemSelectedListener(this);
+		registerForContextMenu(mNamerSpinner); // enable long-press
 		// also need click, if no names & therefore selection cannot be changed
-//		namerSpinner.setOnFocusChangeListener(this); // does not work
+//		mNamerSpinner.setOnFocusChangeListener(this); // does not work
 		// use a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
-		lblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
-		lblNewNamerSpinnerCover.setOnClickListener(this);
+		mLblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
+		mLblNewNamerSpinnerCover.setOnClickListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(Loaders.NAMERS, null, this);
 		// in layout, TextView is in front of Spinner and takes precedence
 		// for testing context menu, bring spinner to front so it receives clicks
-//		namerSpinner.bringToFront();		
+//		mNamerSpinner.bringToFront();		
 		mVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
 		mVisitScribe.setOnFocusChangeListener(this);
 		registerForContextMenu(mVisitScribe); // enable long-press
@@ -319,14 +319,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private void fireOffDatePicker() {
 		String s = mVisitDate.getText().toString();
 	    try { // if the EditText view contains a valid date
-	    	myCalendar.setTime(dateFormat.parse(s)); // use it
+	    	mCalendar.setTime(mDateFormat.parse(s)); // use it
 		} catch (java.text.ParseException e) { // otherwise
-			myCalendar = Calendar.getInstance(); // use today's date
+			mCalendar = Calendar.getInstance(); // use today's date
 		}
 		new DatePickerDialog(getActivity(), myDateListener,
-				myCalendar.get(Calendar.YEAR),
-				myCalendar.get(Calendar.MONTH),
-				myCalendar.get(Calendar.DAY_OF_MONTH)).show();	
+				mCalendar.get(Calendar.YEAR),
+				mCalendar.get(Calendar.MONTH),
+				mCalendar.get(Calendar.DAY_OF_MONTH)).show();	
 	}
 	
 	public void saveDefaultNamerId(long id) {
@@ -371,14 +371,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
 		// there will be various loaders, switch them out here
-		rowCt = finishedCursor.getCount();
+		mRowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
 		/*
 		case Loaders.VISIT:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mVisitAdapter.swapCursor(finishedCursor);
-			if (rowCt > 0) {
+			if (mRowCt > 0) {
 				projSpinner.setEnabled(true);
 				// get default Project from app Preferences, to set spinner
 				// this must wait till the spinner is populated
@@ -405,7 +405,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				}
 				// set the default Project to show in its spinner
 				// for a generalized fn, try: projSpinner.getAdapter().getCount()
-				for (int i=0; i<rowCt; i++) {
+				for (int i=0; i<mRowCt; i++) {
 					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
 					if (projSpinner.getItemIdAtPosition(i) == projectId) {
 						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
@@ -422,7 +422,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mNamerAdapter.swapCursor(finishedCursor);
-			if (rowCt > 0) {
+			if (mRowCt > 0) {
 				// get default Namer from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -438,28 +438,25 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				}
 				// set the default Namer to show in its spinner
 				// for a generalized fn, try: mySpinner.getAdapter().getCount()
-				for (int i=0; i<rowCt; i++) {
-					Log.v(LOG_TAG, "Setting namerSpinner default; testing index " + i);
-					if (namerSpinner.getItemIdAtPosition(i) == namerId) {
-						Log.v(LOG_TAG, "Setting namerSpinner default; found matching index " + i);
-						namerSpinner.setSelection(i);
+				for (int i=0; i<mRowCt; i++) {
+					Log.v(LOG_TAG, "Setting mNamerSpinner default; testing index " + i);
+					if (mNamerSpinner.getItemIdAtPosition(i) == namerId) {
+						Log.v(LOG_TAG, "Setting mNamerSpinner default; found matching index " + i);
+						mNamerSpinner.setSelection(i);
 						break;
 					}
 				}
-				namerSpinner.setEnabled(true);
+				mNamerSpinner.setEnabled(true);
 			} else {
-				namerSpinner.setEnabled(false);
+				mNamerSpinner.setEnabled(false);
 			}
 			if (namerId == 0) {
 				// user sees '(add new)', blank TextView receives click;
-				lblNewNamerSpinnerCover.bringToFront();
+				mLblNewNamerSpinnerCover.bringToFront();
 			} else {
 				// user can operate the spinner
-				namerSpinner.bringToFront();
+				mNamerSpinner.bringToFront();
 			}
-			/*
-			 * private TextView lblNewNamerSpinnerCover;
-	private Spinner ;*/
 			break;
 		}
 	}
@@ -498,7 +495,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		
 		// sort out the spinners
 		// can't use switch because not constants
-		if (parent.getId() == namerSpinner.getId()) {
+		if (parent.getId() == mNamerSpinner.getId()) {
 			if(((String)parent.getTag()).equalsIgnoreCase(TAG_SPINNER_FIRST_USE)) {
 	            parent.setTag("");
 	            return;

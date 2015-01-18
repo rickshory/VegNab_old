@@ -112,10 +112,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		/*			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
-			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
-			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
-*/
 		setHasOptionsMenu(true);
 	}
 	
@@ -303,6 +299,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the fragment
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
+		outState.putLong(ARG_VISIT_ID, mVisitId);
+		outState.putBoolean(ARG_LOC_GOOD_FLAG, mLocIsGood);
 	}
 
 	@Override

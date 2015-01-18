@@ -75,6 +75,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double mLatitude, mLongitude;
+    private boolean mLocGood = false; // default until retrieved or established true
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, namerId = 0; // zero default means new or not specified yet
@@ -250,7 +251,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onResume() {
 	    super.onResume();
 //	    do other setup here if needed
-	    mGoogleApiClient.connect();
+	    if (!mLocGood) {
+	    	mGoogleApiClient.connect();
+	    }
+	    
 	}
 	
 	@Override
@@ -646,19 +650,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {
-    	LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    	/*
-        // Provides a simple way of getting a device's location and is well suited for
-        // applications that do not require a fine-grained location and that do not need location
-        // updates. Gets the best and most recent location currently available, which may be null
-        // in rare cases when a location is not available.
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-            mVisitLocation.setText(mLastLocation.toString());
-        }
-        */
+    	if (!mLocGood) {
+    		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    	}
     }
 
 
@@ -714,6 +708,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				+ "\ncontinuing to acquire";
 		mVisitLocation.setText(s);
 		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
+			mLocGood = true;
 			if (mGoogleApiClient.isConnected()) {
 		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		        mGoogleApiClient.disconnect();

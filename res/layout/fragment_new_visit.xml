@@ -59,6 +59,22 @@
         android:layout_alignLeft="@id/project_label_text"
         android:layout_below="@id/project_label_text"
         />
+    
+    <ListView android:id="@id/android:list"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:drawSelectorOnTop="false"
+         android:layout_alignLeft="@id/new_visit_go_button"
+         android:layout_below="@id/new_visit_go_button"
+         />
+    
+    <TextView android:id="@id/android:empty"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="No data"
+         android:layout_alignLeft="@id/android:list"
+         android:layout_below="@id/android:list"
+         />
 
     
 </RelativeLayout>

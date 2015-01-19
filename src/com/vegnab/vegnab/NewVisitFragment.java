@@ -46,8 +46,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	int mRowCt;
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
-	VegNabDbHelper DbHelper;
-	Spinner projSpinner, plotTypeSpinner;
+	Spinner mProjSpinner, mPlotTypeSpinner;
 	SimpleCursorAdapter mProjAdapter, mPlotTypeAdapter; // to link the spinners' data
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
@@ -85,29 +84,29 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 		// Create an empty adapter we will use to display the list of Projects
-		projSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
-		projSpinner.setEnabled(false); // will enable when data ready		
+		mProjSpinner = (Spinner) rootView.findViewById(R.id.sel_project_spinner);
+		mProjSpinner.setEnabled(false); // will enable when data ready		
 		mProjAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"ProjCode"},
 				new int[] {android.R.id.text1}, 0);		
 
 		mProjAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		projSpinner.setAdapter(mProjAdapter);
-		projSpinner.setOnItemSelectedListener(this);
+		mProjSpinner.setAdapter(mProjAdapter);
+		mProjSpinner.setOnItemSelectedListener(this);
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(Loaders.PROJECTS, null, this);
 		// If there in no Loader yet, this will call
 		// Loader<Cursor> onCreateLoader and pass it a first parameter of Loaders.PROJECTS
-		plotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
-		plotTypeSpinner.setEnabled(false); // will enable when data ready
+		mPlotTypeSpinner = (Spinner) rootView.findViewById(R.id.sel_plot_type_spinner);
+		mPlotTypeSpinner.setEnabled(false); // will enable when data ready
 		mPlotTypeAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
 				new String[] {"PlotTypeDescr"},
 				new int[] {android.R.id.text1}, 0);
 		mPlotTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		plotTypeSpinner.setAdapter(mPlotTypeAdapter);
-		plotTypeSpinner.setOnItemSelectedListener(this);
+		mPlotTypeSpinner.setAdapter(mPlotTypeAdapter);
+		mPlotTypeSpinner.setOnItemSelectedListener(this);
 		getLoaderManager().initLoader(Loaders.PLOTTYPES, null, this);
 		return rootView;
 	}
@@ -133,7 +132,6 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		DbHelper = new VegNabDbHelper(activity);
 		// assure the container activity has implemented the callback interface
 		try {
 			mButtonCallback = (OnButtonListener) activity;
@@ -177,22 +175,22 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			getLoaderManager().initLoader(Loaders.TEST_SQL, null, this);
 			
 /*			Toast.makeText(this.getActivity(), 
-					"Selected Project position: " + projSpinner.getSelectedItemPosition() 
-					+ ", Id: " + projSpinner.getSelectedItemId() , 
+					"Selected Project position: " + mProjSpinner.getSelectedItemPosition() 
+					+ ", Id: " + mProjSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
 
 			Toast.makeText(this.getActivity(), 
-					"Selected PlotType position: " + plotTypeSpinner.getSelectedItemPosition() 
-					+ ", Id: " + plotTypeSpinner.getSelectedItemId() , 
+					"Selected PlotType position: " + mPlotTypeSpinner.getSelectedItemPosition() 
+					+ ", Id: " + mPlotTypeSpinner.getSelectedItemId() , 
 					Toast.LENGTH_LONG).show();
 */			
-			if (projSpinner.getSelectedItemPosition() == -1) {
+			if (mProjSpinner.getSelectedItemPosition() == -1) {
 				Toast.makeText(this.getActivity(),
 						"" + getResources().getString(R.string.missing_project),
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
-			if (plotTypeSpinner.getSelectedItemPosition() == -1) {
+			if (mPlotTypeSpinner.getSelectedItemPosition() == -1) {
 				Toast.makeText(this.getActivity(),
 						"" + getResources().getString(R.string.missing_plottype),
 						Toast.LENGTH_SHORT).show();
@@ -264,7 +262,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			// The framework will take care of closing the old cursor once we return.
 			mProjAdapter.swapCursor(finishedCursor);
 			if (mRowCt > 0) {
-				projSpinner.setEnabled(true);
+				mProjSpinner.setEnabled(true);
 				// get default Project from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -298,17 +296,17 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + mProjectId);
 				}
 				// set the default Project to show in its spinner
-				// for a generalized fn, try: projSpinner.getAdapter().getCount()
+				// for a generalized fn, try: mProjSpinner.getAdapter().getCount()
 				for (int i=0; i<mRowCt; i++) {
-					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
-					if (projSpinner.getItemIdAtPosition(i) == mProjectId) {
-						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
-						projSpinner.setSelection(i);
+					Log.v(LOG_TAG, "Setting mProjSpinner default; testing index " + i);
+					if (mProjSpinner.getItemIdAtPosition(i) == mProjectId) {
+						Log.v(LOG_TAG, "Setting mProjSpinner default; found matching index " + i);
+						mProjSpinner.setSelection(i);
 						break;
 					}
 				}
 			} else {
-				projSpinner.setEnabled(false);
+				mProjSpinner.setEnabled(false);
 			}
 			break;
 		case Loaders.PLOTTYPES:
@@ -316,7 +314,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			// The framework will take care of closing the old cursor once we return.
 			mPlotTypeAdapter.swapCursor(finishedCursor);
 			if (mRowCt > 0) {
-				plotTypeSpinner.setEnabled(true);
+				mPlotTypeSpinner.setEnabled(true);
 				// get default Plot Type from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -346,15 +344,15 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 				// set the default Plot Type to show in its spinner
 				// for a generalized fn, try: mySpinner.getAdapter().getCount()
 				for (int i=0; i<mRowCt; i++) {
-					Log.v(LOG_TAG, "Setting plotTypeSpinner default; testing index " + i);
-					if (plotTypeSpinner.getItemIdAtPosition(i) == mPlotTypeId) {
-						Log.v(LOG_TAG, "Setting plotTypeSpinner default; found matching index " + i);
-						plotTypeSpinner.setSelection(i);
+					Log.v(LOG_TAG, "Setting mPlotTypeSpinner default; testing index " + i);
+					if (mPlotTypeSpinner.getItemIdAtPosition(i) == mPlotTypeId) {
+						Log.v(LOG_TAG, "Setting mPlotTypeSpinner default; found matching index " + i);
+						mPlotTypeSpinner.setSelection(i);
 						break;
 					}
 				}
 			} else {
-				plotTypeSpinner.setEnabled(false);
+				mPlotTypeSpinner.setEnabled(false);
 			}
 			break;
 		}
@@ -393,7 +391,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 		
 		// sort out the spinners
 		// can't use switch because not constants
-		if (parent.getId() == projSpinner.getId()) {
+		if (parent.getId() == mProjSpinner.getId()) {
 			mProjectId = id;
 			// save in app Preferences as the default Project
 			saveDefaultProjectId(mProjectId);
@@ -407,7 +405,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			Toast.makeText(parent.getContext(), "Project selected: " + strSel, Toast.LENGTH_LONG).show();
 */
 		}
-		if (parent.getId() == plotTypeSpinner.getId()) {
+		if (parent.getId() == mPlotTypeSpinner.getId()) {
 			mPlotTypeId = id;
 			// save in app Preferences as the default Plot Type
 			saveDefaultPlotTypeId(mPlotTypeId);

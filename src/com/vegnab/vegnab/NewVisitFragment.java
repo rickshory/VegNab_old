@@ -35,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -174,6 +175,11 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 		// save the current subplot arguments in case we need to re-create the fragment
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
 	}
+	
+    @Override
+    public void onListItemClick(ListView l, View v, int pos, long id) {
+        Toast.makeText(this.getActivity(), "Clicked position " + pos , Toast.LENGTH_SHORT).show();
+    }
 
 	@Override
 	public void onClick(View v) {

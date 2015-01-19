@@ -134,6 +134,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case R.id.action_app_info:
 			Toast.makeText(getActivity(), "''App Info'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
+		case R.id.action_visit_info:
+			Toast.makeText(getActivity(), "''Visit Details'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
 		case R.id.action_delete_visit:
 			Toast.makeText(getActivity(), "''Delete Visit'' is not fully implemented yet", Toast.LENGTH_SHORT).show();
 			Fragment newVisFragment = fm.findFragmentByTag("new_visit");
@@ -592,6 +595,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 	UnderConstrDialog msgDlg = new UnderConstrDialog();
 	switch (item.getItemId()) {
+	case R.id.vis_hdr_loc_restore_prev:
+		Log.v(LOG_TAG, "'Restore Previous' selected");
+		// re-acquire location
+		msgDlg.show(getFragmentManager(), null);
+		return true;
 	case R.id.vis_hdr_loc_reacquire:
 		Log.v(LOG_TAG, "'Re-acquire' selected");
 		// re-acquire location

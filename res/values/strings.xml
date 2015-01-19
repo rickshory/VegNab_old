@@ -11,6 +11,7 @@
     <string name="action_delete_proj">Delete Project</string>
     <string name="action_new_plottype">New Plot Type</string>
     <string name="action_old_visit">Re-open a Visit</string>
+    <string name="action_visit_info">Visit details</string>
     <string name="action_delete_visit">Delete Visit</string>
    
     <string name="default_project">MyProject</string>
@@ -31,7 +32,8 @@
     <string name="new_visit_project">In the Project</string>
     <string name="new_visit_project_prompt">Project</string>
     <string name="new_visit_existing">Work on an exisitng Visit</string>
-    <string name="new_visit_go_button_msg">Start</string>
+    <string name="new_visit_go_button_msg">Start a new Visit</string>
+    <string name="new_visit_no_visits_msg">No Visits yet</string>
 
     <string name="empty_projects">No Projects yet</string>
     <string name="empty_plottypes">No Plot Types yet</string>
@@ -87,6 +89,7 @@
     <string name="visit_header_map_button_msg">Map more locations</string>
     <string name="visit_header_photo_button_msg">Add pictures</string>
     
+    <string name="vis_hdr_ctxmenu_loc_rstore_prev">Restore previous</string>
     <string name="vis_hdr_ctxmenu_loc_reacquire">Re-acquire</string>
     <string name="vis_hdr_ctxmenu_loc_accept">Accept accuracy</string>
     <string name="vis_hdr_ctxmenu_loc_manual">Enter manually</string>

@@ -47,7 +47,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	final static String ARG_SUBPLOT = "subplot";
 	int mCurrentSubplot = -1;
 	Spinner mProjSpinner, mPlotTypeSpinner;
-	SimpleCursorAdapter mProjAdapter, mPlotTypeAdapter; // to link the spinners' data
+	SimpleCursorAdapter mProjAdapter, mPlotTypeAdapter, mVisitListAdapter;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -108,6 +108,14 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 		mPlotTypeSpinner.setAdapter(mPlotTypeAdapter);
 		mPlotTypeSpinner.setOnItemSelectedListener(this);
 		getLoaderManager().initLoader(Loaders.PLOTTYPES, null, this);
+		
+		mVisitListAdapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_list_item_1, null,
+				new String[] {"VisitName"},
+				new int[] {android.R.id.text1}, 0);
+		setListAdapter(mVisitListAdapter);
+		getLoaderManager().initLoader(Loaders.PREV_VISITS, null, this);
+
 		return rootView;
 	}
 	
@@ -238,6 +246,15 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;
+		case Loaders.PREV_VISITS:
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT _id, VisitName, VisitDate FROM Visits ORDER BY VisitDate, LastChanged DESC;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;
+
+		
+//Loaders.		
 		}
 		return cl;
 	}
@@ -355,6 +372,10 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 				mPlotTypeSpinner.setEnabled(false);
 			}
 			break;
+
+		case Loaders.PREV_VISITS:
+			mVisitListAdapter.swapCursor(finishedCursor);
+			break;
 		}
 	}
 
@@ -368,6 +389,9 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			break;
 		case Loaders.PLOTTYPES:
 			mPlotTypeAdapter.swapCursor(null);
+			break;
+		case Loaders.PREV_VISITS:
+			mVisitListAdapter.swapCursor(null);
 			break;
 		}
 	}

@@ -26,6 +26,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final int RAW_SQL = 1;
 	private static final int PROJECTS = 10;
 	private static final int PROJECT_ID = 20;
+	private static final int VISITS = 30;
+	private static final int VISIT_ID = 40;
 	
 	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
 	private static final String BASE_PATH = "data";
@@ -41,6 +43,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, "sql", RAW_SQL);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects", PROJECTS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/projects/#", PROJECT_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/visits", VISITS);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/visits/#", VISIT_ID);
 	}
 	HashSet<String> mFields_Projects = new HashSet<String>();
 	
@@ -92,6 +96,15 @@ public class ContentProvider_VegNab extends ContentProvider {
 				// add the ID to the original query
 				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
 				break;
+
+			case VISIT_ID:
+				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				// note, no break, so drops through
+			case VISITS:
+				queryBuilder.setTables("Visits");
+				break;
+			
+			
 			default:
 				throw new IllegalArgumentException("Unknown URI: " + uri);		
 			}
@@ -119,6 +132,10 @@ public class ContentProvider_VegNab extends ContentProvider {
 			id = sqlDB.insert("Projects", null, values);
 			uriToReturn = Uri.parse(BASE_PATH + "/projects/" + id);
 			break;
+		case VISITS:
+			id = sqlDB.insert("Visits", null, values);
+			uriToReturn = Uri.parse(BASE_PATH + "/visits/" + id);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -129,6 +146,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = sURIMatcher.match(uri);
+		String id;
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		int rowsDeleted = 0;
 		switch (uriType) {
@@ -136,13 +154,26 @@ public class ContentProvider_VegNab extends ContentProvider {
 			rowsDeleted = sqlDB.delete("Projects", selection, selectionArgs);
 			break;
 		case PROJECT_ID:
-			String id = uri.getLastPathSegment();
+			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
 				rowsDeleted = sqlDB.delete("Projects", "_id=" + id, null);
 			} else {
 				rowsDeleted = sqlDB.delete("Projects", "_id=" + id, selectionArgs);
 			}
 			break;
+
+		case VISITS:
+			rowsDeleted = sqlDB.delete("Visits", selection, selectionArgs);
+			break;
+		case VISIT_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete("Visits", "_id=" + id, null);
+			} else {
+				rowsDeleted = sqlDB.delete("Visits", "_id=" + id, selectionArgs);
+			}
+			break;
+		
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -155,6 +186,7 @@ public class ContentProvider_VegNab extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
 		int rowsUpdated = 0;
+		String id;
 		switch (uriType) {
 		case RAW_SQL:
 			// SQL to run is in 'selection', any parameters in 'selectionArgs'
@@ -168,13 +200,27 @@ public class ContentProvider_VegNab extends ContentProvider {
 			rowsUpdated = sqlDB.update("Projects", values, selection, selectionArgs);
 			break;
 		case PROJECT_ID:
-			String id = uri.getLastPathSegment();
+			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
 				rowsUpdated = sqlDB.update("Projects", values, "_id=" + id, null);
 			} else {
 				rowsUpdated = sqlDB.update("Projects", values, "_id=" + id, selectionArgs);
 			}
 			break;
+
+		case VISITS:
+			rowsUpdated = sqlDB.update("Visits", values, selection, selectionArgs);
+			break;
+		case VISIT_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.update("Visits", values, "_id=" + id, null);
+			} else {
+				rowsUpdated = sqlDB.update("Visits", values, "_id=" + id, selectionArgs);
+			}
+			break;
+		
+		
 		default:
 			throw new IllegalArgumentException("Unknown URI:" + uri);
 		}

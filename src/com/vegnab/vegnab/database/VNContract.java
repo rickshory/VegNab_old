@@ -34,7 +34,7 @@ public final class VNContract {
 		public static final int EXISTING_PROJCODES = 11; // to disallow duplicates
 		public static final int PROJECT_TO_EDIT = 12; //
 		// in Visit Header
-		public static final int VISIT = 21;
+		public static final int VISIT_TO_EDIT = 21;
 		public static final int NAMERS = 22;
 		public static final int LOCATIONS = 23;
 

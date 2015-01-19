@@ -20,6 +20,7 @@ import com.vegnab.vegnab.database.VNContract.Prefs;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.IntentSender;
@@ -357,17 +358,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 
-/*		case Loaders.VISIT:
-			// First, create the base URI
-			// could test here, based on e.g. filters
-			baseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			// Now create and return a CursorLoader that will take care of
-			// creating a Cursor for the dataset being displayed
-			// Could build a WHERE clause such as
-			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), Uri.parse(baseUri + "/projects"),
-					PROJECTS_PROJCODES, select, null, null);
-			break; */
+		case Loaders.VISIT_TO_EDIT:
+			Uri oneVisUri = ContentUris.withAppendedId(
+							Uri.withAppendedPath(
+							ContentProvider_VegNab.CONTENT_URI, "visits"), mVisitId);
+			cl = new CursorLoader(getActivity(), oneVisUri,
+					null, select, null, null);
+			break;
 		case Loaders.NAMERS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT _id, NamerName FROM Namers "
@@ -385,8 +382,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// there will be various loaders, switch them out here
 		mRowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
+		case Loaders.VISIT_TO_EDIT:
+			Log.v(LOG_TAG, "onLoadFinished, VISIT_TO_EDIT, records: " + finishedCursor.getCount());
+
+			break;
+		
 		/*
-		case Loaders.VISIT:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
 			mVisitAdapter.swapCursor(finishedCursor);
@@ -478,10 +479,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
-/*		case Loaders.VISIT:
-			mVisitAdapter.swapCursor(null);
+		case Loaders.VISIT_TO_EDIT:
+			Log.v(LOG_TAG, "onLoaderReset, VISIT_TO_EDIT.");
+//			don't need to do anything here, no cursor adapter
 			break;
-			*/
+			
 		case Loaders.NAMERS:
 			mNamerAdapter.swapCursor(null);
 			break;

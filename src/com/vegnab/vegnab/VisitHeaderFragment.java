@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -61,14 +62,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
         LocationListener{
-	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
 	
+	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
 	private class VisitRecord {
 		private String StartTime;
 		private long mId = 0;
@@ -391,6 +394,9 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 			addSppNamerDlg.show(fm, "");
 			break;
 		case R.id.visit_header_go_button:
+			// test date format
+			String s = mTimeFormat.format(new Date());
+			Log.v(LOG_TAG, "test of time format: " + s);
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}

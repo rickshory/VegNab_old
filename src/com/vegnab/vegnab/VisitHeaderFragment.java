@@ -67,6 +67,73 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
         LocationListener{
+	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+	
+	private class VisitRecord {
+		private String StartTime;
+		private long mId = 0;
+		long getId() {
+			return mId;
+		}
+		void setId (long iD) {
+			mId = iD;
+		}
+		private String mVisName;
+		String getVisitName() {
+			return mVisName;
+		}
+		void setVisitName(String visName) {
+			mVisName = visName;
+		}
+	}
+
+		
+		/*CREATE TABLE "Visits" (
+"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+"VisitName" VARCHAR(16) NOT NULL,
+"VisitDate" TIMESTAMP NOT NULL, -- visible to user & can be manually changed
+"ProjID" INTEGER NOT NULL,
+"PlotTypeID" INTEGER NOT NULL,
+"StartTime" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
+"LastChanged" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
+"NamerID" INTEGER NOT NULL,
+"Scribe" VARCHAR(20), -- optional, if someone besides the Namer is entering data
+"RefLocID" INTEGER, -- can not be required for valid record, but app will keep bugging user to get this
+"RefLocIsGood" BOOL NOT NULL DEFAULT 0, -- allow to accept as good, even if accuracy is poor
+"Azimuth" INTEGER -- if it applies to this plot type
+CHECK ((Azimuth IS NULL) OR ((CAST(Azimuth AS INTEGER) == Azimuth) 
+AND (Azimuth >= 0) AND (Azimuth <= 360))), 
+"VisitNotes" VARCHAR(255), -- limit the length; some users would write a thesis
+"DeviceType" INTEGER DEFAULT 1, -- 1=Unknown, 2=Android
+"DeviceID" VARCHAR(20) NOT NULL,
+
+"DeviceID" should be a unique identifier for the device this Visit is entered on.
+It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or 
+else ANDROID_ID.
+ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
+MEIDs are 56 bits long, the same length as the IMEI
+MEID allows hexadecimal digits while IMEI allows only decimal digits
+IMEI length 17
+MEID length 14
+ANDROID_ID is a 64-bit number as a hex string, therefore length 16
+Use 20 to be sure the field is long enough.
+
+"IsComplete" BOOL NOT NULL DEFAULT 0, -- flag to sync to cloud storage, if subscribed; option to automatically set following flag to 0 after sync
+"ShowOnMobile" BOOL NOT NULL DEFAULT 1, -- allow masking out, to reduce clutter
+"Include" BOOL NOT NULL DEFAULT 1, -- include in analysis, not used on mobile but here for completeness
+"IsDeleted" BOOL NOT NULL DEFAULT 0, -- don't allow user to actually delete a visit, just flag it; this by hard experience
+"NumAdditionalLocations" INTEGER NOT NULL DEFAULT 0, -- if additional locations are mapped, maintain the count
+"AdditionalLocationsType" INTEGER NOT NULL DEFAULT 1 -- 1=points, 2=line, 3=polygon
+CHECK ((AdditionalLocationsType >= 1) AND (AdditionalLocationsType <= 3)),
+"AdditionalLocationSelected" INTEGER, -- the currently active additional location for this visit, if one is selected
+FOREIGN KEY("ProjID") REFERENCES Projects("_id"),
+FOREIGN KEY("PlotTypeID") REFERENCES PlotTypes("_id"),
+FOREIGN KEY("NamerID") REFERENCES Namers("_id"),
+FOREIGN KEY("RefLocID") REFERENCES Locations("_id"),
+FOREIGN KEY("AdditionalLocationSelected") REFERENCES Locations("_id"),
+FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
+*/
+	
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	private static final int MENU_HELP = 0;

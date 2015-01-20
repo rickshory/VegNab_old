@@ -79,7 +79,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private boolean mLocIsGood = false; // default until retrieved or established true
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-	long mVisitId = 0, namerId = 0; // zero default means new or not specified yet
+	long mVisitId = 0, mNamerId = 0; // zero default means new or not specified yet
 	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues mValues = new ContentValues();
 	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
@@ -378,92 +378,52 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
+	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		// there will be various loaders, switch them out here
-		mRowCt = finishedCursor.getCount();
+		mRowCt = c.getCount();
 		switch (loader.getId()) {
 		case Loaders.VISIT_TO_EDIT:
-			Log.v(LOG_TAG, "onLoadFinished, VISIT_TO_EDIT, records: " + finishedCursor.getCount());
+			Log.v(LOG_TAG, "onLoadFinished, VISIT_TO_EDIT, records: " + c.getCount());
+			if (c.moveToFirst()) {
+				mVisitName.setText(c.getString(c.getColumnIndexOrThrow("VisitName")));
+				mVisitDate.setText(c.getString(c.getColumnIndexOrThrow("VisitDate")));
+				mNamerId = c.getLong(c.getColumnIndexOrThrow("NamerID"));
+				setNamerSpinnerSelection();
+				mVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
+				// write code to save/retrieve Locations
+				mLocIsGood = (c.getInt(c.getColumnIndexOrThrow("RefLocIsGood")) == 0) ? false : true;
+				
+//		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
+				mAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
+				mVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
+			}
 
 			break;
 		
-		/*
-			// Swap the new cursor in.
-			// The framework will take care of closing the old cursor once we return.
-			mVisitAdapter.swapCursor(finishedCursor);
-			if (mRowCt > 0) {
-				projSpinner.setEnabled(true);
-				// get default Project from app Preferences, to set spinner
-				// this must wait till the spinner is populated
-				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-				// database comes pre-loaded with one Project record that has _id = 1
-				// default ProjCode = "MyProject', but may be renamed
-				projectId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
-				if (!sharedPref.contains(Prefs.DEFAULT_PROJECT_ID)) {
-					// this will only happen once, when the app is first installed
-//					Toast.makeText(this.getActivity(), 
-//							"Prefs key '" + PREF_DEFAULT_PROJECT_ID + "' does not exist yet.", 
-//							Toast.LENGTH_LONG).show();
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' does not exist yet.");
-					// update the create time in the database from when the DB file was created to 'now'
-					String sql = "UPDATE Projects SET StartDate = DATETIME('now') WHERE _id = 1;";
-					ContentResolver resolver = getActivity().getContentResolver();
-					// use raw SQL, to make use of SQLite internal "DATETIME('now')"
-					Uri uri = ContentProvider_VegNab.SQL_URI;
-					int numUpdated = resolver.update(uri, null, sql, null);
-					saveDefaultProjectId(projectId);
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' set for the first time."); 
-				} else {
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_PROJECT_ID + "' = " + projectId);
-				}
-				// set the default Project to show in its spinner
-				// for a generalized fn, try: projSpinner.getAdapter().getCount()
-				for (int i=0; i<mRowCt; i++) {
-					Log.v(LOG_TAG, "Setting projSpinner default; testing index " + i);
-					if (projSpinner.getItemIdAtPosition(i) == projectId) {
-						Log.v(LOG_TAG, "Setting projSpinner default; found matching index " + i);
-						projSpinner.setSelection(i);
-						break;
-					}
-				}
-			} else {
-				projSpinner.setEnabled(false);
-			}
-			break;
-			*/
 		case Loaders.NAMERS:
 			// Swap the new cursor in.
 			// The framework will take care of closing the old cursor once we return.
-			mNamerAdapter.swapCursor(finishedCursor);
+			mNamerAdapter.swapCursor(c);
 			if (mRowCt > 0) {
 				// get default Namer from app Preferences, to set spinner
 				// this must wait till the spinner is populated
 				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 				// if none yet, use _id = 0, generated in query as '(add new)'
-				namerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
+				mNamerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
 				if (!sharedPref.contains(Prefs.DEFAULT_NAMER_ID)) {
 					// this will only happen once, when the app is first installed
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' does not exist yet.");
-					saveDefaultNamerId(namerId);
+					saveDefaultNamerId(mNamerId);
 					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' set for the first time."); 
 				} else {
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' = " + namerId);
+					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' = " + mNamerId);
 				}
-				// set the default Namer to show in its spinner
-				// for a generalized fn, try: mySpinner.getAdapter().getCount()
-				for (int i=0; i<mRowCt; i++) {
-					Log.v(LOG_TAG, "Setting mNamerSpinner default; testing index " + i);
-					if (mNamerSpinner.getItemIdAtPosition(i) == namerId) {
-						Log.v(LOG_TAG, "Setting mNamerSpinner default; found matching index " + i);
-						mNamerSpinner.setSelection(i);
-						break;
-					}
-				}
+				setNamerSpinnerSelection();
 				mNamerSpinner.setEnabled(true);
 			} else {
 				mNamerSpinner.setEnabled(false);
 			}
-			if (namerId == 0) {
+			if (mNamerId == 0) {
 				// user sees '(add new)', blank TextView receives click;
 				mLblNewNamerSpinnerCover.bringToFront();
 			} else {
@@ -474,6 +434,18 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 
+	private void setNamerSpinnerSelection() {
+		// set the current Namer to show in its spinner
+		for (int i=0; i<mRowCt; i++) {
+			Log.v(LOG_TAG, "Setting mNamerSpinner; testing index " + i);
+			if (mNamerSpinner.getItemIdAtPosition(i) == mNamerId) {
+				Log.v(LOG_TAG, "Setting mNamerSpinner; found matching index " + i);
+				mNamerSpinner.setSelection(i);
+				break;
+			}
+		}
+	}
+	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// This is called when the last Cursor provided to onLoadFinished()
@@ -514,17 +486,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	            parent.setTag("");
 	            return;
 	        }
-			namerId = id;
-			if (namerId == 0) { // picked '(add new)'
+			mNamerId = id;
+			if (mNamerId == 0) { // picked '(add new)'
 				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");
 				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addSppNamerDlg.show(fm, "");
 
 			}
-			if (namerId != 0) {
+			if (mNamerId != 0) {
 				// save in app Preferences as the default Project
-				saveDefaultNamerId(namerId);
+				saveDefaultNamerId(mNamerId);
 			}
 		}
 		// write code for any other spinner(s) here

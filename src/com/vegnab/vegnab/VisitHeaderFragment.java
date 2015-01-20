@@ -73,13 +73,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	
 	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
 	private class VisitRecord {
-		private String StartTime;
+		private String mStartTime = mTimeFormat.format(new Date());
+		private String mLastChanged = mTimeFormat.format(new Date());
 		private long mId = 0;
 		long getId() {
 			return mId;
 		}
 		void setId (long iD) {
 			mId = iD;
+			mLastChanged = mTimeFormat.format(new Date()); // maybe move this to saveToDb
 		}
 		private String mVisName;
 		String getVisitName() {
@@ -87,7 +89,25 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 		void setVisitName(String visName) {
 			mVisName = visName;
+			mLastChanged = mTimeFormat.format(new Date()); // maybe move this to saveToDb
 		}
+		private long mProjID = 0;
+		private long mPlotTypeID = 0;
+		private long mNamerID = 0;
+		private String mScribe;
+		private long mRefLocID = 0;
+		private boolean mRefLocIsGood = false;
+		private int mAzimuth;
+		private String mVisitNotes;
+		private int mDeviceType = 1;
+		private String mDeviceID;
+		private boolean mIsComplete = false;
+		private boolean mShowOnMobile = true;
+		private boolean mInclude = true;
+		private boolean mIsDeleted = false;
+		private int mNumAdditionalLocations = 0;
+		private int mAdditionalLocationsType = 1;			
+		
 	}
 
 		
@@ -146,13 +166,14 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double mLatitude, mLongitude;
+    private VisitRecord mVis = new VisitRecord();
     private boolean mLocIsGood = false; // default until retrieved or established true
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, mNamerId = 0; // zero default means new or not specified yet
 	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	ContentValues mValues = new ContentValues();
-	private EditText mVisitName, mVisitDate, mVisitScribe, mVisitLocation, mAzimuth, mVisitNotes;
+	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
 	private Spinner mNamerSpinner;
 	private TextView mLblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
@@ -165,7 +186,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 	        mCalendar.set(Calendar.YEAR, year);
 	        mCalendar.set(Calendar.MONTH, monthOfYear);
 	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-	        mVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
+	        mViewVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
 	    }
 	};
 	int mRowCt;
@@ -248,12 +269,12 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
-		mVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
-		mVisitName.setOnFocusChangeListener(this);
-		registerForContextMenu(mVisitName); // enable long-press
-		mVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
-		mVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
-		mVisitDate.setOnClickListener(this);
+		mViewVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
+		mViewVisitName.setOnFocusChangeListener(this);
+		registerForContextMenu(mViewVisitName); // enable long-press
+		mViewVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
+		mViewVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
+		mViewVisitDate.setOnClickListener(this);
 		mNamerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		mNamerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
 		mNamerSpinner.setEnabled(false); // will enable when data ready		
@@ -275,15 +296,15 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 		// in layout, TextView is in front of Spinner and takes precedence
 		// for testing context menu, bring spinner to front so it receives clicks
 //		mNamerSpinner.bringToFront();		
-		mVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
-		mVisitScribe.setOnFocusChangeListener(this);
-		registerForContextMenu(mVisitScribe); // enable long-press
+		mViewVisitScribe = (EditText) rootView.findViewById(R.id.txt_visit_scribe);
+		mViewVisitScribe.setOnFocusChangeListener(this);
+		registerForContextMenu(mViewVisitScribe); // enable long-press
 		// set up the visit Location
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		mAccuracyTargetForVisitLoc = sharedPref.getFloat(Prefs.TARGET_ACCURACY_OF_VISIT_LOCATIONS, 7.0f);
-		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
-		mVisitLocation.setOnFocusChangeListener(this);
-		registerForContextMenu(mVisitLocation); // enable long-press
+		mViewVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
+		mViewVisitLocation.setOnFocusChangeListener(this);
+		registerForContextMenu(mViewVisitLocation); // enable long-press
         // should the following go in onCreate() ?
         buildGoogleApiClient();
     	mLocationRequest = LocationRequest.create()
@@ -291,12 +312,12 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
             .setInterval(10 * 1000)        // 10 seconds, in milliseconds
             .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-		mAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
-		mAzimuth.setOnFocusChangeListener(this);
-		registerForContextMenu(mAzimuth); // enable long-press
-		mVisitNotes = (EditText) rootView.findViewById(R.id.txt_visit_notes);
-		mVisitNotes.setOnFocusChangeListener(this);
-		registerForContextMenu(mVisitNotes); // enable long-press
+		mViewAzimuth = (EditText) rootView.findViewById(R.id.txt_visit_azimuth);
+		mViewAzimuth.setOnFocusChangeListener(this);
+		registerForContextMenu(mViewAzimuth); // enable long-press
+		mViewVisitNotes = (EditText) rootView.findViewById(R.id.txt_visit_notes);
+		mViewVisitNotes.setOnFocusChangeListener(this);
+		registerForContextMenu(mViewVisitNotes); // enable long-press
 		// set click listener for the button in the view
 		Button b = (Button) rootView.findViewById(R.id.visit_header_go_button);
 		b.setOnClickListener(this);
@@ -394,16 +415,13 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 			addSppNamerDlg.show(fm, "");
 			break;
 		case R.id.visit_header_go_button:
-			// test date format
-			String s = mTimeFormat.format(new Date());
-			Log.v(LOG_TAG, "test of time format: " + s);
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
 	}
 	
 	private void fireOffDatePicker() {
-		String s = mVisitDate.getText().toString();
+		String s = mViewVisitDate.getText().toString();
 	    try { // if the EditText view contains a valid date
 	    	mCalendar.setTime(mDateFormat.parse(s)); // use it
 		} catch (java.text.ParseException e) { // otherwise
@@ -458,17 +476,17 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 		case Loaders.VISIT_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, VISIT_TO_EDIT, records: " + c.getCount());
 			if (c.moveToFirst()) {
-				mVisitName.setText(c.getString(c.getColumnIndexOrThrow("VisitName")));
-				mVisitDate.setText(c.getString(c.getColumnIndexOrThrow("VisitDate")));
+				mViewVisitName.setText(c.getString(c.getColumnIndexOrThrow("VisitName")));
+				mViewVisitDate.setText(c.getString(c.getColumnIndexOrThrow("VisitDate")));
 				mNamerId = c.getLong(c.getColumnIndexOrThrow("NamerID"));
 				setNamerSpinnerSelection();
-				mVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
+				mViewVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
 				// write code to save/retrieve Locations
 				mLocIsGood = (c.getInt(c.getColumnIndexOrThrow("RefLocIsGood")) == 0) ? false : true;
 				
-//		mVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
-				mAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
-				mVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
+//		mViewVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
+				mViewAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
+				mViewVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
 			}
 
 			break;
@@ -703,7 +721,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
             }
         } else {
             Log.v(LOG_TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-            mVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
+            mViewVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
         }
     }
 
@@ -766,7 +784,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 				+ "\naccuracy " + mAccuracy + "m"
 				+ "\ntarget accuracy " + mAccuracyTargetForVisitLoc + "m"
 				+ "\ncontinuing to acquire";
-		mVisitLocation.setText(s);
+		mViewVisitLocation.setText(s);
 		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
 			mLocIsGood = true;
 			if (mGoogleApiClient.isConnected()) {
@@ -775,7 +793,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 		        // overwrite the message
 				s = "" + mLatitude + ", " + mLongitude
 						+ "\naccuracy " + mAccuracy + "m";
-				mVisitLocation.setText(s);
+				mViewVisitLocation.setText(s);
 				// write to database here, or just flag?
 		    }
 		}

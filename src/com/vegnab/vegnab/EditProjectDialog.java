@@ -36,7 +36,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	long mProjRecId = 0; // zero default means new or not specified yet
-	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
+	Uri mUri, mProjectsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
 	HashSet<String> mExistingProjCodes = new HashSet<String>();
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
@@ -133,7 +133,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
-			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
+			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
@@ -211,10 +211,10 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		}
 		ContentResolver rs = getActivity().getContentResolver();
 		if (mProjRecId == 0) { // new record
-			mUri = rs.insert(mBaseUri, mValues);
+			mUri = rs.insert(mProjectsUri, mValues);
 			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + mUri.toString());
 			mProjRecId = Long.parseLong(mUri.getLastPathSegment());
-			mUri = ContentUris.withAppendedId(mBaseUri, mProjRecId);
+			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -248,7 +248,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		case Loaders.PROJECT_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
-//			mBaseUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+//			mProjectsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
 			Uri oneProjUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
 							ContentProvider_VegNab.CONTENT_URI, "projects"), mProjRecId);

@@ -63,93 +63,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
-        LocationListener{
-	/*
-	private class VisitRecord {
-		private String mStartTime = mTimeFormat.format(new Date());
-		private String mLastChanged = mTimeFormat.format(new Date());
-		private long mId = 0;
-		long getId() {
-			return mId;
-		}
-		void setId (long iD) {
-			mId = iD;
-			mLastChanged = mTimeFormat.format(new Date()); // maybe move this to saveToDb
-		}
-		private String mVisName;
-		String getVisitName() {
-			return mVisName;
-		}
-		void setVisitName(String visName) {
-			mVisName = visName;
-			mLastChanged = mTimeFormat.format(new Date()); // maybe move this to saveToDb
-		}
-		private long mProjID = 0;
-		private long mPlotTypeID = 0;
-		private long mNamerID = 0;
-		private String mScribe;
-		private long mRefLocID = 0;
-		private boolean mRefLocIsGood = false;
-		private int mAzimuth;
-		private String mVisitNotes;
-		private int mDeviceType = 1;
-		private String mDeviceID;
-		private boolean mIsComplete = false;
-		private boolean mShowOnMobile = true;
-		private boolean mInclude = true;
-		private boolean mIsDeleted = false;
-		private int mNumAdditionalLocations = 0;
-		private int mAdditionalLocationsType = 1;			
-		
-	}
+        LocationListener {
 
-		
-	CREATE TABLE "Visits" (
-"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-"VisitName" VARCHAR(16) NOT NULL,
-"VisitDate" TIMESTAMP NOT NULL, -- visible to user & can be manually changed
-"ProjID" INTEGER NOT NULL,
-"PlotTypeID" INTEGER NOT NULL,
-"StartTime" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
-"LastChanged" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
-"NamerID" INTEGER NOT NULL,
-"Scribe" VARCHAR(20), -- optional, if someone besides the Namer is entering data
-"RefLocID" INTEGER, -- can not be required for valid record, but app will keep bugging user to get this
-"RefLocIsGood" BOOL NOT NULL DEFAULT 0, -- allow to accept as good, even if accuracy is poor
-"Azimuth" INTEGER -- if it applies to this plot type
-CHECK ((Azimuth IS NULL) OR ((CAST(Azimuth AS INTEGER) == Azimuth) 
-AND (Azimuth >= 0) AND (Azimuth <= 360))), 
-"VisitNotes" VARCHAR(255), -- limit the length; some users would write a thesis
-"DeviceType" INTEGER DEFAULT 1, -- 1=Unknown, 2=Android
-"DeviceID" VARCHAR(20) NOT NULL,
-
-"DeviceID" should be a unique identifier for the device this Visit is entered on.
-It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or 
-else ANDROID_ID.
-ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
-MEIDs are 56 bits long, the same length as the IMEI
-MEID allows hexadecimal digits while IMEI allows only decimal digits
-IMEI length 17
-MEID length 14
-ANDROID_ID is a 64-bit number as a hex string, therefore length 16
-Use 20 to be sure the field is long enough.
-
-"IsComplete" BOOL NOT NULL DEFAULT 0, -- flag to sync to cloud storage, if subscribed; option to automatically set following flag to 0 after sync
-"ShowOnMobile" BOOL NOT NULL DEFAULT 1, -- allow masking out, to reduce clutter
-"Include" BOOL NOT NULL DEFAULT 1, -- include in analysis, not used on mobile but here for completeness
-"IsDeleted" BOOL NOT NULL DEFAULT 0, -- don't allow user to actually delete a visit, just flag it; this by hard experience
-"NumAdditionalLocations" INTEGER NOT NULL DEFAULT 0, -- if additional locations are mapped, maintain the count
-"AdditionalLocationsType" INTEGER NOT NULL DEFAULT 1 -- 1=points, 2=line, 3=polygon
-CHECK ((AdditionalLocationsType >= 1) AND (AdditionalLocationsType <= 3)),
-"AdditionalLocationSelected" INTEGER, -- the currently active additional location for this visit, if one is selected
-FOREIGN KEY("ProjID") REFERENCES Projects("_id"),
-FOREIGN KEY("PlotTypeID") REFERENCES PlotTypes("_id"),
-FOREIGN KEY("NamerID") REFERENCES Namers("_id"),
-FOREIGN KEY("RefLocID") REFERENCES Locations("_id"),
-FOREIGN KEY("AdditionalLocationSelected") REFERENCES Locations("_id"),
-FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
-*/
-	
 	private class VNLocation extends Location {
 		public VNLocation(Location l) {
 			super(l);
@@ -200,24 +115,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 			return mTimeFormat.format(new Date(n));
 		}
 	}
-	/*CREATE TABLE Locations (
-"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-"LocName" VARCHAR(30) NOT NULL,
-"VisitID" INTEGER NOT NULL,
-"SubplotID" INTEGER,
-"ListingOrder" INTEGER DEFAULT 0,
-"Latitude" FLOAT NOT NULL 
-CHECK ((CAST(Latitude AS FLOAT) == Latitude) 
-AND (Latitude >= -90) AND (Latitude <= 90)),
-"Longitude" FLOAT NOT NULL 
-CHECK ((CAST(Longitude AS FLOAT) == Longitude) 
-AND (Longitude >= -180) AND (Longitude <= 180)),
-"TimeStamp" TIMESTAMP NOT NULL,
-"Accuracy" FLOAT,
-"Altitude" FLOAT,
-FOREIGN KEY("VisitID") REFERENCES Visits("_id"),
-FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
-)*/
+
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	private static final int MENU_HELP = 0;
@@ -231,10 +129,10 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private String mLocTime;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-	long mVisitId = 0, mNamerId = 0; // zero default means new or not specified yet
+	long mVisitId = 0, mNamerId = 0, mLocId = 0; // zero default means new or not specified yet
 	Uri mUri;
-	Uri mBaseVisitsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
-	Uri mBaseLocationsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "locations");
+	Uri mVisitsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
+	Uri mLocationsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "locations");
 	ContentValues mValues = new ContentValues();
 	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
 	private Spinner mNamerSpinner;
@@ -261,7 +159,6 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 	final static String ARG_LOC_LONGITUDE = "locLongitude";
 	final static String ARG_LOC_ACCURACY = "locAccuracy";
 	final static String ARG_LOC_TIME = "locTimeStamp";
-	final static String ARG_DEVICE_ID = "deviceID";
 	
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
@@ -679,30 +576,19 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 //		private Spinner mNamerSpinner;
 
 		ContentResolver rs = getActivity().getContentResolver();
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		int numUpdated;
 		if (mVisitId == 0) { // new record
 			// fill in fields the user never sees
-			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			mValues.put("ProjID", sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 0));
 			mValues.put("PlotTypeID", sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0));
 			mValues.put("StartTime", mTimeFormat.format(new Date()));
 			mValues.put("LastChanged", mTimeFormat.format(new Date()));
 			mValues.put("NamerID", mNamerId);
 			// wait on 'RefLocID', location record cannot be created until the Visit record has an ID assigned
-//			mValues.put("RefLocID", mEndDate.getText().toString().trim()); // save the Location to get this ID
-			mValues.put("RefLocIsGood", mLocIsGood);
-			// get a unique identifier for the device
-			// "DeviceID" should be a unique identifier for the device this Visit is entered on.
-			// It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or
-			// else ANDROID_ID.
-			// ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
-			// MEIDs are 56 bits long, the same length as the IMEI
-			// MEID allows hexadecimal digits while IMEI allows only decimal digits
-			// IMEI length 17
-			// MEID length 14
-			// ANDROID_ID is a 64-bit number as a hex string, therefore length 16
-			// Use 40 to be sure the field is long enough.
-			// "DeviceIDSource" is usually 'phone' or 'AndroidID' or 'UUID' but allowed to be anything
-			mValues.put("DeviceType", 2); // 'Android', this may be redundant, but flags that this was explicitly set
+//			mValues.put("RefLocID", ); // save the Location to get this ID
+			mValues.put("RefLocIsGood", mLocIsGood ? 1 : 0);
+			mValues.put("DeviceType", 2); // 1='unknown', 2='Android', this may be redundant, but flags that this was explicitly set
 			mValues.put("DeviceID", sharedPref.getString(Prefs.UNIQUE_DEVICE_ID, "")); // set on first app start
 			mValues.put("DeviceIDSource", sharedPref.getString(Prefs.DEVICE_ID_SOURCE, ""));
 			// don't actually need the following 6 as the fields have default values
@@ -711,74 +597,36 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 			mValues.put("Include", 1); // include in analysis, not used on mobile but here for completeness
 			mValues.put("IsDeleted", 0); // don't allow user to actually delete a visit, just flag it; this by hard experience
 			mValues.put("NumAdditionalLocations", 0); // if additional locations are mapped, maintain the count
-			mValues.put("AdditionalLocationsType", 1); // 1=points, 2=line, 3=polygon
-			
-			/*	
-			CREATE TABLE "Visits" (
-		"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-		"VisitName" VARCHAR(16) NOT NULL,
-		"VisitDate" TIMESTAMP NOT NULL, -- visible to user & can be manually changed
-		"ProjID" INTEGER NOT NULL,
-		"PlotTypeID" INTEGER NOT NULL,
-		"StartTime" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
-		"LastChanged" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
-		"NamerID" INTEGER NOT NULL,
-		"Scribe" VARCHAR(20), -- optional, if someone besides the Namer is entering data
-		"RefLocID" INTEGER, -- can not be required for valid record, but app will keep bugging user to get this
-		"RefLocIsGood" BOOL NOT NULL DEFAULT 0, -- allow to accept as good, even if accuracy is poor
-		"Azimuth" INTEGER -- if it applies to this plot type
-		CHECK ((Azimuth IS NULL) OR ((CAST(Azimuth AS INTEGER) == Azimuth) 
-		AND (Azimuth >= 0) AND (Azimuth <= 360))), 
-		"VisitNotes" VARCHAR(255), -- limit the length; some users would write a thesis
-		"DeviceType" INTEGER DEFAULT 1, -- 1=Unknown, 2=Android
-		"DeviceID" VARCHAR(40) NOT NULL,
-		*/
-			
-			mUri = rs.insert(mBaseVisitsUri, mValues);
-
-/*	    private double mLatitude, mLongitude;
-	    private float mAccuracy, mAccuracyTargetForVisitLoc;
-	    private String mLocTime;
-
-		final static String ARG_LOC_LATITUDE = "locLatitude";
-		final static String ARG_LOC_LONGITUDE = "locLongitude";
-		final static String ARG_LOC_ACCURACY = "locAccuracy";
-		final static String ARG_LOC_TIME = "locTimeStamp";
-		final static String ARG_DEVICE_ID = "deviceID";
-
-		fix up this
-*/
-			
+			mValues.put("AdditionalLocationsType", 1); // 1=points, 2=line, 3=polygon			
+			mUri = rs.insert(mVisitsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; returned URI: " + mUri.toString());
 			mVisitId = Long.parseLong(mUri.getLastPathSegment());
-			mUri = ContentUris.withAppendedId(mBaseVisitsUri, mVisitId);
+			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
-			/*CREATE TABLE Locations (
-"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-"LocName" VARCHAR(30) NOT NULL,
-"VisitID" INTEGER NOT NULL,
-"SubplotID" INTEGER,
-"ListingOrder" INTEGER DEFAULT 0,
-"Latitude" FLOAT NOT NULL 
-CHECK ((CAST(Latitude AS FLOAT) == Latitude) 
-AND (Latitude >= -90) AND (Latitude <= 90)),
-"Longitude" FLOAT NOT NULL 
-CHECK ((CAST(Longitude AS FLOAT) == Longitude) 
-AND (Longitude >= -180) AND (Longitude <= 180)),
-"TimeStamp" TIMESTAMP NOT NULL,
-"Accuracy" FLOAT,
-"Altitude" FLOAT,
-FOREIGN KEY("VisitID") REFERENCES Visits("_id"),
-FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
-)*/
-			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
 			prefEditor.putLong(Prefs.CURRENT_VISIT_ID, mVisitId);
 			prefEditor.commit();
+			if (mLocIsGood) { // add the location record
+				mValues.clear();
+				mValues.put("LocName", "Reference Location");
+				mValues.put("VisitID", mVisitId);
+				//mValues.put("SubplotID", 0); // N/A, for the whole site, not any subplot
+				//mValues.put("ListingOrder", 0); // use the default=0
+				mValues.put("Latitude", mLatitude);
+				mValues.put("Longitude", mLongitude);
+				mValues.put("TimeStamp", mLocTime);
+				mValues.put("Accuracy", mAccuracy);
+				mUri = rs.insert(mLocationsUri, mValues);
+				mLocId = Long.parseLong(mUri.getLastPathSegment());
+				// update the Visit record to include the Location
+				
+				numUpdated = rs.update(mUri, mValues, null, null);
+			}
+
 			return 1;
 		} else { // update the existing record
 			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
-			int numUpdated = rs.update(mUri, mValues, null, null);
+			numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveVisitRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}

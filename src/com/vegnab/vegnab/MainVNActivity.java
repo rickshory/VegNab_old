@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import java.util.UUID;
+
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.telephony.TelephonyManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,6 +29,8 @@ public class MainVNActivity extends ActionBarActivity
 		implements NewVisitFragment.OnButtonListener, 
 		VisitHeaderFragment.OnButtonListener, 
 		VegSubplotFragment.OnButtonListener {
+	
+	static String mUniqueDeviceId, mDeviceIdSource;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,15 @@ public class MainVNActivity extends ActionBarActivity
 			prefEditor.putFloat(Prefs.TARGET_ACCURACY_OF_MAPPED_LOCATIONS, (float) 7.0);
 			prefEditor.commit();
 		}
+		if (!sharedPref.contains(Prefs.UNIQUE_DEVICE_ID)) {
+			SharedPreferences.Editor prefEditor = sharedPref.edit();
+			getUniqueDeviceId(this); // generate the ID and the source
+			prefEditor.putString(Prefs.DEVICE_ID_SOURCE, mDeviceIdSource);
+			prefEditor.putString(Prefs.UNIQUE_DEVICE_ID, mUniqueDeviceId);
+			prefEditor.commit();
+		}
+		
+		//getDeviceId
 		setContentView(R.layout.activity_vn_main);
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout
@@ -189,4 +203,38 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
+	
+	public void getUniqueDeviceId(Context context) {
+		// this is used to get a unique identifier for the device this app is being run on
+		// it is primarily used to warn the user if the Visit has been downloaded onto
+		// a different device and the Visit is about to be edited; 
+		// This simple fn is not entirely robust for various reasons, but it is adequate since
+		// it is rare for Visits to be edited, and even more rare to be downloaded before editing
+		// this ID may be useful in sorting out field work chaos, to tell where the data came from
+	    String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+	    if (deviceId != null) { // won't have this if device is not a phone, and
+	    						//not always reliable to read even if it is a phone
+	    	mDeviceIdSource = "Phone";
+	    	mUniqueDeviceId = deviceId;
+	        return;
+	    } else { // try to get the Android ID
+	    	deviceId = android.os.Build.SERIAL; // generated on first boot, so may change on system reset
+	    	// only guaranteed available from API 9 and up
+	    	// since Gingerbread (Android 2.3) android.os.Build.SERIAL must exist on any device that doesn't provide IMEI
+	    	if (deviceId != null) {
+	    		// some Froyo 2.2 builds give the same serial number "9774d56d682e549c" for
+	    		// all, but these are rare and dying out (fixed ~December 2010.
+	    		// 4.2+, different profiles on the same device may give different IDs
+		    	mDeviceIdSource = "Android serial number";
+		    	mUniqueDeviceId = deviceId;
+	    		return;
+	    	} else { 
+	    		// generate a random number
+		    	mDeviceIdSource = "random UUID";
+		    	mUniqueDeviceId = UUID.randomUUID().toString();
+	    		return;
+	    	}
+	    }
+	}
+
 }

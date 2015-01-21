@@ -20,6 +20,9 @@ public final class VNContract {
 		public static final String CURRENT_VISIT_ID = "Current_Visit_Id";
 		public static final String TARGET_ACCURACY_OF_VISIT_LOCATIONS = "Target_Accuracy_VisitLocs";
 		public static final String TARGET_ACCURACY_OF_MAPPED_LOCATIONS = "Target_Accuracy_MappedLocs";
+		public static final String UNIQUE_DEVICE_ID = "Unique_Device_Id";
+		public static final String DEVICE_ID_SOURCE = "Device_Id_Source";
+		
 		
 	}
 	// inner class to define loader IDs

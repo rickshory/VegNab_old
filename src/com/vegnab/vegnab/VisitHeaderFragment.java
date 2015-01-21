@@ -39,6 +39,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat.AdapterContextMenuInfo;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -678,26 +679,38 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		ContentResolver rs = getActivity().getContentResolver();
 		if (mVisitId == 0) { // new record
 			// fill in fields the user never sees
-			
-//			mValues.put("ProjID", mEndDate.getText().toString().trim()); // how to put a long?
-//			mValues.put("PlotTypeID", mEndDate.getText().toString().trim());
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			mValues.put("ProjID", sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 0));
+			mValues.put("PlotTypeID", sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0));
 			mValues.put("StartTime", mTimeFormat.format(new Date()));
 			mValues.put("LastChanged", mTimeFormat.format(new Date()));
-//			mValues.put("NamerID", mEndDate.getText().toString().trim()); // maybe do this one in Switch?
+			mValues.put("NamerID", mNamerId);
+			// wait on 'RefLocID', location record cannot be created until the Visit record has an ID assigned
 //			mValues.put("RefLocID", mEndDate.getText().toString().trim()); // save the Location to get this ID
-//			mValues.put("RefLocIsGood", mEndDate.getText().toString().trim());
-//			mValues.put("DeviceType", mEndDate.getText().toString().trim()); // get this earlier and have it ready
-//			mValues.put("DeviceID", mEndDate.getText().toString().trim()); // get this earlier and have it ready
+			mValues.put("RefLocIsGood", mLocIsGood);
+			// get a unique identifier for the device
+			// "DeviceID" should be a unique identifier for the device this Visit is entered on.
+			// It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or
+			// else ANDROID_ID.
+			// ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
+			// MEIDs are 56 bits long, the same length as the IMEI
+			// MEID allows hexadecimal digits while IMEI allows only decimal digits
+			// IMEI length 17
+			// MEID length 14
+			// ANDROID_ID is a 64-bit number as a hex string, therefore length 16
+			// Use 40 to be sure the field is long enough.
+			// "DeviceIDSource" is usually 'phone' or 'AndroidID' or 'UUID' but allowed to be anything
+			mValues.put("DeviceType", 2); // 'Android', this may be redundant, but flags that this was explicitly set
+			mValues.put("DeviceID", sharedPref.getString(Prefs.UNIQUE_DEVICE_ID, "")); // set on first app start
+			mValues.put("DeviceIDSource", sharedPref.getString(Prefs.DEVICE_ID_SOURCE, ""));
 			// don't actually need the following 6 as the fields have default values
-			// check if this is the right way to do a number
-			mValues.put("IsComplete", "0"); // flag to sync to cloud storage, if subscribed; option to automatically set following flag to 0 after sync
-			mValues.put("ShowOnMobile", "1"); // allow masking out, to reduce clutter
-			mValues.put("Include", "1"); // include in analysis, not used on mobile but here for completeness
-			mValues.put("IsDeleted", "0"); // don't allow user to actually delete a visit, just flag it; this by hard experience
-			mValues.put("NumAdditionalLocations", "0"); // if additional locations are mapped, maintain the count
-			mValues.put("AdditionalLocationsType", "1"); // 1=points, 2=line, 3=polygon
+			mValues.put("IsComplete", 0); // flag to sync to cloud storage, if subscribed; option to automatically set following flag to 0 after sync
+			mValues.put("ShowOnMobile", 1); // allow masking out, to reduce clutter
+			mValues.put("Include", 1); // include in analysis, not used on mobile but here for completeness
+			mValues.put("IsDeleted", 0); // don't allow user to actually delete a visit, just flag it; this by hard experience
+			mValues.put("NumAdditionalLocations", 0); // if additional locations are mapped, maintain the count
+			mValues.put("AdditionalLocationsType", 1); // 1=points, 2=line, 3=polygon
 			
-//			mProjID = 0;
 			/*	
 			CREATE TABLE "Visits" (
 		"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
@@ -716,19 +729,7 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		AND (Azimuth >= 0) AND (Azimuth <= 360))), 
 		"VisitNotes" VARCHAR(255), -- limit the length; some users would write a thesis
 		"DeviceType" INTEGER DEFAULT 1, -- 1=Unknown, 2=Android
-		"DeviceID" VARCHAR(20) NOT NULL,
-
-		"DeviceID" should be a unique identifier for the device this Visit is entered on.
-		It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or 
-		else ANDROID_ID.
-		ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
-		MEIDs are 56 bits long, the same length as the IMEI
-		MEID allows hexadecimal digits while IMEI allows only decimal digits
-		IMEI length 17
-		MEID length 14
-		ANDROID_ID is a 64-bit number as a hex string, therefore length 16
-		Use 20 to be sure the field is long enough.
-
+		"DeviceID" VARCHAR(40) NOT NULL,
 		*/
 			
 			mUri = rs.insert(mBaseUri, mValues);
@@ -769,7 +770,6 @@ FOREIGN KEY("VisitID") REFERENCES Visits("_id"),
 FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 )*/
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
-			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
 			prefEditor.putLong(Prefs.CURRENT_VISIT_ID, mVisitId);
 			prefEditor.commit();

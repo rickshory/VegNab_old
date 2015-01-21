@@ -133,7 +133,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
-			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
@@ -223,6 +222,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			prefEditor.commit();
 			return 1;
 		} else {
+			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 			return numUpdated;

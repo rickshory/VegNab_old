@@ -618,14 +618,19 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mValues.put("Accuracy", mAccuracy);
 				mUri = rs.insert(mLocationsUri, mValues);
 				mLocId = Long.parseLong(mUri.getLastPathSegment());
+				Log.v(LOG_TAG, "saveVisitRecord; new Location record created, locID = " + mLocId);
 				// update the Visit record to include the Location
-				
+				mValues.clear();
+				mValues.put("RefLocID", mLocId);
+				mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 				numUpdated = rs.update(mUri, mValues, null, null);
+				Log.v(LOG_TAG, "saveVisitRecord; new Visit record updated with locID = " + mLocId);
 			}
 
 			return 1;
 		} else { // update the existing record
 			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
+			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveVisitRecord; numUpdated: " + numUpdated);
 			return numUpdated;

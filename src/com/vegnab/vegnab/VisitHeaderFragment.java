@@ -614,6 +614,123 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		}
 	}
 
+	
+	private int saveVisitRecord () {
+		// if anything invalid, don't save record
+		if ("" + mViewVisitName.getText().toString().trim() == "") {
+			Toast.makeText(this.getActivity(),
+					"Need Visit Name",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
+		// test and warn if duplicate name, but allow
+//		if (mExistingProjCodes.contains("" + mProjCode.getText().toString().trim())) {
+//			Toast.makeText(this.getActivity(),
+//					"Duplicate Project Code",
+//					Toast.LENGTH_LONG).show();
+//			return 0;
+//		}
+
+		if ("" + mViewVisitDate.getText().toString().trim() == "") {
+			Toast.makeText(this.getActivity(),
+					"Need Visit Date",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
+		if (mNamerId == 0) {
+			Toast.makeText(this.getActivity(),
+					"Need a Namer for species",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
+		
+		if (!mLocIsGood) {
+			Toast.makeText(this.getActivity(),
+					"Wait till Location is valid, or long-press for options.",
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
+		// mVisitId = 0, mNamerId = 0;
+		// mLocIsGood
+		// , mViewVisitLocation
+		
+// none of these are required: mViewVisitScribe, mViewAzimuth, mViewVisitNotes;
+//		private Spinner mNamerSpinner;
+
+		ContentResolver rs = getActivity().getContentResolver();
+		if (mVisitId == 0) { // new record
+			// fill in fields the user never sees
+//			mValues.put("ProjID", mEndDate.getText().toString().trim()); // how to put a long?
+//			mValues.put("PlotTypeID", mEndDate.getText().toString().trim());
+			mValues.put("StartTime", mTimeFormat.format(new Date()));
+			mValues.put("LastChanged", mTimeFormat.format(new Date()));
+//			mValues.put("NamerID", mEndDate.getText().toString().trim()); // maybe do this one in Switch?
+//			mValues.put("RefLocID", mEndDate.getText().toString().trim()); // save the Location to get this ID
+//			mValues.put("RefLocIsGood", mEndDate.getText().toString().trim());
+//			mValues.put("DeviceType", mEndDate.getText().toString().trim()); // get this earlier and have it ready
+//			mValues.put("DeviceID", mEndDate.getText().toString().trim()); // get this earlier and have it ready
+			// don't actually need the following 6 as the fields have default values
+			// check if this is the right way to do a number
+			mValues.put("IsComplete", "0"); // flag to sync to cloud storage, if subscribed; option to automatically set following flag to 0 after sync
+			mValues.put("ShowOnMobile", "1"); // allow masking out, to reduce clutter
+			mValues.put("Include", "1"); // include in analysis, not used on mobile but here for completeness
+			mValues.put("IsDeleted", "0"); // don't allow user to actually delete a visit, just flag it; this by hard experience
+			mValues.put("NumAdditionalLocations", "0"); // if additional locations are mapped, maintain the count
+			mValues.put("AdditionalLocationsType", "1"); // 1=points, 2=line, 3=polygon
+			
+//			mProjID = 0;
+			/*	
+			CREATE TABLE "Visits" (
+		"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+		"VisitName" VARCHAR(16) NOT NULL,
+		"VisitDate" TIMESTAMP NOT NULL, -- visible to user & can be manually changed
+		"ProjID" INTEGER NOT NULL,
+		"PlotTypeID" INTEGER NOT NULL,
+		"StartTime" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
+		"LastChanged" TIMESTAMP NOT NULL DEFAULT (DATETIME('now')), -- maintained automatically
+		"NamerID" INTEGER NOT NULL,
+		"Scribe" VARCHAR(20), -- optional, if someone besides the Namer is entering data
+		"RefLocID" INTEGER, -- can not be required for valid record, but app will keep bugging user to get this
+		"RefLocIsGood" BOOL NOT NULL DEFAULT 0, -- allow to accept as good, even if accuracy is poor
+		"Azimuth" INTEGER -- if it applies to this plot type
+		CHECK ((Azimuth IS NULL) OR ((CAST(Azimuth AS INTEGER) == Azimuth) 
+		AND (Azimuth >= 0) AND (Azimuth <= 360))), 
+		"VisitNotes" VARCHAR(255), -- limit the length; some users would write a thesis
+		"DeviceType" INTEGER DEFAULT 1, -- 1=Unknown, 2=Android
+		"DeviceID" VARCHAR(20) NOT NULL,
+
+		"DeviceID" should be a unique identifier for the device this Visit is entered on.
+		It would be either from TelephonyManager.getDeviceId() (IMEI, MEID, ESN, etc.), or 
+		else ANDROID_ID.
+		ESNs are either 11-digit decimal numbers or 8-digit hexadecimal numbers
+		MEIDs are 56 bits long, the same length as the IMEI
+		MEID allows hexadecimal digits while IMEI allows only decimal digits
+		IMEI length 17
+		MEID length 14
+		ANDROID_ID is a 64-bit number as a hex string, therefore length 16
+		Use 20 to be sure the field is long enough.
+
+		*/
+			
+			mUri = rs.insert(mBaseUri, mValues);
+			Log.v(LOG_TAG, "new record in saveVisitRecord; returned URI: " + mUri.toString());
+			mVisitId = Long.parseLong(mUri.getLastPathSegment());
+			mUri = ContentUris.withAppendedId(mBaseUri, mVisitId);
+			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
+			// set default project; redundant with fn in NewVisitFragment; low priority fix
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			SharedPreferences.Editor prefEditor = sharedPref.edit();
+			prefEditor.putLong(Prefs.CURRENT_VISIT_ID, mVisitId);
+			prefEditor.commit();
+			return 1;
+		} else { // update the existing record
+			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
+			int numUpdated = rs.update(mUri, mValues, null, null);
+			Log.v(LOG_TAG, "Saved record in saveVisitRecord; numUpdated: " + numUpdated);
+			return numUpdated;
+		}
+	}	
+	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {

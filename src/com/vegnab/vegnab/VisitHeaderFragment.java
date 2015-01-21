@@ -225,10 +225,10 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
     private static final int MENU_DELETE = 3;
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private double mLatitude, mLongitude;
-//    private VisitRecord mVis;
     private boolean mLocIsGood = false; // default until retrieved or established true
+    private double mLatitude, mLongitude;
     private float mAccuracy, mAccuracyTargetForVisitLoc;
+    private String mLocTime;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, mNamerId = 0; // zero default means new or not specified yet
 	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
@@ -251,9 +251,15 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 	    }
 	};
 	int mRowCt;
+	final static String ARG_SUBPLOT = "subplot"; // dummy value, eventually get rid of this one
 	final static String ARG_VISIT_ID = "visitId";
-	final static String ARG_SUBPLOT = "subplot";
 	final static String ARG_LOC_GOOD_FLAG = "locGood";
+	final static String ARG_LOC_LATITUDE = "locLatitude";
+	final static String ARG_LOC_LONGITUDE = "locLongitude";
+	final static String ARG_LOC_ACCURACY = "locAccuracy";
+	final static String ARG_LOC_TIME = "locTimeStamp";
+	final static String ARG_DEVICE_ID = "deviceID";
+	
 	int mCurrentSubplot = -1;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
@@ -327,6 +333,12 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
 			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
 			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
+			if (mLocIsGood) {
+				mLatitude = savedInstanceState.getDouble(ARG_LOC_LATITUDE);
+				mLongitude = savedInstanceState.getDouble(ARG_LOC_LONGITUDE);
+				mAccuracy = savedInstanceState.getFloat(ARG_LOC_ACCURACY);
+				mLocTime = savedInstanceState.getString(ARG_LOC_TIME);
+			}
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
@@ -457,6 +469,12 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
 		outState.putLong(ARG_VISIT_ID, mVisitId);
 		outState.putBoolean(ARG_LOC_GOOD_FLAG, mLocIsGood);
+		if (mLocIsGood) {
+			outState.putDouble(ARG_LOC_LATITUDE, mLatitude);
+			outState.putDouble(ARG_LOC_LONGITUDE, mLongitude);
+			outState.putFloat(ARG_LOC_ACCURACY, mAccuracy);
+			outState.putString(ARG_LOC_TIME, mLocTime);			
+		}
 	}
 
 	@Override
@@ -660,6 +678,7 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		ContentResolver rs = getActivity().getContentResolver();
 		if (mVisitId == 0) { // new record
 			// fill in fields the user never sees
+			
 //			mValues.put("ProjID", mEndDate.getText().toString().trim()); // how to put a long?
 //			mValues.put("PlotTypeID", mEndDate.getText().toString().trim());
 			mValues.put("StartTime", mTimeFormat.format(new Date()));
@@ -713,10 +732,42 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		*/
 			
 			mUri = rs.insert(mBaseUri, mValues);
+
+/*	    private double mLatitude, mLongitude;
+	    private float mAccuracy, mAccuracyTargetForVisitLoc;
+	    private String mLocTime;
+
+		final static String ARG_LOC_LATITUDE = "locLatitude";
+		final static String ARG_LOC_LONGITUDE = "locLongitude";
+		final static String ARG_LOC_ACCURACY = "locAccuracy";
+		final static String ARG_LOC_TIME = "locTimeStamp";
+		final static String ARG_DEVICE_ID = "deviceID";
+
+		fix up this
+*/
+			
 			Log.v(LOG_TAG, "new record in saveVisitRecord; returned URI: " + mUri.toString());
 			mVisitId = Long.parseLong(mUri.getLastPathSegment());
 			mUri = ContentUris.withAppendedId(mBaseUri, mVisitId);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
+			/*CREATE TABLE Locations (
+"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+"LocName" VARCHAR(30) NOT NULL,
+"VisitID" INTEGER NOT NULL,
+"SubplotID" INTEGER,
+"ListingOrder" INTEGER DEFAULT 0,
+"Latitude" FLOAT NOT NULL 
+CHECK ((CAST(Latitude AS FLOAT) == Latitude) 
+AND (Latitude >= -90) AND (Latitude <= 90)),
+"Longitude" FLOAT NOT NULL 
+CHECK ((CAST(Longitude AS FLOAT) == Longitude) 
+AND (Longitude >= -180) AND (Longitude <= 180)),
+"TimeStamp" TIMESTAMP NOT NULL,
+"Accuracy" FLOAT,
+"Altitude" FLOAT,
+FOREIGN KEY("VisitID") REFERENCES Visits("_id"),
+FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
+)*/
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -965,6 +1016,10 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		mViewVisitLocation.setText(s);
 		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
 			mLocIsGood = true;
+			long n = loc.getTime();
+			mLocTime = mTimeFormat.format(new Date(n));
+			// test that this is correct
+			Log.v(LOG_TAG, "Time: " + mLocTime);
 			if (mGoogleApiClient.isConnected()) {
 		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		        mGoogleApiClient.disconnect();

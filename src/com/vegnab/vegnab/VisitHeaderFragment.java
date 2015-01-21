@@ -232,7 +232,9 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
     private String mLocTime;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, mNamerId = 0; // zero default means new or not specified yet
-	Uri mUri, mBaseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
+	Uri mUri;
+	Uri mBaseVisitsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
+	Uri mBaseLocationsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "locations");
 	ContentValues mValues = new ContentValues();
 	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
 	private Spinner mNamerSpinner;
@@ -732,7 +734,7 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 		"DeviceID" VARCHAR(40) NOT NULL,
 		*/
 			
-			mUri = rs.insert(mBaseUri, mValues);
+			mUri = rs.insert(mBaseVisitsUri, mValues);
 
 /*	    private double mLatitude, mLongitude;
 	    private float mAccuracy, mAccuracyTargetForVisitLoc;
@@ -749,7 +751,7 @@ FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
 			
 			Log.v(LOG_TAG, "new record in saveVisitRecord; returned URI: " + mUri.toString());
 			mVisitId = Long.parseLong(mUri.getLastPathSegment());
-			mUri = ContentUris.withAppendedId(mBaseUri, mVisitId);
+			mUri = ContentUris.withAppendedId(mBaseVisitsUri, mVisitId);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
 			/*CREATE TABLE Locations (
 "_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,

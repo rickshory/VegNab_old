@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.telephony.TelephonyManager;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -204,6 +205,7 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.commit();
 	}
 	
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public void getUniqueDeviceId(Context context) {
 		// this is used to get a unique identifier for the device this app is being run on
 		// it is primarily used to warn the user if the Visit has been downloaded onto
@@ -211,29 +213,37 @@ public class MainVNActivity extends ActionBarActivity
 		// This simple fn is not entirely robust for various reasons, but it is adequate since
 		// it is rare for Visits to be edited, and even more rare to be downloaded before editing
 		// this ID may be useful in sorting out field work chaos, to tell where the data came from
-	    String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-	    if (deviceId != null) { // won't have this if device is not a phone, and
-	    						//not always reliable to read even if it is a phone
-	    	mDeviceIdSource = "Phone";
-	    	mUniqueDeviceId = deviceId;
-	        return;
-	    } else { // try to get the Android ID
-	    	deviceId = android.os.Build.SERIAL; // generated on first boot, so may change on system reset
-	    	// only guaranteed available from API 9 and up
-	    	// since Gingerbread (Android 2.3) android.os.Build.SERIAL must exist on any device that doesn't provide IMEI
-	    	if (deviceId != null) {
-	    		// some Froyo 2.2 builds give the same serial number "9774d56d682e549c" for
-	    		// all, but these are rare and dying out (fixed ~December 2010.
-	    		// 4.2+, different profiles on the same device may give different IDs
-		    	mDeviceIdSource = "Android serial number";
+	    String deviceId;
+	    try {
+	    	deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+		    if (deviceId != null) { // won't have this if device is not a phone, and
+		    						//not always reliable to read even if it is a phone
+		    	mDeviceIdSource = "Phone";
 		    	mUniqueDeviceId = deviceId;
-	    		return;
-	    	} else { 
-	    		// generate a random number
-		    	mDeviceIdSource = "random UUID";
-		    	mUniqueDeviceId = UUID.randomUUID().toString();
-	    		return;
-	    	}
+		        return;
+		    } else { // try to get the Android ID
+		    	deviceId = android.os.Build.SERIAL; // generated on first boot, so may change on system reset
+		    	// only guaranteed available from API 9 and up
+		    	// since Gingerbread (Android 2.3) android.os.Build.SERIAL must exist on any device that doesn't provide IMEI
+		    	if (deviceId != null) {
+		    		// some Froyo 2.2 builds give the same serial number "9774d56d682e549c" for
+		    		// all, but these are rare and dying out (fixed ~December 2010.
+		    		// 4.2+, different profiles on the same device may give different IDs
+			    	mDeviceIdSource = "Android serial number";
+			    	mUniqueDeviceId = deviceId;
+		    		return;
+		    	} else { 
+		    		// generate a random number
+			    	mDeviceIdSource = "random UUID";
+			    	mUniqueDeviceId = UUID.randomUUID().toString();
+		    		return;
+		    	}
+		    }	
+	    } catch (Exception e) {
+    		// generate a random number
+	    	mDeviceIdSource = "random UUID";
+	    	mUniqueDeviceId = UUID.randomUUID().toString();
+    		return;	    	
 	    }
 	}
 

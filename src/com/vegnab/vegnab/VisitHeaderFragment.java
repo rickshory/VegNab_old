@@ -29,18 +29,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.internal.widget.AdapterViewCompat.AdapterContextMenuInfo;
 import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
 import android.util.Log;
@@ -51,7 +47,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.AccessibilityDelegate;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,16 +57,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
 public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
         LocationListener{
-	
-	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+	/*
 	private class VisitRecord {
 		private String mStartTime = mTimeFormat.format(new Date());
 		private String mLastChanged = mTimeFormat.format(new Date());
@@ -111,7 +103,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 		
-		/*CREATE TABLE "Visits" (
+	CREATE TABLE "Visits" (
 "_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
 "VisitName" VARCHAR(16) NOT NULL,
 "VisitDate" TIMESTAMP NOT NULL, -- visible to user & can be manually changed
@@ -157,6 +149,74 @@ FOREIGN KEY("AdditionalLocationSelected") REFERENCES Locations("_id"),
 FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 */
 	
+	private class VNLocation extends Location {
+		public VNLocation(Location l) {
+			super(l);
+		}
+		
+		private long mId;
+		public long getId() {
+			return mId;
+		}
+		public void setId (long iD) {
+			mId = iD;
+		}
+		
+		private String mLocName;
+		public String getLocName() {
+			return mLocName;
+		}
+		public void setLocName(String locName) {
+			mLocName = locName;
+		}
+
+		private long mVisitId;
+		public long getVisitId() {
+			return mVisitId;
+		}
+		public void setVisitId (long iD) {
+			mVisitId = iD;
+		}
+		
+		private long mSubplotId;
+		public long getSubploId() {
+			return mSubplotId;
+		}
+		public void setSubploId (long iD) {
+			mSubplotId = iD;
+		}
+		
+		private int mListingOrder;
+		public int getListingOrder() {
+			return mListingOrder;
+		}
+		public void setListingOrder (int i) {
+			mListingOrder = i;
+		}
+		
+		public String getTimeString() {
+			long n = super.getTime();
+			return mTimeFormat.format(new Date(n));
+		}
+	}
+	/*CREATE TABLE Locations (
+"_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+"LocName" VARCHAR(30) NOT NULL,
+"VisitID" INTEGER NOT NULL,
+"SubplotID" INTEGER,
+"ListingOrder" INTEGER DEFAULT 0,
+"Latitude" FLOAT NOT NULL 
+CHECK ((CAST(Latitude AS FLOAT) == Latitude) 
+AND (Latitude >= -90) AND (Latitude <= 90)),
+"Longitude" FLOAT NOT NULL 
+CHECK ((CAST(Longitude AS FLOAT) == Longitude) 
+AND (Longitude >= -180) AND (Longitude <= 180)),
+"TimeStamp" TIMESTAMP NOT NULL,
+"Accuracy" FLOAT,
+"Altitude" FLOAT,
+FOREIGN KEY("VisitID") REFERENCES Visits("_id"),
+FOREIGN KEY("SubplotID") REFERENCES SubplotTypes("_id")
+)*/
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	private static final int MENU_HELP = 0;
@@ -166,7 +226,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private double mLatitude, mLongitude;
-    private VisitRecord mVis = new VisitRecord();
+//    private VisitRecord mVis;
     private boolean mLocIsGood = false; // default until retrieved or established true
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -178,6 +238,7 @@ FOREIGN KEY("AdditionalLocationsType") REFERENCES LocationTypes("_id")
 	private TextView mLblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
 	private Calendar mCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 	    @Override

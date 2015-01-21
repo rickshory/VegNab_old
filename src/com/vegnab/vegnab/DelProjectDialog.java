@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class DelProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
-	public static final int LOADER_FOR_VALID_DEL_PROJECTS = 4; // Loader Id for the list of Projects valid to delete
+	public static final int LOADER_FOR_VALID_DEL_PROJECTS = 4; // Loader Id for the list of Projects that are valid to delete
 	VegNabDbHelper mDbHelper;
 	ListView mValidProjList;
 	SimpleCursorAdapter mListAdapter; // to link the list's data

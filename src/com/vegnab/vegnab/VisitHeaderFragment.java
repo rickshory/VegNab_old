@@ -1,5 +1,8 @@
 package com.vegnab.vegnab;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +33,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -394,6 +398,23 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			addSppNamerDlg.show(fm, "");
 			break;
 		case R.id.visit_header_go_button:
+			// for testing, write a log file
+			String content = "hello world";
+			File file;
+			FileOutputStream outputStream;
+			try {
+				file = new File(Environment.getExternalStorageDirectory(), "VegNab.txt");
+//				file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "VegNab.txt");
+				outputStream = new FileOutputStream(file);
+				outputStream.write(content.getBytes());
+				outputStream.close();
+				Log.v(LOG_TAG, "completed write of test 'VegNab.txt' file");
+				
+			} catch (IOException e) {
+				Log.v(LOG_TAG, "exception occurred on write of test 'VegNab.txt' file");
+				e.printStackTrace();
+			}
+			
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
@@ -889,4 +910,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	
 	// if Google Play Services not available, would Location Services be?
 	// requestSingleUpdate
+	
+	
+	// Checks if external storage is available for read and write
+	public boolean isExternalStorageWritable() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state)) {
+	        return true;
+	    }
+	    return false;
+	}
 }

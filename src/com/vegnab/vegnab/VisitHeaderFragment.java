@@ -400,6 +400,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			break;
 		case R.id.visit_header_go_button:
 			// for testing, write a log file
+			// the following worked, but the file appears, using Android File Manager, in
+			// storage > emulated > 0
+			// and 
+			// storage > emulated > legacy
+			// and
+			// storage > sdcard0
+			// all apparently the same, and the same as viewed from PC looking at the Android as 
+			// Galaxy Nexus > Internal Storage
+			// except this created file does *not* appear
 			if (isExternalStorageWritable()) {
 				Log.v(LOG_TAG, "external storage is writeable");
 				String content = "hello world";

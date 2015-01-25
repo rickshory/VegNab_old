@@ -25,10 +25,12 @@ import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -36,6 +38,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -83,6 +86,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private double mLatitude, mLongitude;
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private String mLocTime;
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    // Unique tag for the error dialog fragment
+    private static final String DIALOG_ERROR = "dialog_error";
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
+    private static final String STATE_RESOLVING_ERROR = "resolving_error";
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	long mVisitId = 0, mNamerId = 0, mLocId = 0; // zero default means new or not specified yet
 	Uri mUri;
@@ -185,6 +195,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// restore the previous screen, remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts
 		if (savedInstanceState != null) {
+		    mResolvingError = savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
 			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
 			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
@@ -321,6 +332,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the fragment
+		outState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
 		outState.putLong(ARG_VISIT_ID, mVisitId);
 		outState.putBoolean(ARG_LOC_GOOD_FLAG, mLocIsGood);
@@ -801,19 +813,60 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
-        if (connectionResult.hasResolution()) {
+    	if (mResolvingError) { // already working on this
+    		return;
+    	} else  if (connectionResult.hasResolution()) {
             try {
+            	mResolvingError = true;
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(getActivity(), CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(getActivity(), REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
+                mGoogleApiClient.connect(); // error with resolution intent, try again
             }
         } else {
+        	// Show dialog using GooglePlayServicesUtil.getErrorDialog()
+        	showErrorDialog(connectionResult.getErrorCode());
+            mResolvingError = true;
             Log.v(LOG_TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
             mViewVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
         }
     }
+    
+    // next sections build the error dialog
 
+    // Creates a dialog for an error message
+    private void showErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getActivity().getSupportFragmentManager(), "errordialog");
+    }
+
+    // Called from ErrorDialogFragment when the dialog is dismissed.
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
+    // A fragment to display an error dialog
+    public static class ErrorDialogFragment extends DialogFragment {
+        public ErrorDialogFragment() { }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GooglePlayServicesUtil.getErrorDialog(errorCode,
+                    this.getActivity(), REQUEST_RESOLVE_ERROR);
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            ((VisitHeaderFragment)getTargetFragment()).onDialogDismissed();
+        }
+    }
     // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {

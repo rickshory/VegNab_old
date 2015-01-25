@@ -882,7 +882,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     	}
     	// create new contents resource
-    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+//    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
     }
     
     final private ResultCallback<DriveContentsResult> driveContentsCallback = new
@@ -957,8 +957,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
-        		.addApi(Drive.API)
-        		.addScope(Drive.SCOPE_FILE)
+//        		.addApi(Drive.API)
+//        		.addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();

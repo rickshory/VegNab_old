@@ -838,6 +838,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private void showErrorDialog(int errorCode) {
         // Create a fragment for the error dialog
         ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        dialogFragment.setTargetFragment(this, -1);
         // Pass the error that should be displayed
         Bundle args = new Bundle();
         args.putInt(DIALOG_ERROR, errorCode);

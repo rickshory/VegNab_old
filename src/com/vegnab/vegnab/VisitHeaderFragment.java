@@ -71,57 +71,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		ConnectionCallbacks, OnConnectionFailedListener, 
         LocationListener {
 
-	private class VNLocation extends Location {
-		public VNLocation(Location l) {
-			super(l);
-		}
-		
-		private long mId;
-		public long getId() {
-			return mId;
-		}
-		public void setId (long iD) {
-			mId = iD;
-		}
-		
-		private String mLocName;
-		public String getLocName() {
-			return mLocName;
-		}
-		public void setLocName(String locName) {
-			mLocName = locName;
-		}
-
-		private long mVisitId;
-		public long getVisitId() {
-			return mVisitId;
-		}
-		public void setVisitId (long iD) {
-			mVisitId = iD;
-		}
-		
-		private long mSubplotId;
-		public long getSubploId() {
-			return mSubplotId;
-		}
-		public void setSubploId (long iD) {
-			mSubplotId = iD;
-		}
-		
-		private int mListingOrder;
-		public int getListingOrder() {
-			return mListingOrder;
-		}
-		public void setListingOrder (int i) {
-			mListingOrder = i;
-		}
-		
-		public String getTimeString() {
-			long n = super.getTime();
-			return mTimeFormat.format(new Date(n));
-		}
-	}
-
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	private static final int MENU_HELP = 0;
@@ -892,8 +841,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // documented under FusedLocationProviderApi
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-        		.addApi(Drive.API)
-        		.addScope(Drive.SCOPE_FILE)
+//        		.addApi(Drive.API)
+//        		.addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)

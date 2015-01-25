@@ -894,8 +894,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // documented under FusedLocationProviderApi
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-//        		.addApi(Drive.API)
-//        		.addScope(Drive.SCOPE_FILE)
+        		.addApi(Drive.API)
+        		.addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)

@@ -3,7 +3,9 @@ package com.vegnab.vegnab;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,7 +17,12 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFolder.DriveFileResult;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -874,8 +881,62 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     	if (!mLocIsGood) {
     		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     	}
+    	// create new contents resource
+    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
     }
-
+    
+    final private ResultCallback<DriveContentsResult> driveContentsCallback = new
+    		ResultCallback<DriveContentsResult>() {
+    	@Override
+    	public void onResult(DriveContentsResult result) {
+    		if (!result.getStatus().isSuccess()) {
+    			Log.v(LOG_TAG, "Error while trying to create new file contents");
+//    			showMessage("Error while trying to create new file contents");
+    			Toast.makeText(getActivity(), "Error while trying to create new file contents", Toast.LENGTH_LONG).show();
+    			return;
+    		}
+    		final DriveContents driveContents = result.getDriveContents();
+    		
+    		// perform i/o off the ui thread
+    		new Thread() {
+    			@Override
+    			public void run() {
+    				    			// write content to DriveContents
+	    			OutputStream outputStream = driveContents.getOutputStream();
+	    			Writer writer = new OutputStreamWriter(outputStream);
+	    			try {
+	    				writer.write("Hello world");
+	    				writer.close();
+	    			} catch (IOException e) {
+	    				Log.v(LOG_TAG, "Error writing file: " + e.getMessage());
+	    			}
+	    			MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+	    				.setTitle("New file")
+	    				.setMimeType("text/plain")
+	    				.setStarred(true).build();
+	    			
+	    			// create file on root folder
+	    			Drive.DriveApi.getRootFolder(mGoogleApiClient)
+	    				.createFile(mGoogleApiClient, changeSet, driveContents)
+	    				.setResultCallback(fileCallback);
+    			}
+   		}.start();
+    	}
+    };
+    
+    final private ResultCallback<DriveFileResult> fileCallback = new
+    		ResultCallback<DriveFileResult> () {
+    	@Override
+    	public void onResult(DriveFileResult result) {
+    		if (!result.getStatus().isSuccess()) {
+    			Log.v(LOG_TAG, "Error trying to create the file");
+//    			showMessage("Error while trying to create new file contents");
+    			Toast.makeText(getActivity(), "Error trying to create the file", Toast.LENGTH_LONG).show();
+    			return;
+    		}
+    		Toast.makeText(getActivity(), "Created file, content: " + result.getDriveFile().getDriveId(), Toast.LENGTH_LONG).show();
+    	}
+    };
 
     // Called by Google Play services if the connection to GoogleApiClient drops because of an error.
 
@@ -895,11 +956,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // documented under FusedLocationProviderApi
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-//        		.addApi(Drive.API)
-//        		.addScope(Drive.SCOPE_FILE)
+                .addApi(LocationServices.API)
+        		.addApi(Drive.API)
+        		.addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
                 .build();
     }
 

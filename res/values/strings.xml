@@ -13,6 +13,7 @@
     <string name="action_old_visit">Re-open a Visit</string>
     <string name="action_visit_info">Visit details</string>
     <string name="action_delete_visit">Delete Visit</string>
+    <string name="action_export_visit">Export Visit</string>
    
     <string name="default_project">MyProject</string>
     <string name="default_plottype">Species List</string>

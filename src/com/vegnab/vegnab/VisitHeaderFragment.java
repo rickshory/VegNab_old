@@ -168,6 +168,26 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case R.id.action_visit_info:
 			Toast.makeText(getActivity(), "''Visit Details'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
+		case R.id.action_export_visit:
+			Toast.makeText(getActivity(), "''Export Visit'' of Visit Header is not fully implemented yet", Toast.LENGTH_SHORT).show();
+			// test, create new contents resource
+			if (mGoogleApiClient.isConnected()) {
+				mGoogleApiClient.disconnect();
+		    	if (servicesAvailable()) {
+			        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+//			        	.addApi(LocationServices.API)
+			        	.addApi(Drive.API).addScope(Drive.SCOPE_FILE)
+			        	.addConnectionCallbacks(this)
+			        	.addOnConnectionFailedListener(this)
+			        	.build();
+		    	}
+		    	mGoogleApiClient.connect();
+		    	// following won't work, has to wait for the connected callback
+		    	// at least isolate errors in above
+//				Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+			}
+			return true;
+		
 		case R.id.action_delete_visit:
 			Toast.makeText(getActivity(), "''Delete Visit'' is not fully implemented yet", Toast.LENGTH_SHORT).show();
 			Fragment newVisFragment = fm.findFragmentByTag("new_visit");
@@ -275,7 +295,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onStart() {
 		super.onStart();
-//        mGoogleApiClient.connect();
 		// during startup, check if arguments are passed to the fragment
 		// this is where to do this because the layout has been applied
 		// to the fragment
@@ -313,9 +332,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     @Override
     public void onStop() {
         super.onStop();
-//        if (mGoogleApiClient.isConnected()) {
-//            mGoogleApiClient.disconnect();
-//        }
     }
 
 	@Override
@@ -881,8 +897,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     	if (!mLocIsGood) {
     		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     	}
+    	// moved the following to a menu action, for testing
     	// create new contents resource
-    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+//    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
     }
     
     final private ResultCallback<DriveContentsResult> driveContentsCallback = new
@@ -958,7 +975,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     	if (servicesAvailable()) {
 	        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
 	        	.addApi(LocationServices.API)
-	        	.addApi(Drive.API).addScope(Drive.SCOPE_FILE)
+//	        	.addApi(Drive.API)
+//	        	.addScope(Drive.SCOPE_FILE)
 	        	.addConnectionCallbacks(this)
 	        	.addOnConnectionFailedListener(this)
 	        	.build();

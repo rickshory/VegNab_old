@@ -88,6 +88,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
     protected GoogleApiClient mGoogleApiClient;
+    // track the state of Google API Client, to isolate errors
+    private static final int GAC_STATE_LOCATION = 1;
+    private static final int GAC_STATE_DRIVE = 2;
+    // we use LocationServices, and Drive, but not at the same time
+    private int mGACState = GAC_STATE_LOCATION;
     private LocationRequest mLocationRequest;
     private boolean mLocIsGood = false; // default until retrieved or established true
     private double mLatitude, mLongitude;
@@ -171,21 +176,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case R.id.action_export_visit:
 			Toast.makeText(getActivity(), "''Export Visit'' of Visit Header is not fully implemented yet", Toast.LENGTH_SHORT).show();
 			// test, create new contents resource
-			if (mGoogleApiClient.isConnected()) {
-				mGoogleApiClient.disconnect();
-		    	if (servicesAvailable()) {
-			        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-//			        	.addApi(LocationServices.API)
-			        	.addApi(Drive.API).addScope(Drive.SCOPE_FILE)
-			        	.addConnectionCallbacks(this)
-			        	.addOnConnectionFailedListener(this)
-			        	.build();
-		    	}
-		    	mGoogleApiClient.connect();
-		    	// following won't work, has to wait for the connected callback
-		    	// at least isolate errors in above
-//				Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
-			}
+		    if (mGACState != GAC_STATE_LOCATION) {
+		    	LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+		    }
+			mGACState = GAC_STATE_DRIVE;
+			buildGoogleApiClient();
+			mGoogleApiClient.connect();
+
 			return true;
 		
 		case R.id.action_delete_visit:
@@ -314,10 +311,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onResume() {
 	    super.onResume();
 //	    do other setup here if needed
-	    if (!mLocIsGood) {
+	    switch (mGACState) {
+	    case GAC_STATE_LOCATION:
+	    	if (!mLocIsGood) {
+	    		mGoogleApiClient.connect();
+	    	}
+	    	break;
+	    	
+	    case GAC_STATE_DRIVE:
 	    	mGoogleApiClient.connect();
+	    	break;	    
 	    }
-	    
 	}
 	
 	@Override
@@ -894,14 +898,22 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {
-    	if (!mLocIsGood) {
-    		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    	switch (mGACState) {
+    	case GAC_STATE_LOCATION:
+    		if (!mLocIsGood) {
+    			LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    		}
+    		break;
+    		
+    	case GAC_STATE_DRIVE: // this state is set by a menu action, for testing
+    		// test, create new contents resource
+    		Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+    		
+    		break;
     	}
-    	// moved the following to a menu action, for testing
-    	// create new contents resource
-//    	Drive.DriveApi.newDriveContents(mGoogleApiClient).setResultCallback(driveContentsCallback);
+    	
     }
-    
+
     final private ResultCallback<DriveContentsResult> driveContentsCallback = new
     		ResultCallback<DriveContentsResult>() {
     	@Override
@@ -969,20 +981,38 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         mGoogleApiClient.connect();
     }
 
-    // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-    // documented under FusedLocationProviderApi
+    // Builds a GoogleApiClient.
     protected synchronized void buildGoogleApiClient() {
+    	try {
+    		mGoogleApiClient.disconnect();
+    	} catch (NullPointerException e) {
+    		Log.v(LOG_TAG, "'mGoogleApiClient' is still null");
+    	}
     	if (servicesAvailable()) {
-	        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-	        	.addApi(LocationServices.API)
-//	        	.addApi(Drive.API)
-//	        	.addScope(Drive.SCOPE_FILE)
-	        	.addConnectionCallbacks(this)
-	        	.addOnConnectionFailedListener(this)
-	        	.build();
+    		// for testing, separate the states to isolate errors
+    		switch (mGACState) {
+    		case GAC_STATE_LOCATION:
+    			//  Uses the addApi() method to request the LocationServices API.
+    			// documented under FusedLocationProviderApi
+    			mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+		        	.addApi(LocationServices.API)
+		        	.addConnectionCallbacks(this)
+		        	.addOnConnectionFailedListener(this)
+		        	.build();
+    			break;
+    			
+    		case GAC_STATE_DRIVE: // testing this
+    			mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+		        	.addApi(Drive.API)
+		        	.addScope(Drive.SCOPE_FILE)
+		        	.addConnectionCallbacks(this)
+		        	.addOnConnectionFailedListener(this)
+		        	.build();
+    			break;
+    		}
     	}
     }
-
+    
 	private boolean servicesAvailable() {
 	    int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
 	

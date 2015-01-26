@@ -176,8 +176,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		case R.id.action_export_visit:
 			Toast.makeText(getActivity(), "''Export Visit'' of Visit Header is not fully implemented yet", Toast.LENGTH_SHORT).show();
 			// test, create new contents resource
-		    if (mGACState != GAC_STATE_LOCATION) {
+		    try {
 		    	LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+		    } catch (Exception e) {
+		    	Log.v(LOG_TAG, "GoogleApiClient may not be connected yet, error code " + e);
 		    }
 			mGACState = GAC_STATE_DRIVE;
 			buildGoogleApiClient();
@@ -892,7 +894,20 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            ((VisitHeaderFragment)getTargetFragment()).onDialogDismissed();
+        	try { // is this what occasionally crashes?, e.g. on pause while error dialog is displayed
+        		((VisitHeaderFragment)getTargetFragment()).onDialogDismissed();
+        	} catch (Exception e) {
+        		Log.v(LOG_TAG, "onDismiss error: " + e);
+        	}
+        }
+        	
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+        	try { // is this what occasionally crashes?, e.g. on pause while error dialog is displayed
+        		super.onSaveInstanceState(outState);
+        	} catch (Exception e) {
+        		Log.v(LOG_TAG, "onSaveInstanceState error: " + e);
+        	}
         }
     }
     // Runs when a GoogleApiClient object successfully connects.

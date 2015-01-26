@@ -955,13 +955,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
     // documented under FusedLocationProviderApi
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(LocationServices.API)
-//        		.addApi(Drive.API)
-//        		.addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+    	if (servicesAvailable()) {
+	        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+	                .addApi(LocationServices.API)
+	        		.addApi(Drive.API)
+	        		.addScope(Drive.SCOPE_FILE)
+	                .addConnectionCallbacks(this)
+	                .addOnConnectionFailedListener(this)
+	                .build();
+    	}
     }
 
 	private boolean servicesAvailable() {

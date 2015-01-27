@@ -182,8 +182,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		    	Log.v(LOG_TAG, "GoogleApiClient may not be connected yet, error code " + e);
 		    }
 			mGACState = GAC_STATE_DRIVE;
+			Log.v(LOG_TAG, "about to call 'buildGoogleApiClient()'");
 			buildGoogleApiClient();
+			Log.v(LOG_TAG, "about to do 'mGoogleApiClient.connect()'");
 			mGoogleApiClient.connect();
+			Log.v(LOG_TAG, "just after 'mGoogleApiClient.connect()'");
 
 			return true;
 		
@@ -856,8 +859,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
         	// Show dialog using GooglePlayServicesUtil.getErrorDialog()
         	showErrorDialog(connectionResult.getErrorCode());
             mResolvingError = true;
-            Log.v(LOG_TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-            mViewVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
+            Log.v(LOG_TAG, "Connection failed with code " + connectionResult.getErrorCode());
+            switch (mGACState) {
+            case GAC_STATE_LOCATION:
+            	mViewVisitLocation.setText("Location services connection failed with code " + connectionResult.getErrorCode());
+            	break;
+            case GAC_STATE_DRIVE: // make this show somewhere else
+            	mViewVisitLocation.setText("Google Drive connection failed with code " + connectionResult.getErrorCode());
+            	break;
+            }            
         }
     }
     

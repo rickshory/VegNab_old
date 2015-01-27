@@ -856,8 +856,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
                 mGoogleApiClient.connect(); // error with resolution intent, try again
             }
         } else {
+        	GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),getActivity(),2000).show();
         	// Show dialog using GooglePlayServicesUtil.getErrorDialog()
-        	showErrorDialog(connectionResult.getErrorCode());
+//        	showErrorDialog(connectionResult.getErrorCode());
             mResolvingError = true;
             Log.v(LOG_TAG, "Connection failed with code " + connectionResult.getErrorCode());
             switch (mGACState) {

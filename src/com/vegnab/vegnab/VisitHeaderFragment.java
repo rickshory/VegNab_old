@@ -951,7 +951,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     			return;
     		}
     		final DriveContents driveContents = result.getDriveContents();
-    		
+    		SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.US);
+    		final String fileName = "VegNab" + "_" + fileNameFormat.format(new Date());
     		// perform i/o off the ui thread
     		new Thread() {
     			@Override
@@ -960,13 +961,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    			OutputStream outputStream = driveContents.getOutputStream();
 	    			Writer writer = new OutputStreamWriter(outputStream);
 	    			try {
-	    				writer.write("Hello world");
+	    				writer.write("This will be the output of a visit's data.\n");
+	    				writer.write("Presently it is a test of logging.");
 	    				writer.close();
 	    			} catch (IOException e) {
 	    				Log.v(LOG_TAG, "Error writing file: " + e.getMessage());
 	    			}
 	    			MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-	    				.setTitle("New file")
+	    				.setTitle(fileName)
 	    				.setMimeType("text/plain")
 	    				.setStarred(true).build();
 	    			

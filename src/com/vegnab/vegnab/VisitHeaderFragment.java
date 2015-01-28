@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
@@ -966,18 +967,37 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    			try {
 	    				writer.write("This will be the output of a visit's data.\n");
 	    				writer.write("Presently it is a test of logging.\n");
-	    				if (visId == 0) {
-	    					writer.write("\nNo data yet for this Visit.\n");
-	    				} else {
+	    				// temporarily comment out the following
+//	    				if (visId == 0) {
+//	    					writer.write("\nNo data yet for this Visit.\n");
+//	    				} else {
+	    				if (true) { // for testing
 	    					writer.write("\nVisit ID = " + visId + "\n");
-	    					// how should we access the database here?
+	    					// test getting data from the database
+	    					VegNabDbHelper thdDb = new VegNabDbHelper(getActivity());
+//	    					ContentResolver thdRs = getActivity().getContentResolver();
+	    					Cursor thdCs;
+	    					String sSQL = "SELECT * FROM Projects;"; // to test, get something that exists
+	    					thdCs = thdDb.getReadableDatabase().rawQuery(sSQL, null);
+	    					while (thdCs.moveToNext()) {
+	    						writer.write("Project Code\t" 
+	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("ProjCode")) + "\n");
+	    						writer.write("Start date\t" 
+	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("StartDate")) + "\n");
+	    						Log.v(LOG_TAG, "wrote a record");
+	    					}
+	    					Log.v(LOG_TAG, "cursor done");
+	    					thdCs.close();
+	    					Log.v(LOG_TAG, "cursor closed");
+	    					thdDb.close();
+	    					Log.v(LOG_TAG, "database closed");
 	    				}
 	    				writer.close();
 	    			} catch (IOException e) {
 	    				Log.v(LOG_TAG, "Error writing file: " + e.getMessage());
 	    			}
 	    			MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-	    				.setTitle(fileName)
+	    				.setTitle(fileName + ".txt")
 	    				.setMimeType("text/plain")
 	    				.setStarred(true).build();
 	    			

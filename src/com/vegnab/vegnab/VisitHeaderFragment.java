@@ -951,8 +951,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     			return;
     		}
     		final DriveContents driveContents = result.getDriveContents();
+    		String visName = "" + mViewVisitName.getText().toString().trim();
     		SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.US);
-    		final String fileName = "VegNab" + "_" + fileNameFormat.format(new Date());
+    		final String fileName = "VegNab" + " " + ((visName == "" ? "" : visName + " ")) 
+    				+ fileNameFormat.format(new Date());
+    		final long visId = mVisitId;
     		// perform i/o off the ui thread
     		new Thread() {
     			@Override

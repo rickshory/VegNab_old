@@ -965,14 +965,16 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    			OutputStream outputStream = driveContents.getOutputStream();
 	    			Writer writer = new OutputStreamWriter(outputStream);
 	    			try {
-	    				writer.write("This will be the output of a visit's data.\n");
-	    				writer.write("Presently it is a test of logging.\n");
+						// \n writes only a '0x0a' character to the file (newline)
+						// 'normal' text files contain '0x0d' '0x0a' (carriage return and then newline)
+	    				writer.write("This will be the output of a visit's data.\r\n");
+	    				writer.write("Presently it is a test of logging.\r\n");
 	    				// temporarily comment out the following
 //	    				if (visId == 0) {
 //	    					writer.write("\nNo data yet for this Visit.\n");
 //	    				} else {
 	    				if (true) { // for testing
-	    					writer.write("\nVisit ID = " + visId + "\n");
+	    					writer.write("\r\nVisit ID = " + visId + "\r\n");
 	    					// test getting data from the database
 	    					VegNabDbHelper thdDb = new VegNabDbHelper(getActivity());
 //	    					ContentResolver thdRs = getActivity().getContentResolver();
@@ -981,9 +983,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    					thdCs = thdDb.getReadableDatabase().rawQuery(sSQL, null);
 	    					while (thdCs.moveToNext()) {
 	    						writer.write("Project Code\t" 
-	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("ProjCode")) + "\n");
+	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("ProjCode")) + "\r\n");
 	    						writer.write("Start date\t" 
-	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("StartDate")) + "\n");
+	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("StartDate")) + "\r\n");
 	    						Log.v(LOG_TAG, "wrote a record");
 	    					}
 	    					Log.v(LOG_TAG, "cursor done");

@@ -965,7 +965,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    			Writer writer = new OutputStreamWriter(outputStream);
 	    			try {
 	    				writer.write("This will be the output of a visit's data.\n");
-	    				writer.write("Presently it is a test of logging.");
+	    				writer.write("Presently it is a test of logging.\n");
+	    				if (visId == 0) {
+	    					writer.write("\nNo data yet for this Visit.\n");
+	    				} else {
+	    					writer.write("\nVisit ID = " + visId + "\n");
+	    					// how should we access the database here?
+	    				}
 	    				writer.close();
 	    			} catch (IOException e) {
 	    				Log.v(LOG_TAG, "Error writing file: " + e.getMessage());

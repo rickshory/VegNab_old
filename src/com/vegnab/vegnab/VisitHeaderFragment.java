@@ -992,7 +992,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     			return;
     		}
     		Toast.makeText(getActivity(), "Created file, content: " + result.getDriveFile().getDriveId(), Toast.LENGTH_LONG).show();
+			mGACState = GAC_STATE_LOCATION;
+			Log.v(LOG_TAG, "about to call 'buildGoogleApiClient()' to change back to Location");
+			buildGoogleApiClient();
+			Log.v(LOG_TAG, "about to do 'mGoogleApiClient.connect()'");
+			mGoogleApiClient.connect();
     	}
+
+    	
     };
 
     // Called by Google Play services if the connection to GoogleApiClient drops because of an error.

@@ -31,6 +31,7 @@ import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -959,7 +960,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     		final long visId = mVisitId;
     		// perform i/o off the ui thread
     		new Thread() {
-    			@Override
+    			@SuppressLint("NewApi")
+				@Override
     			public void run() {
     				    			// write content to DriveContents
 	    			OutputStream outputStream = driveContents.getOutputStream();
@@ -979,15 +981,38 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    					VegNabDbHelper thdDb = new VegNabDbHelper(getActivity());
 //	    					ContentResolver thdRs = getActivity().getContentResolver();
 	    					Cursor thdCs;
-	    					String sSQL = "SELECT * FROM Projects;"; // to test, get something that exists
+	    					String sSQL;
+	    					sSQL = "SELECT Visits.VisitName, Visits.VisitDate, Projects.ProjCode, " 
+	    							+ "PlotTypes.PlotTypeDescr, Visits.StartTime, Visits.LastChanged, " 
+	    							+ "Namers.NamerName, Visits.Scribe, Locations.LocName, " 
+	    							+ "Locations.VisitID, Locations.SubplotID, Locations.ListingOrder, " 
+	    							+ "Locations.Latitude, Locations.Longitude, Locations.TimeStamp, " 
+	    							+ "Locations.Accuracy, Locations.Altitude, LocationSources.LocationSource, " 
+	    							+ "Visits.Azimuth, Visits.VisitNotes, Visits.DeviceType, " 
+	    							+ "Visits.DeviceID, Visits.DeviceIDSource, Visits.IsComplete, " 
+	    							+ "Visits.ShowOnMobile, Visits.Include, Visits.IsDeleted, " 
+	    							+ "Visits.NumAdditionalLocations, Visits.AdditionalLocationsType, " 
+	    							+ "Visits.AdditionalLocationSelected " 
+	    							+ "FROM ((((Visits LEFT JOIN Projects " 
+	    							+ "ON Visits.ProjID = Projects._id) " 
+	    							+ "LEFT JOIN PlotTypes ON Visits.PlotTypeID = PlotTypes._id) " 
+	    							+ "LEFT JOIN Namers ON Visits.NamerID = Namers._id) " 
+	    							+ "LEFT JOIN Locations ON Visits.RefLocID = Locations._id) " 
+	    							+ "LEFT JOIN LocationSources ON Locations.SourceID = LocationSources._id;";
 	    					thdCs = thdDb.getReadableDatabase().rawQuery(sSQL, null);
-	    					while (thdCs.moveToNext()) {
-	    						writer.write("Project Code\t" 
-	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("ProjCode")) + "\r\n");
-	    						writer.write("Start date\t" 
-	    								+ thdCs.getString(thdCs.getColumnIndexOrThrow("StartDate")) + "\r\n");
+	    					int numCols = thdCs.getColumnCount();
+//	    					while (thdCs.moveToNext()) {
+	    						for (int i=0; i<numCols; i++) {
+	    							writer.write(thdCs.getColumnName(i) + "\t");
+	    							try {
+//	    								writer.write(thdCs.getType(i) + "\r\n");
+	    								writer.write(thdCs.getString(i) + "\r\n");
+	    							} catch (Exception e) {
+	    								writer.write("\r\n");
+	    							}
+	    						}
 	    						Log.v(LOG_TAG, "wrote a record");
-	    					}
+//	    					}
 	    					Log.v(LOG_TAG, "cursor done");
 	    					thdCs.close();
 	    					Log.v(LOG_TAG, "cursor closed");

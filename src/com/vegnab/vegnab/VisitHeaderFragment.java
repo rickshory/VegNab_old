@@ -93,7 +93,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // track the state of Google API Client, to isolate errors
     private static final int GAC_STATE_LOCATION = 1;
     private static final int GAC_STATE_DRIVE = 2;
-    // we use LocationServices, and Drive, but not at the same time
+    // we use LocationServices, and Drive, but not at the same time; start with LocationServices
     private int mGACState = GAC_STATE_LOCATION;
     private LocationRequest mLocationRequest;
     private boolean mLocIsGood = false; // default until retrieved or established true
@@ -245,6 +245,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mViewVisitDate = (EditText) rootView.findViewById(R.id.txt_visit_date);
 		mViewVisitDate.setText(mDateFormat.format(mCalendar.getTime()));
 		mViewVisitDate.setOnClickListener(this);
+		mViewVisitDate.setOnFocusChangeListener(this);
 		mNamerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
 		mNamerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
 		mNamerSpinner.setEnabled(false); // will enable when data ready		
@@ -535,7 +536,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	
 	private int saveVisitRecord () {
-		// if anything invalid, don't save record
+		// if anything invalid, don't save record, and return zero to indicate failure
 		if ("" + mViewVisitName.getText().toString().trim() == "") {
 			Toast.makeText(this.getActivity(),
 					"Need Visit Name",
@@ -633,7 +634,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
 			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			numUpdated = rs.update(mUri, mValues, null, null);
-			Log.v(LOG_TAG, "Saved record in saveVisitRecord; numUpdated: " + numUpdated);
+			Log.v(LOG_TAG, "Updated record in saveVisitRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}
 	}	
@@ -693,12 +694,50 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addSppNamerDlg.show(fm, "");
 			}
-			
 
 			break;
-//		case R.id.txt_descr:
-//			values.put("Description", mDescription.getText().toString().trim());
-//			break;
+/*	public void onFocusChange(View v, boolean hasFocus) {
+		if(!hasFocus) { // something lost focus
+			mValues.clear();
+			switch (v.getId()) {
+			case R.id.txt_visit_name:
+				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
+				break;
+			case R.id.txt_visit_date:
+				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
+				break;
+			case R.id.txt_visit_scribe:
+				mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+				break;
+			case R.id.txt_visit_location:
+				if (mLocId != 0) {
+					mValues.put("RefLocID", mLocId);
+				}
+				break;
+			case R.id.txt_visit_azimuth:
+				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
+				break;			
+			case R.id.txt_visit_notes:
+				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+				break;			
+
+			default: // save everything
+				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
+				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
+				mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+				if (mLocId != 0) {
+					mValues.put("RefLocID", mLocId);
+				}
+				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
+				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+				
+				}
+			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
+			int numUpdated = saveVisitRecord();
+			}		
+		}
+*/
+
 		}
 	}
 	// create context menus

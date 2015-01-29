@@ -395,56 +395,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			addSppNamerDlg.show(fm, "");
 			break;
 		case R.id.visit_header_go_button:
-			// for testing, write a log file
-			// the following worked, but the file appears, using Android File Manager, in
-			// storage > emulated > 0
-			// and 
-			// storage > emulated > legacy
-			// and
-			// storage > sdcard0
-			// all apparently the same, and the same as viewed from PC looking at the Android as 
-			// Galaxy Nexus > Internal Storage
-			// except this created file does *not* appear
-			if (isExternalStorageWritable()) {
-				Log.v(LOG_TAG, "external storage is writeable");
-				String content = "hello world";
-	//			File file;
-	//			FileOutputStream outputStream;
-				try {
-	//				file = new File(Environment.getExternalStorageDirectory(), "VegNab.txt");
-	//				file = new File(Environment.getExternalStoragePublicDirectory(
-	//					Environment.DIRECTORY_DOWNLOADS), "VegNab.txt");
-	//				if (!file.mkdirs()) {
-	//					Log.e(LOG_TAG, "Folder not created");
-	//				}
-					File sdCard = Environment.getExternalStorageDirectory();
-					// create the folder
-					File folder = new File(sdCard.getAbsolutePath() + "/VegNab");
-					folder.mkdirs();
-					Log.v(LOG_TAG, "folder created 'VegNab'");
-					// create the file
-					File logFile = new File(folder, "VegNabLog.txt");
-					Log.v(LOG_TAG, "file created 'VegNabLog.txt'");
-					FileOutputStream fos = new FileOutputStream(logFile);
-					OutputStreamWriter osw = new OutputStreamWriter(fos);
-					// write a string to the file
-					osw.write(content);
-					osw.flush();
-					osw.close();
-					
-	//				outputStream = new FileOutputStream(file);
-	//				outputStream.write(content.getBytes());
-	//				outputStream.close();
-					Log.v(LOG_TAG, "completed write of test 'VegNabLog.txt' file");
-					
-				} catch (IOException e) {
-					Log.v(LOG_TAG, "exception occurred on write of test 'VegNab.txt' file");
-					e.printStackTrace();
-				}
-			} else {
-				Log.v(LOG_TAG, "external storage is NOT writeable");
-			}
-			
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}

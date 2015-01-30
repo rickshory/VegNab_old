@@ -30,7 +30,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final int VISIT_ID = 40;
 	private static final int LOCATIONS = 50;
 	private static final int LOCATION_ID = 60;
-
+	private static final int NAMERS = 70;
+	private static final int NAMER_ID = 80;
 	
 	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
 	private static final String BASE_PATH = "data";
@@ -50,6 +51,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/visits/#", VISIT_ID);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/locations", LOCATIONS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/locations/#", LOCATION_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/namers", NAMERS);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/namers/#", NAMER_ID);
 	}
 	HashSet<String> mFields_Projects = new HashSet<String>();
 	
@@ -115,6 +118,13 @@ public class ContentProvider_VegNab extends ContentProvider {
 			case LOCATIONS:
 				queryBuilder.setTables("Locations");
 				break;
+
+			case NAMER_ID:
+				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				// note, no break, so drops through
+			case NAMERS:
+				queryBuilder.setTables("Namers");
+				break;
 				
 			
 			default:
@@ -152,6 +162,11 @@ public class ContentProvider_VegNab extends ContentProvider {
 			id = sqlDB.insert("Locations", null, values);
 			uriToReturn = Uri.parse(BASE_PATH + "/locations/" + id);
 			break;
+		case NAMERS:
+			id = sqlDB.insert("Namers", null, values);
+			uriToReturn = Uri.parse(BASE_PATH + "/namers/" + id);
+			break;
+		
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -202,6 +217,17 @@ public class ContentProvider_VegNab extends ContentProvider {
 			}
 			break;
 			
+		case NAMERS:
+			rowsDeleted = sqlDB.delete("Namers", selection, selectionArgs);
+			break;
+		case NAMER_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete("Namers", "_id=" + id, null);
+			} else {
+				rowsDeleted = sqlDB.delete("Namers", "_id=" + id, selectionArgs);
+			}
+			break;
 			
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -261,6 +287,17 @@ public class ContentProvider_VegNab extends ContentProvider {
 			}
 			break;
 
+		case NAMERS:
+			rowsUpdated = sqlDB.update("Namers", values, selection, selectionArgs);
+			break;
+		case NAMER_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.update("Namers", values, "_id=" + id, null);
+			} else {
+				rowsUpdated = sqlDB.update("Namers", values, "_id=" + id, selectionArgs);
+			}
+			break;
 			
 		default:
 			throw new IllegalArgumentException("Unknown URI:" + uri);

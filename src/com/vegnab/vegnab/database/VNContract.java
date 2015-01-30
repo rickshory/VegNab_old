@@ -38,8 +38,9 @@ public final class VNContract {
 		public static final int PROJECT_TO_EDIT = 12; //
 		// in Visit Header
 		public static final int VISIT_TO_EDIT = 21;
-		public static final int NAMERS = 22;
-		public static final int LOCATIONS = 23;
+		public static final int EXISTING_NAMERS = 22;
+		public static final int NAMERS = 23;
+		public static final int LOCATIONS = 24;
 
 		
 	}

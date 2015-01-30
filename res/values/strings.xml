@@ -101,7 +101,8 @@
     <string name="add_namer_header">Person\'s name who will be deciding the species</string>
     <string name="add_namer_msg">This should be an identifiable human, not something untraceable like \"team two\"</string>
     <string name="add_namer_hint">Person\'s Name</string>
-    
+    <string name="add_namer_missing">Need person\'s Name</string>
+    <string name="add_namer_duplicate">Duplicate Name</string>
     
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>

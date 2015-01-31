@@ -469,7 +469,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mViewAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
 				mViewVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
 			}
-
 			break;
 		
 		case Loaders.NAMERS:
@@ -659,6 +658,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// sort out the spinners
 		// can't use switch because not constants
 		if (parent.getId() == mNamerSpinner.getId()) {
+			// workaround for spinner firing when first set
 			if(((String)parent.getTag()).equalsIgnoreCase(TAG_SPINNER_FIRST_USE)) {
 	            parent.setTag("");
 	            return;
@@ -669,7 +669,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addSppNamerDlg.show(fm, "");
-
 			}
 			if (mNamerId != 0) {
 				// save in app Preferences as the default Project

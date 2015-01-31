@@ -121,11 +121,12 @@ public class ContentProvider_VegNab extends ContentProvider {
 
 			case NAMER_ID:
 				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				Log.v(LOG_TAG, "NAMER_ID appendWhere");
 				// note, no break, so drops through
 			case NAMERS:
 				queryBuilder.setTables("Namers");
+				Log.v(LOG_TAG, "NAMERS setTables");
 				break;
-				
 			
 			default:
 				throw new IllegalArgumentException("Unknown URI: " + uri);		

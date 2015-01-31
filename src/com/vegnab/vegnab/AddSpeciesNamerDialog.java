@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
 	private EditText mViewNamer;
 	private String mName;
 	private HashSet<String> mExistingNamers = new HashSet<String>();
@@ -48,8 +49,9 @@ public class AddSpeciesNamerDialog extends DialogFragment
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
+		// fire the loader manager off ASAP, its results don't use the UI
+		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
 		View view = inflater.inflate(R.layout.fragment_new_namer, root);
-
 		mViewNamer = (EditText) view.findViewById(R.id.txt_new_namer);
 		Button btnCancel = (Button) view.findViewById(R.id.btn_new_namer_cancel);
 		btnCancel.setOnClickListener(this);
@@ -107,6 +109,7 @@ public class AddSpeciesNamerDialog extends DialogFragment
 			// get the existing Namers, to disallow duplicates
 			Uri allNamersUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "namers");
+			Log.v(LOG_TAG, "allNamersUri: " + allNamersUri.toString());
 			String[] projection = {"NamerName"};
 			cl = new CursorLoader(getActivity(), allNamersUri,
 					projection, select, null, null);
@@ -122,6 +125,7 @@ public class AddSpeciesNamerDialog extends DialogFragment
 			mExistingNamers.clear();
 			while (c.moveToNext()) {
 				mExistingNamers.add(c.getString(c.getColumnIndexOrThrow("NamerName")));
+				Log.v(LOG_TAG, "Namer item added to HashMap: " + c.getString(c.getColumnIndexOrThrow("NamerName")));
 			}
 			break;
 		}	
@@ -135,5 +139,4 @@ public class AddSpeciesNamerDialog extends DialogFragment
 			break;
 		}
 	}
-	
 }

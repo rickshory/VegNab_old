@@ -32,11 +32,8 @@ import android.widget.Toast;
 
 public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
-	Uri uri, baseUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
-	ContentValues values = new ContentValues();
 	private EditText mViewNamer;
 	private String mName;
-	private long mNamerID;
 	private HashSet<String> mExistingNamers = new HashSet<String>();
 	
 	static AddSpeciesNamerDialog newInstance() {
@@ -86,27 +83,17 @@ public class AddSpeciesNamerDialog extends DialogFragment
 					Toast.LENGTH_LONG).show();
 				break;
 			}
-/*		
-		ContentResolver rs = getActivity().getContentResolver();
-		if (mProjRecId == 0) { // new record
-			mUri = rs.insert(mProjectsUri, mValues);
-			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + mUri.toString());
-			mProjRecId = Long.parseLong(mUri.getLastPathSegment());
-			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
-			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
-			// set default project; redundant with fn in NewVisitFragment; low priority fix
+			ContentResolver rs = c.getContentResolver();
+			Uri uri, namersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
+			ContentValues values = new ContentValues();
+			values.put("NamerName", mName);
+			uri = rs.insert(namersUri, values);
+			long namerId = Long.parseLong(uri.getLastPathSegment());
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mProjRecId);
+			prefEditor.putLong(Prefs.DEFAULT_NAMER_ID, namerId);
 			prefEditor.commit();
-			return 1;
-		} else {
-			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
-			int numUpdated = rs.update(mUri, mValues, null, null);
-			Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
-			return numUpdated;
-		}
-*/
+			dismiss();
 			break;
  		}
 	}

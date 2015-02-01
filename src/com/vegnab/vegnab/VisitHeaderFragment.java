@@ -81,7 +81,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
-        LocationListener {
+        LocationListener, DialogClickListener {
 
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
@@ -382,6 +382,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onClick(View v) {
 		AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+		addSppNamerDlg.setTargetFragment(this, 0);
 		FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId()) {
 		case R.id.txt_visit_date:
@@ -389,11 +390,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			break;
 		case R.id.sel_spp_namer_spinner:
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick");
-			addSppNamerDlg.show(fm, "");
+			addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
 			break;
 		case R.id.lbl_spp_namer_spinner_cover:
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick of 'lbl_spp_namer_spinner_cover'");
-			addSppNamerDlg.show(fm, "");
+			addSppNamerDlg.show(fm, "sppNamerDialog_TextClick");
 			break;
 		case R.id.visit_header_go_button:
 			mButtonCallback.onVisitHeaderGoButtonClicked();
@@ -1149,4 +1150,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    }
 	    return false;
 	}
+
+	@Override
+	public void onDialogPositiveClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogNegativeClick() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

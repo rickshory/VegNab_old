@@ -33,7 +33,11 @@ import android.widget.Toast;
 public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
-	private DialogClickListener callback;
+	DialogClickListener dialogCallback;
+	public interface DialogClickListener {
+		public void onDialogPositiveClick();
+		public void onDialogNegativeClick();		
+	}
 	private EditText mViewNamer;
 	private String mName;
 	private HashSet<String> mExistingNamers = new HashSet<String>();
@@ -52,14 +56,33 @@ public class AddSpeciesNamerDialog extends DialogFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            callback = (DialogClickListener) getTargetFragment();
+        	dialogCallback = (DialogClickListener) getTargetFragment();
         } catch (ClassCastException e) {
             throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
         }
 		// fire the loader manager off ASAP, its results don't use the UI
 		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
     }
-	
+/*
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("message")
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    	dialogCallback.onDialogPositiveClick();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    	dialogCallback.onDialogNegativeClick();
+                    }
+                });
+
+        return builder.create();
+    }    
+*/    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_new_namer, root);
@@ -71,36 +94,20 @@ public class AddSpeciesNamerDialog extends DialogFragment
 		getDialog().setTitle(R.string.add_namer_title);
 		return view;
 	}	
-/*   @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("message")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        callback.onYesClick();
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        callback.onNoClick();
-                    }
-                });
 
-        return builder.create();*/
 	@Override
  	public void onClick(View v) {
 		Context c = this.getActivity();
  		switch (v.getId()) {
 		case R.id.btn_new_namer_cancel:
-			callback.onDialogNegativeClick();
+//			dialogCallback.onDialogNegativeClick();
 //			Toast.makeText(this.getActivity(), 
 //					"'Cancel' button clicked" , 
 //					Toast.LENGTH_SHORT).show();
 			dismiss();
 			break;
 		case R.id.btn_new_namer_save:
-			callback.onDialogPositiveClick();
+//			dialogCallback.onDialogPositiveClick();
 			mName = "" + mViewNamer.getText().toString().trim();
 			if (mName == "") {
 				Toast.makeText(c,

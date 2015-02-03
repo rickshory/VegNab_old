@@ -29,11 +29,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AddSpeciesNamerDialog extends DialogFragment 
+public class AddSpeciesNamerDialog extends android.support.v4.app.DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
 	public interface AddNamerDialogListener {
-		public void onAddNamerSaveClick(DialogFragment dialog);
+		public void onAddNamerSaveClick(android.support.v4.app.DialogFragment dialog);
 	}
 	AddNamerDialogListener mListener;
 	private EditText mViewNamer;

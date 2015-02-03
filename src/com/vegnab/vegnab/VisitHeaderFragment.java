@@ -883,7 +883,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     }
 
     // A fragment to display an error dialog
-    public static class ErrorDialogFragment extends DialogFragment {
+    public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
         public ErrorDialogFragment() { }
 
         @Override
@@ -1152,7 +1152,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onAddNamerSaveClick(DialogFragment dialog) {
+	public void onAddNamerSaveClick(android.support.v4.app.DialogFragment dialog) {
 		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
 		
 	}

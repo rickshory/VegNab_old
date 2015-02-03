@@ -81,7 +81,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		android.view.View.OnFocusChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
-        LocationListener {
+        LocationListener, AddSpeciesNamerDialog.AddNamerDialogListener {
 
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
@@ -1150,17 +1150,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    }
 	    return false;
 	}
-/*
-	@Override
-	public void onDialogPositiveClick() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public void onDialogNegativeClick() {
-		// TODO Auto-generated method stub
+	public void onAddNamerSaveClick(DialogFragment dialog) {
+		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
 		
 	}
-*/
 }

@@ -32,10 +32,10 @@ import android.widget.Toast;
 public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
-	public interface NewNamerListener {
-		public void onNewNamerSaveClick();
-		public void onNewNamerCancelClick();		
+	public interface AddNamerDialogListener {
+		public void onAddNamerSaveClick(DialogFragment dialog);
 	}
+	AddNamerDialogListener mListener;
 	private EditText mViewNamer;
 	private String mName;
 	private HashSet<String> mExistingNamers = new HashSet<String>();
@@ -52,13 +52,15 @@ public class AddSpeciesNamerDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        try {
-//        	dialogCallback = (DialogClickListener) getTargetFragment();
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
-//        }
-		// fire the loader manager off ASAP, its results don't use the UI
+		// fire off the loader manager ASAP, its results don't use the UI
 		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
+		// Verify that the host fragment implements the callback interface
+        try {
+        	mListener = (AddNamerDialogListener) getTargetFragment();
+        	Log.v(LOG_TAG, "(AddNamerDialogListener) getTargetFragment()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Calling fragment must implement AddNamerDialogListener interface");
+        }
     }
     
     @Override
@@ -74,6 +76,12 @@ public class AddSpeciesNamerDialog extends DialogFragment
     		@Override
     		public void onClick(DialogInterface dialog, int id) {
                 // test and Save here
+    			Log.v(LOG_TAG, "onClick(DialogInterface dialog, int id); dialog='" + dialog.toString() + "', id=" + id);
+    			if (AddSpeciesNamerDialog.this == null) {
+    				Log.v(LOG_TAG, "AddSpeciesNamerDialog.this == null");
+    			} else {
+    				mListener.onAddNamerSaveClick(AddSpeciesNamerDialog.this);
+    			}
     		}
     	})
     	.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {

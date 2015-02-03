@@ -33,7 +33,7 @@ public class AddSpeciesNamerDialog extends DialogFragment
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
 	public interface AddNamerDialogListener {
-		public void onAddNamerSaveClick();
+		public void onAddNamerSaveClick(DialogFragment dialog);
 	}
 	AddNamerDialogListener mListener;
 	private EditText mViewNamer;
@@ -80,7 +80,7 @@ public class AddSpeciesNamerDialog extends DialogFragment
     			if (AddSpeciesNamerDialog.this == null) {
     				Log.v(LOG_TAG, "AddSpeciesNamerDialog.this == null");
     			} else {
-    				mListener.onAddNamerSaveClick();
+    				mListener.onAddNamerSaveClick(AddSpeciesNamerDialog.this);
     			}
     		}
     	})

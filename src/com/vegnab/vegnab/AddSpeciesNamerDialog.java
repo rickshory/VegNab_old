@@ -116,9 +116,10 @@ public class AddSpeciesNamerDialog extends DialogFragment
 		return view;
 	}	
 */
-	
+
 	@Override
  	public void onClick(View v) {
+/*
 		Context c = this.getActivity();
  		switch (v.getId()) {
 		case R.id.btn_new_namer_cancel:
@@ -156,8 +157,9 @@ public class AddSpeciesNamerDialog extends DialogFragment
 			dismiss();
 			break;
  		}
+*/
 	}
-
+    
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		CursorLoader cl = null;

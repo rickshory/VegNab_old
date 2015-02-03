@@ -6,19 +6,15 @@ import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -33,21 +29,19 @@ import android.widget.Toast;
 public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
-	DialogClickListener dialogCallback;
-	public interface DialogClickListener {
-		public void onDialogPositiveClick();
-		public void onDialogNegativeClick();		
+	public interface NewNamerListener {
+		public void onNewNamerSaveClick();
+		public void onNewNamerCancelClick();		
 	}
 	private EditText mViewNamer;
 	private String mName;
 	private HashSet<String> mExistingNamers = new HashSet<String>();
 	
-	static AddSpeciesNamerDialog newInstance() {
+	public static AddSpeciesNamerDialog newInstance() {
 		AddSpeciesNamerDialog f = new AddSpeciesNamerDialog();
+//		f.setTargetFragment((Fragment) listener, /*requestCode*/ 123);
 		// supply arguments
 		Bundle args = new Bundle();
-//		args.putLong("projRecId", projRecId);
-//		args.putString("projCode", projCode);
 		f.setArguments(args);
 		return f;
 	};
@@ -55,11 +49,11 @@ public class AddSpeciesNamerDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-        	dialogCallback = (DialogClickListener) getTargetFragment();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
-        }
+//        try {
+//        	dialogCallback = (DialogClickListener) getTargetFragment();
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
+//        }
 		// fire the loader manager off ASAP, its results don't use the UI
 		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
     }

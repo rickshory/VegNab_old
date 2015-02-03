@@ -70,22 +70,24 @@ public class AddSpeciesNamerDialog extends DialogFragment
     	LayoutInflater inflater = getActivity().getLayoutInflater();
     	// Inflate and set the layout for the dialog
     	// Pass null as the parent view because its going in the dialog layout
-    	builder.setView(inflater.inflate(R.layout.fragment_new_namer, null))
+    	builder.setView(inflater.inflate(R.layout.fragment_new_namer, null));
     	// Add action buttons
-    	.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
+    	builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
     		@Override
     		public void onClick(DialogInterface dialog, int id) {
                 // test and Save here
-    			Log.v(LOG_TAG, "onClick(DialogInterface dialog, int id); dialog='" + dialog.toString() + "', id=" + id);
+    			Log.v(LOG_TAG, "Save: onClick(DialogInterface dialog, int id); dialog='" + dialog.toString() + "', id=" + id);
     			if (AddSpeciesNamerDialog.this == null) {
     				Log.v(LOG_TAG, "AddSpeciesNamerDialog.this == null");
     			} else {
+    				Log.v(LOG_TAG, "AddSpeciesNamerDialog.this: '" + AddSpeciesNamerDialog.this.toString() + "'");
     				mListener.onAddNamerSaveClick(AddSpeciesNamerDialog.this);
     			}
     		}
-    	})
-    	.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+    	});
+    	builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
     		public void onClick(DialogInterface dialog, int id) {
+    			Log.v(LOG_TAG, "Cancel: onClick(DialogInterface dialog, int id); dialog='" + dialog.toString() + "', id=" + id);
     			AddSpeciesNamerDialog.this.getDialog().cancel();
     		}
     	});
@@ -127,6 +129,8 @@ public class AddSpeciesNamerDialog extends DialogFragment
 
 	@Override
  	public void onClick(View v) {
+//		Context c = this.getActivity();
+		Log.v(LOG_TAG, "onClick, v.getId()=" + v.getId());
 /*
 		Context c = this.getActivity();
  		switch (v.getId()) {

@@ -72,6 +72,8 @@ public class AddSpeciesNamerDialog extends DialogFragment
     	// Pass null as the parent view because its going in the dialog layout
     	builder.setView(inflater.inflate(R.layout.fragment_new_namer, null));
     	// Add action buttons
+    	builder.setPositiveButton(R.string.action_save, null);
+/*
     	builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
     		@Override
     		public void onClick(DialogInterface dialog, int id) {
@@ -85,6 +87,7 @@ public class AddSpeciesNamerDialog extends DialogFragment
     			}
     		}
     	});
+*/
     	builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
     		public void onClick(DialogInterface dialog, int id) {
     			Log.v(LOG_TAG, "Cancel: onClick(DialogInterface dialog, int id); dialog='" + dialog.toString() + "', id=" + id);
@@ -93,6 +96,22 @@ public class AddSpeciesNamerDialog extends DialogFragment
     	});
     	return builder.create();
     }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        AlertDialog dialog = (AlertDialog)getDialog();
+
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positiveButton.setOnClickListener(new View.OnClickListener() {                  
+            @Override
+            public void onClick(View onClick) {
+            	Log.v(LOG_TAG, "onSaveButtonClick");
+            }
+        });
+    }
+    
 /*
     
     

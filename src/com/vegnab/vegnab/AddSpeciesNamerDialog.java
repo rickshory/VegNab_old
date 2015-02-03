@@ -101,37 +101,22 @@ public class AddSpeciesNamerDialog extends DialogFragment
     public void onResume() {
         super.onResume();
 
-        AlertDialog dialog = (AlertDialog)getDialog();
+        final AlertDialog dialog = (AlertDialog)getDialog();
 
         Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         positiveButton.setOnClickListener(new View.OnClickListener() {                  
             @Override
             public void onClick(View onClick) {
-            	Log.v(LOG_TAG, "onSaveButtonClick");
+            	Log.v(LOG_TAG, "onSaveButtonClick, about to callback to the host Fragment");
+            	mListener.onAddNamerSaveClick(AddSpeciesNamerDialog.this);
+            	Log.v(LOG_TAG, "onSaveButtonClick, after callback to the host Fragment");
+            	// when ready, dismiss the dialog
+            	dismiss();
             }
         });
     }
     
-/*
-    
-    
-        
-        builder.setMessage("message")
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    	dialogCallback.onDialogPositiveClick();
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    	dialogCallback.onDialogNegativeClick();
-                    }
-                });
 
-        return builder.create();
-    }    
-*/    
 /*    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {

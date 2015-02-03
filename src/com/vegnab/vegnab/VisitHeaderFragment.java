@@ -1152,7 +1152,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	@Override
-	public void onAddNamerSaveClick(DialogFragment dialog) {
+	public void onAddNamerSaveClick() {
 		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
 		
 	}

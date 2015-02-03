@@ -29,11 +29,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AddSpeciesNamerDialog extends android.support.v4.app.DialogFragment 
+public class AddSpeciesNamerDialog extends DialogFragment 
 		implements android.view.View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = AddSpeciesNamerDialog.class.getSimpleName();
 	public interface AddNamerDialogListener {
-		public void onAddNamerSaveClick(android.support.v4.app.DialogFragment dialog);
+		public void onAddNamerSaveClick(DialogFragment dialog);
 	}
 	AddNamerDialogListener mListener;
 	private EditText mViewNamer;
@@ -107,9 +107,9 @@ public class AddSpeciesNamerDialog extends android.support.v4.app.DialogFragment
         positiveButton.setOnClickListener(new View.OnClickListener() {                  
             @Override
             public void onClick(View onClick) {
-            	Log.v(LOG_TAG, "onSaveButtonClick, about to callback to the host Fragment");
+            	Log.v(LOG_TAG, "onSaveButtonClick, about to callback to the main Activity");
             	mListener.onAddNamerSaveClick(AddSpeciesNamerDialog.this);
-            	Log.v(LOG_TAG, "onSaveButtonClick, after callback to the host Fragment");
+            	Log.v(LOG_TAG, "onSaveButtonClick, after callback to the main Activity");
             	// when ready, dismiss the dialog
             	dismiss();
             }

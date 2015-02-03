@@ -29,8 +29,10 @@ import android.os.Build;
 public class MainVNActivity extends ActionBarActivity 
 		implements NewVisitFragment.OnButtonListener, 
 		VisitHeaderFragment.OnButtonListener, 
-		VegSubplotFragment.OnButtonListener {
+		VegSubplotFragment.OnButtonListener, 
+		AddSpeciesNamerDialog.AddNamerDialogListener {
 	
+	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
 
 	@Override
@@ -245,6 +247,12 @@ public class MainVNActivity extends ActionBarActivity
 	    	mUniqueDeviceId = UUID.randomUUID().toString();
     		return;	    	
 	    }
+	}
+
+	@Override
+	public void onAddNamerSaveClick(DialogFragment dialog) {
+		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
+		
 	}
 
 }

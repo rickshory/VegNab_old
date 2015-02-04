@@ -381,18 +381,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
-		AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
-		addSppNamerDlg.setTargetFragment(this, 0);
-		FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId()) {
 		case R.id.txt_visit_date:
 			fireOffDatePicker();
 			break;
-		case R.id.sel_spp_namer_spinner:
-			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick");
-			addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
-			break;
+//		case R.id.sel_spp_namer_spinner: // does not receive onClick
 		case R.id.lbl_spp_namer_spinner_cover:
+			AddSpeciesNamerDialog addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+//			addSppNamerDlg.setTargetFragment(this, 0); // does not work
+			FragmentManager fm = getActivity().getSupportFragmentManager();
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick of 'lbl_spp_namer_spinner_cover'");
 			addSppNamerDlg.show(fm, "sppNamerDialog_TextClick");
 			break;
@@ -461,7 +458,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mViewVisitName.setText(c.getString(c.getColumnIndexOrThrow("VisitName")));
 				mViewVisitDate.setText(c.getString(c.getColumnIndexOrThrow("VisitDate")));
 				mNamerId = c.getLong(c.getColumnIndexOrThrow("NamerID"));
-				setNamerSpinnerSelection();
+				// set the retrieved Namer as the default, will usually be who
+				saveDefaultNamerId(mNamerId);
+				setNamerSpinnerSelectionFromDefaultNamer();
 				mViewVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
 				// write code to save/retrieve Locations
 				mLocIsGood = (c.getInt(c.getColumnIndexOrThrow("RefLocIsGood")) == 0) ? false : true;
@@ -477,35 +476,29 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			// The framework will take care of closing the old cursor once we return.
 			mNamerAdapter.swapCursor(c);
 			if (mRowCt > 0) {
-				// get default Namer from app Preferences, to set spinner
-				// this must wait till the spinner is populated
-				SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-				// if none yet, use _id = 0, generated in query as '(add new)'
-				mNamerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
-				if (!sharedPref.contains(Prefs.DEFAULT_NAMER_ID)) {
-					// this will only happen once, when the app is first installed
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' does not exist yet.");
-					saveDefaultNamerId(mNamerId);
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' set for the first time."); 
-				} else {
-					Log.v(LOG_TAG, "Prefs key '" + Prefs.DEFAULT_NAMER_ID + "' = " + mNamerId);
-				}
-				setNamerSpinnerSelection();
+				setNamerSpinnerSelectionFromDefaultNamer(); // internally sets mNamerId
 				mNamerSpinner.setEnabled(true);
 			} else {
 				mNamerSpinner.setEnabled(false);
-			}
-			if (mNamerId == 0) {
-				// user sees '(add new)', blank TextView receives click;
-				mLblNewNamerSpinnerCover.bringToFront();
-			} else {
-				// user can operate the spinner
-				mNamerSpinner.bringToFront();
 			}
 			break;
 		}
 	}
 
+	public void setNamerSpinnerSelectionFromDefaultNamer() {
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		// if none yet, use _id = 0, generated in query as '(add new)'
+		mNamerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
+		setNamerSpinnerSelection();
+		if (mNamerId == 0) {
+			// user sees '(add new)', blank TextView receives click;
+			mLblNewNamerSpinnerCover.bringToFront();
+		} else {
+			// user can operate the spinner
+			mNamerSpinner.bringToFront();
+		}
+	}
+	
 	public void setNamerSpinnerSelection() {
 		// set the current Namer to show in its spinner
 		for (int i=0; i<mRowCt; i++) {
@@ -669,12 +662,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");
 				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
 				FragmentManager fm = getActivity().getSupportFragmentManager();
-				addSppNamerDlg.show(fm, "");
-			}
-			if (mNamerId != 0) {
+				addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
+			} else { // (mNamerId != 0) 
 				// save in app Preferences as the default Namer
 				saveDefaultNamerId(mNamerId);
 			}
+			setNamerSpinnerSelectionFromDefaultNamer(); // in either case, reset selection
 		}
 		// write code for any other spinner(s) here
 	}

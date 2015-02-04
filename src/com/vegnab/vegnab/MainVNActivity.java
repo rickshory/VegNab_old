@@ -255,7 +255,7 @@ public class MainVNActivity extends ActionBarActivity
 		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
 		VisitHeaderFragment visHdrFragment = (VisitHeaderFragment) 
 				getSupportFragmentManager().findFragmentByTag(Tags.VISIT_HEADER);
-		visHdrFragment.setNamerSpinnerSelection();
+		visHdrFragment.setNamerSpinnerSelectionFromDefaultNamer();
 		
 	}
 

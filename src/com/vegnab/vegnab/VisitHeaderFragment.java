@@ -418,6 +418,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		prefEditor.putLong(Prefs.DEFAULT_NAMER_ID, id);
 		prefEditor.commit();
 	}
+	
+	public void refreshNamerSpinner() {
+		// when the referred Loader callback returns, will update the Namers spinner
+		getLoaderManager().restartLoader(Loaders.NAMERS, null, this);
+	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {

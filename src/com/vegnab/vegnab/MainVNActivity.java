@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import java.util.UUID;
 
+import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 
@@ -255,8 +256,7 @@ public class MainVNActivity extends ActionBarActivity
 		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
 		VisitHeaderFragment visHdrFragment = (VisitHeaderFragment) 
 				getSupportFragmentManager().findFragmentByTag(Tags.VISIT_HEADER);
-		visHdrFragment.setNamerSpinnerSelectionFromDefaultNamer();
-		
+		visHdrFragment.refreshNamerSpinner();		
 	}
 
 }

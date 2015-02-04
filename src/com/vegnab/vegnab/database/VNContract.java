@@ -31,7 +31,8 @@ public final class VNContract {
 		// in New Visit
 		public static final int PROJECTS = 1; // Loader Id for Projects
 		public static final int PLOTTYPES = 2; // Loader Id for Plot Types
-		public static final int PREV_VISITS = 3;
+		public static final int PREV_VISITS = 3; // Loader ID for previous Visits
+		public static final int VALID_DEL_PROJECTS = 4; // Loader Id for the list of Projects that are valid to delete
 		// in Edit Project
 		public static final int EXISTING_PROJCODES = 11; // to disallow duplicates
 		public static final int PROJECT_TO_EDIT = 12; //
@@ -40,6 +41,7 @@ public final class VNContract {
 		public static final int EXISTING_NAMERS = 22;
 		public static final int NAMERS = 23;
 		public static final int LOCATIONS = 24;
+		public static final int VALID_DEL_NAMERS = 25; // Loader Id for the list of Namers that are valid to delete
 
 		
 	}

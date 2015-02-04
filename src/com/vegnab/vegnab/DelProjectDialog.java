@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import java.util.List;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 
@@ -27,7 +28,6 @@ import android.widget.Toast;
 
 public class DelProjectDialog extends DialogFragment implements android.view.View.OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
-	public static final int LOADER_FOR_VALID_DEL_PROJECTS = 4; // Loader Id for the list of Projects that are valid to delete
 	VegNabDbHelper mDbHelper;
 	ListView mValidProjList;
 	SimpleCursorAdapter mListAdapter; // to link the list's data
@@ -43,7 +43,8 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 				android.R.layout.simple_list_item_1, null,
 				fromColumns, toViews, 0);
 		mValidProjList.setAdapter(mListAdapter);
-		getLoaderManager().initLoader(LOADER_FOR_VALID_DEL_PROJECTS, null, this);
+		// Loader Id for the list of Projects that are valid to delete
+		getLoaderManager().initLoader(Loaders.VALID_DEL_PROJECTS, null, this);
 		mValidProjList.setOnItemClickListener(new OnItemClickListener () {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int position,
@@ -71,7 +72,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 		Uri baseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
-		case LOADER_FOR_VALID_DEL_PROJECTS:
+		case Loaders.VALID_DEL_PROJECTS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			// complex use-once query: only use Project not marked deleted, and 
 			// disallow the first Project,
@@ -92,7 +93,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
 		switch (loader.getId()) {
-		case LOADER_FOR_VALID_DEL_PROJECTS:
+		case Loaders.VALID_DEL_PROJECTS:
 			mListAdapter.swapCursor(finishedCursor);
 			break;
 		}	
@@ -101,7 +102,7 @@ public class DelProjectDialog extends DialogFragment implements android.view.Vie
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch (loader.getId()) {
-		case LOADER_FOR_VALID_DEL_PROJECTS:
+		case Loaders.VALID_DEL_PROJECTS:
 			mListAdapter.swapCursor(null);
 			break;
 		}

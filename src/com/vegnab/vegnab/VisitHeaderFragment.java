@@ -506,7 +506,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 
-	private void setNamerSpinnerSelection() {
+	public void setNamerSpinnerSelection() {
 		// set the current Namer to show in its spinner
 		for (int i=0; i<mRowCt; i++) {
 			Log.v(LOG_TAG, "Setting mNamerSpinner; testing index " + i);
@@ -672,7 +672,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				addSppNamerDlg.show(fm, "");
 			}
 			if (mNamerId != 0) {
-				// save in app Preferences as the default Project
+				// save in app Preferences as the default Namer
 				saveDefaultNamerId(mNamerId);
 			}
 		}

@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import java.util.UUID;
 
 import com.vegnab.vegnab.database.VNContract.Prefs;
+import com.vegnab.vegnab.database.VNContract.Tags;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -202,7 +203,7 @@ public class MainVNActivity extends ActionBarActivity
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, visHdrFrag, "header");
+		transaction.replace(R.id.fragment_container, visHdrFrag, Tags.VISIT_HEADER);
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
@@ -252,6 +253,9 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onAddNamerSaveClick(DialogFragment dialog) {
 		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
+		VisitHeaderFragment visHdrFragment = (VisitHeaderFragment) 
+				getSupportFragmentManager().findFragmentByTag(Tags.VISIT_HEADER);
+		visHdrFragment.setNamerSpinnerSelection();
 		
 	}
 

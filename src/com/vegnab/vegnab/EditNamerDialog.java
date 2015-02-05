@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 public class EditNamerDialog extends DialogFragment implements android.view.View.OnClickListener,
 		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
-		//, android.view.View.OnKeyListener
 		{
 	private static final String LOG_TAG = EditNamerDialog.class.getSimpleName();
 	long mNamerRecId = 0; // zero default means new or not specified yet

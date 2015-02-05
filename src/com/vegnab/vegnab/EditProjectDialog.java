@@ -35,6 +35,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
 		//, android.view.View.OnKeyListener
 		{
+	private static final String LOG_TAG = EditProjectDialog.class.getSimpleName();
 	long mProjRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mProjectsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
@@ -174,7 +175,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				mValues.put("StartDate", mStartDate.getText().toString().trim());
 				mValues.put("EndDate", mEndDate.getText().toString().trim());
 				}
-			Log.v("EditProj", "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
+			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
 			int numUpdated = saveProjRecord();
 			}		
 		}
@@ -191,30 +192,31 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
 		mValues.put("StartDate", mStartDate.getText().toString().trim());
 		mValues.put("EndDate", mEndDate.getText().toString().trim());
-		Log.v("EditProj", "Saving record in onCancel; mValues: " + mValues.toString());
+		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
 		int numUpdated = saveProjRecord();
 	}
 	
 	private int saveProjRecord () {
+		Context c = getActivity();
 		if ("" + mProjCode.getText().toString().trim() == "") {
 			Toast.makeText(this.getActivity(),
-					"Need Project Code",
+					c.getResources().getString(R.string.edit_proj_msg_no_proj),
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
 		if (mExistingProjCodes.contains("" + mProjCode.getText().toString().trim())) {
 			Toast.makeText(this.getActivity(),
-					"Duplicate Project Code",
+					c.getResources().getString(R.string.edit_proj_msg_dup_proj),
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
-		ContentResolver rs = getActivity().getContentResolver();
+		ContentResolver rs = c.getContentResolver();
 		if (mProjRecId == 0) { // new record
 			mUri = rs.insert(mProjectsUri, mValues);
-			Log.v("EditProj", "new record in saveProjRecord; returned URI: " + mUri.toString());
+			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
 			mProjRecId = Long.parseLong(mUri.getLastPathSegment());
 			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
-			Log.v("EditProj", "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
+			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -224,7 +226,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		} else {
 			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
-			Log.v("EditProj", "Saved record in saveProjRecord; numUpdated: " + numUpdated);
+			Log.v(LOG_TAG, "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}
 	}
@@ -270,12 +272,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		case Loaders.EXISTING_PROJCODES:
 			mExistingProjCodes.clear();
 			while (c.moveToNext()) {
-				Log.v("EditProj", "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mExistingProjCodes.add(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 			}
 			break;
 		case Loaders.PROJECT_TO_EDIT:
-			Log.v("EditProj", "onLoadFinished, records: " + c.getCount());
+			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
 				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));

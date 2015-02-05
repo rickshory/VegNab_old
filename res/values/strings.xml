@@ -63,6 +63,8 @@
     <string name="edit_proj_hint_date_start">Start date</string>
     <string name="edit_proj_label_date_end">To</string>
     <string name="edit_proj_hint_date_end">End date</string>
+    <string name="edit_proj_msg_no_proj">Need Project Code</string>
+    <string name="edit_proj_msg_dup_proj">Duplicate Project Code</string>
     
     <string name="del_proj_details">Can\'t delete first Project, current Project, or Projects with Visits</string>
     <string name="del_proj_confirm">Delete Project?</string>

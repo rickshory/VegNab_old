@@ -42,6 +42,7 @@ public final class VNContract {
 		public static final int NAMERS = 23;
 		public static final int LOCATIONS = 24;
 		public static final int VALID_DEL_NAMERS = 25; // Loader Id for the list of Namers that are valid to delete
+		public static final int NAMER_TO_EDIT = 26;
 
 		
 	}

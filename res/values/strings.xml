@@ -104,6 +104,9 @@
     <string name="add_namer_missing">Need person\'s Name</string>
     <string name="add_namer_duplicate">Duplicate Name</string>
     
+    <string name="edit_namer_title_edit">Edit Namer</string>
+    <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has done</string>
+    
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>
     <string name="veg_subplot_name_msg">Subplot: </string>

@@ -53,6 +53,19 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	        mCalendar.set(Calendar.MONTH, monthOfYear);
 	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 	        mActiveDateView.setText(mDateFormat.format(mCalendar.getTime()));
+	        mValues.clear();
+	        Log.v(LOG_TAG, "Date set");
+	        if (mActiveDateView == mStartDate) {
+	        	Log.v(LOG_TAG, "Date set for mStartDate, about to save record");
+	        	mValues.put("StartDate", mStartDate.getText().toString().trim());
+	        }
+	        if (mActiveDateView == mEndDate) {
+	        	Log.v(LOG_TAG, "Date set for mEndDate, about to save record");
+	        	mValues.put("EndDate", mEndDate.getText().toString().trim());
+	        }
+	        Log.v(LOG_TAG, "About to save record after date set, mValues: " + mValues.toString());
+	        int numUpdated = saveProjRecord();
+	        Log.v(LOG_TAG, "Date set, saved record, numUpdated=" + numUpdated);
 	    }
 	};
 	
@@ -208,13 +221,24 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj),
 					Toast.LENGTH_LONG).show();
+			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mProjRecId = " + mProjRecId);
 			return 0;
 		}
 		ContentResolver rs = c.getContentResolver();
+		if (mProjRecId == -1) {
+			Log.v(LOG_TAG, "entered saveProjRecord with (mProjRecId == -1); canceled");
+			return 0;
+		}
 		if (mProjRecId == 0) { // new record
 			mUri = rs.insert(mProjectsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
-			mProjRecId = Long.parseLong(mUri.getLastPathSegment());
+			long newRecId = Long.parseLong(mUri.getLastPathSegment());
+			if (newRecId < 1) { // don't yet know why we sometimes get -1, but don't save it
+				Log.v(LOG_TAG, "new record in saveProjRecord has Id == " + newRecId + "); canceled");
+				return 0;
+			}
+			mProjRecId = newRecId;
+			getLoaderManager().restartLoader(Loaders.EXISTING_PROJCODES, null, this);
 			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
 			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix

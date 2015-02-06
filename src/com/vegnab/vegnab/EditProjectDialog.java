@@ -190,6 +190,9 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				mValues.put("StartDate", mStartDate.getText().toString().trim());
 				mValues.put("EndDate", mEndDate.getText().toString().trim());
 				}
+			if (!mValues.containsKey("ProjCode")) { // assure contains required field
+				mValues.put("ProjCode", mProjCode.getText().toString().trim());
+			}
 			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
 			int numUpdated = saveProjRecord();
 			}		
@@ -213,15 +216,17 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	
 	private int saveProjRecord () {
 		Context c = getActivity();
-		if ("" + mProjCode.getText().toString().trim() == "") {
+		// test field for validity
+		String projCodeString = mValues.getAsString("ProjCode");
+		if (projCodeString == "") {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_no_proj),
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
-		if (mExistingProjCodes.contains("" + mProjCode.getText().toString().trim())) {
+		if (mExistingProjCodes.contains(projCodeString)) {
 			Toast.makeText(this.getActivity(),
-					c.getResources().getString(R.string.edit_proj_msg_dup_proj),
+					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,
 					Toast.LENGTH_LONG).show();
 			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mProjRecId = " + mProjRecId);
 			return 0;
@@ -235,7 +240,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			mUri = rs.insert(mProjectsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
 			long newRecId = Long.parseLong(mUri.getLastPathSegment());
-			if (newRecId < 1) { // don't yet know why we sometimes get -1, but don't save it
+			if (newRecId < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
 				Log.v(LOG_TAG, "new record in saveProjRecord has Id == " + newRecId + "); canceled");
 				return 0;
 			}

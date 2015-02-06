@@ -54,6 +54,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 	        mActiveDateView.setText(mDateFormat.format(mCalendar.getTime()));
 	        mValues.clear();
+	        // put required field, will test for validity before Save
+	        mValues.put("ProjCode", mProjCode.getText().toString().trim());
 	        Log.v(LOG_TAG, "Date set");
 	        if (mActiveDateView == mStartDate) {
 	        	Log.v(LOG_TAG, "Date set for mStartDate, about to save record");
@@ -173,12 +175,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			case R.id.txt_person:
 				mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
 				break;			
-			case R.id.txt_date_from: // this one is not focusable
-				mValues.put("StartDate", mStartDate.getText().toString().trim());
-				break;
-			case R.id.txt_date_to: // this one is not focusable
-				mValues.put("EndDate", mEndDate.getText().toString().trim());
-				break;
+//			case R.id.txt_date_from: // this one is not focusable
+//				mValues.put("StartDate", mStartDate.getText().toString().trim());
+//				break;
+//			case R.id.txt_date_to: // this one is not focusable
+//				mValues.put("EndDate", mEndDate.getText().toString().trim());
+//				break;
 			default: // save everything
 				mValues.put("ProjCode", mProjCode.getText().toString().trim());
 				mValues.put("Description", mDescription.getText().toString().trim());

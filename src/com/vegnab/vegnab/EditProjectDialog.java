@@ -83,6 +83,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// request existing project codes ASAP, this doesn't use the UI
+		getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 	}
 	
 	@Override
@@ -149,7 +151,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
-			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}
@@ -306,6 +307,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mExistingProjCodes.add(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 			}
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingProjCodes: " + mExistingProjCodes.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingProjCodes: " + mExistingProjCodes.toString());
 			break;
 		case Loaders.PROJECT_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());

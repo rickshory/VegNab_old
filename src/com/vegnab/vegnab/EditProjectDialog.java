@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -39,7 +40,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	long mProjRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mProjectsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
-	HashSet<String> mExistingProjCodes = new HashSet<String>();
+	HashMap<Long, String> mExistingProjCodes = new HashMap<Long, String>();
 	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -225,7 +226,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
-		if (mExistingProjCodes.contains(projCodeString)) {
+		if (mExistingProjCodes.containsValue(projCodeString)) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,
 					Toast.LENGTH_LONG).show();
@@ -274,7 +275,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			// get the existing ProjCodes, other than the current one, to disallow duplicates
 			Uri allProjsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "projects");
-			String[] projection = {"ProjCode"};
+			String[] projection = {"_id", "ProjCode"};
 			select = "(_id <> " + mProjRecId + " AND IsDeleted = 0)";
 			cl = new CursorLoader(getActivity(), allProjsUri,
 					projection, select, null, null);
@@ -305,7 +306,8 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 			mExistingProjCodes.clear();
 			while (c.moveToNext()) {
 				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mExistingProjCodes.add(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mExistingProjCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+						c.getString(c.getColumnIndexOrThrow("ProjCode")));
 			}
 			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingProjCodes: " + mExistingProjCodes.size());
 			Log.v(LOG_TAG, "onLoadFinished, items in mExistingProjCodes: " + mExistingProjCodes.toString());

@@ -56,8 +56,6 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// request existing Namers ASAP, this doesn't use the UI
-		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
         try {
         	mEditNamerListener = (EditNamerDialogListener) getActivity();
         	Log.v(LOG_TAG, "(EditNamerDialogListener) getActivity()");
@@ -95,6 +93,8 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		
 		if (args != null) {
 			mNamerRecId = args.getLong("namerId");
+			// request existing Namers ASAP, this doesn't use the UI
+			getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
 			getLoaderManager().initLoader(Loaders.NAMER_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}

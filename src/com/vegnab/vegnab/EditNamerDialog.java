@@ -69,7 +69,11 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		View view = inflater.inflate(R.layout.fragment_edit_namer, root);
 		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
 		mEditNamerName = (EditText) view.findViewById(R.id.txt_edit_namer);
+		// attempt to automatically show soft keyboard
+		mEditNamerName.requestFocus();
+		getDialog().getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		mEditNamerName.setOnFocusChangeListener(this);
+
 //		if (mNamerRecId == 0) { // new record
 //			getDialog().setTitle(R.string.add_namer_title);
 //		} else { // existing record being edited

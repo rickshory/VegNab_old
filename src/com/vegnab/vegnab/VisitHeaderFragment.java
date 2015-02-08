@@ -785,7 +785,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	case R.id.vis_hdr_namer_edit:
 		Log.v(LOG_TAG, "'Edit Namer' selected");
 		// edit Namer
-		notYetDlg.show(getFragmentManager(), null);
+		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+		long defaultNamerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
+		if (defaultNamerId == 0) {
+			return true;
+		}
+		EditNamerDialog editNmrDlg = EditNamerDialog.newInstance(defaultNamerId);
+		editNmrDlg.show(getFragmentManager(), "frg_edit_namer");
 		return true;
 	case R.id.vis_hdr_namer_delete:
 		Log.v(LOG_TAG, "'Delete Namer' selected");
@@ -798,12 +804,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		hlpDlg.show(getFragmentManager(), null);
 		return true;
 
-/*			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
-			editProjDlg = EditProjectDialog.newInstance(defaultProjId);
-			editProjDlg.show(fm, "frg_edit_proj");
-			return true;
-*/
 	case R.id.vis_hdr_loc_restore_prev:
 		Log.v(LOG_TAG, "'Restore Previous' selected");
 		// re-acquire location

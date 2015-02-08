@@ -100,7 +100,7 @@
     <string name="add_namer_duplicate">Duplicate Name</string>
     
     <string name="edit_namer_title_edit">Edit Namer</string>
-    <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has done</string>
+    <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has already done.</string>
     
     <string name="vis_hdr_ctxmenu_namer_edit">Edit</string>
     <string name="vis_hdr_ctxmenu_namer_delete">Delete</string>

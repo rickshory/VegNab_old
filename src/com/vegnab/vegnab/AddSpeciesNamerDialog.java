@@ -54,12 +54,12 @@ public class AddSpeciesNamerDialog extends DialogFragment
         super.onCreate(savedInstanceState);
 		// fire off the loader manager ASAP, its results don't use the UI
 		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
-		// Verify that the host fragment implements the callback interface
+		// Verify that the main activity implements this callback interface
         try {
         	mListener = (AddNamerDialogListener) getActivity();
-        	Log.v(LOG_TAG, "(AddNamerDialogListener) getTargetFragment()");
+        	Log.v(LOG_TAG, "(AddNamerDialogListener) getActivity()");
         } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement AddNamerDialogListener interface");
+            throw new ClassCastException("Main Activity must implement AddNamerDialogListener interface");
         }
     }
     

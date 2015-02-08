@@ -2,6 +2,7 @@ package com.vegnab.vegnab;
 
 import java.util.HashMap;
 
+import com.vegnab.vegnab.AddSpeciesNamerDialog.AddNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -31,6 +32,10 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
 		{
 	private static final String LOG_TAG = EditNamerDialog.class.getSimpleName();
+	public interface EditNamerDialogListener {
+		public void onEditNamerComplete(DialogFragment dialog);
+	}
+	EditNamerDialogListener mEditNamerListener;
 	long mNamerRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
 	ContentValues mValues = new ContentValues();
@@ -53,6 +58,12 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		super.onCreate(savedInstanceState);
 		// request existing Namers ASAP, this doesn't use the UI
 		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
+        try {
+        	mEditNamerListener = (EditNamerDialogListener) getActivity();
+        	Log.v(LOG_TAG, "(EditNamerDialogListener) getActivity()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Main Activity must implement EditNamerDialogListener interface");
+        }
 	}
 	
 	@Override
@@ -123,6 +134,7 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		mValues.put("NamerName", mEditNamerName.getText().toString().trim());
 		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
 		int numUpdated = saveNamerRecord();
+		mEditNamerListener.onEditNamerComplete(EditNamerDialog.this);
 	}
 	
 	private int saveNamerRecord () {

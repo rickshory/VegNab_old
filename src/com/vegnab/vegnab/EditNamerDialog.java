@@ -1,6 +1,6 @@
 package com.vegnab.vegnab;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditNamerDialog extends DialogFragment implements android.view.View.OnClickListener,
@@ -33,15 +34,16 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 	long mNamerRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
 	ContentValues mValues = new ContentValues();
-	HashSet<String> mExistingNamers = new HashSet<String>();
+	HashMap<Long, String> mExistingNamers = new HashMap<Long, String>();
 	private EditText mEditNamerName;
+	private TextView mTxtNamerMsg;
 	String mStringNamer;
 	
-	static EditNamerDialog newInstance(long mNamerId) {
+	static EditNamerDialog newInstance(long namerId) {
 		EditNamerDialog f = new EditNamerDialog();
-		// supply mNamerId as an argument
+		// supply namerId as an argument
 		Bundle args = new Bundle();
-		args.putLong("mNamerId", mNamerId);
+		args.putLong("namerId", namerId);
 		f.setArguments(args);
 		return f;
 	}
@@ -49,14 +51,21 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// request existing Namers ASAP, this doesn't use the UI
+		getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_edit_project, root);
+		View view = inflater.inflate(R.layout.fragment_edit_namer, root);
+		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
 		mEditNamerName = (EditText) view.findViewById(R.id.txt_edit_namer);
 		mEditNamerName.setOnFocusChangeListener(this);
-		getDialog().setTitle(R.string.edit_namer_title_edit);
+//		if (mNamerRecId == 0) { // new record
+//			getDialog().setTitle(R.string.add_namer_title);
+//		} else { // existing record being edited
+//			getDialog().setTitle(R.string.edit_namer_title_edit);
+//		}
 		return view;
 	}
 
@@ -74,11 +83,18 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			mNamerRecId = args.getLong("mNamerId");
-			getLoaderManager().initLoader(Loaders.EXISTING_NAMERS, null, this);
+			mNamerRecId = args.getLong("namerId");
 			getLoaderManager().initLoader(Loaders.NAMER_TO_EDIT, null, this);
 			// will insert values into screen when cursor is finished
 		}
+		if (mNamerRecId == 0) { // new record
+			getDialog().setTitle(R.string.add_namer_title);
+			mTxtNamerMsg.setText(R.string.add_namer_header);
+		} else { // existing record being edited
+			getDialog().setTitle(R.string.edit_namer_title_edit);
+			mTxtNamerMsg.setText(R.string.edit_namer_label_namername);
+		}
+
 	}
 
 	@Override
@@ -95,7 +111,7 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 
 				}
 			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
-			int numUpdated = saveProjRecord();
+			int numUpdated = saveNamerRecord();
 			}		
 		}
 
@@ -106,39 +122,52 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		mValues.clear();
 		mValues.put("NamerName", mEditNamerName.getText().toString().trim());
 		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
-		int numUpdated = saveProjRecord();
+		int numUpdated = saveNamerRecord();
 	}
 	
-	private int saveProjRecord () {
-		if ("" + mEditNamerName.getText().toString().trim() == "") {
+	private int saveNamerRecord () {
+		Context c = getActivity();
+		// test field for validity
+		String namerString = mValues.getAsString("NamerName");
+		if (namerString == "") {
 			Toast.makeText(this.getActivity(),
-					"Need Namer",
+					c.getResources().getString(R.string.add_namer_missing),
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
-		if (mExistingNamers.contains("" + mEditNamerName.getText().toString().trim())) {
+		if (mExistingNamers.containsValue(namerString)) {
 			Toast.makeText(this.getActivity(),
-					"Duplicate Name",
+					c.getResources().getString(R.string.add_namer_duplicate),
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
 		ContentResolver rs = getActivity().getContentResolver();
+		if (mNamerRecId == -1) {
+			Log.v(LOG_TAG, "entered saveNamerRecord with (mNamerRecId == -1); canceled");
+			return 0;
+		}
 		if (mNamerRecId == 0) { // new record
 			mUri = rs.insert(mNamersUri, mValues);
-			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
-			mNamerRecId = Long.parseLong(mUri.getLastPathSegment());
+			Log.v(LOG_TAG, "new record in saveNamerRecord; returned URI: " + mUri.toString());
+			long newRecId = Long.parseLong(mUri.getLastPathSegment());
+			if (newRecId < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
+				Log.v(LOG_TAG, "new record in saveNamerRecord has Id == " + newRecId + "); canceled");
+				return 0;
+			}
+			mNamerRecId = newRecId;
+			getLoaderManager().restartLoader(Loaders.EXISTING_NAMERS, null, this);
 			mUri = ContentUris.withAppendedId(mNamersUri, mNamerRecId);
-			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
-			// set default project; redundant with fn in NewVisitFragment; low priority fix
+			Log.v(LOG_TAG, "new record in saveNamerRecord; URI re-parsed: " + mUri.toString());
+			// set default Namer
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mNamerRecId);
+			prefEditor.putLong(Prefs.DEFAULT_NAMER_ID, mNamerRecId);
 			prefEditor.commit();
 			return 1;
 		} else {
 			mUri = ContentUris.withAppendedId(mNamersUri, mNamerRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
-			Log.v(LOG_TAG, "Saved record in saveProjRecord; numUpdated: " + numUpdated);
+			Log.v(LOG_TAG, "Saved record in saveNamerRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}
 	}
@@ -151,29 +180,28 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 		case Loaders.EXISTING_NAMERS:
-			// get the existing ProjCodes, other than the current one, to disallow duplicates
-			Uri allProjsUri = Uri.withAppendedPath(
+			// get the existing Namers, other than the current one, to disallow duplicates
+			Uri allNamersUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "namers");
-			String[] projection = {"NamerName"};
-			select = "(_id <> " + mNamerRecId + " AND IsDeleted = 0)";
-			cl = new CursorLoader(getActivity(), allProjsUri,
+			String[] projection = {"_id", "NamerName"};
+			select = "(_id <> " + mNamerRecId + ")";
+			cl = new CursorLoader(getActivity(), allNamersUri,
 					projection, select, null, null);
 			break;
 		case Loaders.NAMER_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
 //			mNamersUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri oneProjUri = ContentUris.withAppendedId(
+			Uri oneNamerUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
 							ContentProvider_VegNab.CONTENT_URI, "namers"), mNamerRecId);
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
 			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), oneProjUri,
+			cl = new CursorLoader(getActivity(), oneNamerUri,
 					null, select, null, null);
 			break;
-
 		}
 		return cl;
 	}
@@ -185,8 +213,12 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 			mExistingNamers.clear();
 			while (c.moveToNext()) {
 				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("NamerName")));
-				mExistingNamers.add(c.getString(c.getColumnIndexOrThrow("NamerName")));
+				mExistingNamers.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+						c.getString(c.getColumnIndexOrThrow("NamerName")));
 			}
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingNamers: " + mExistingNamers.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingNamers: " + mExistingNamers.toString());
+			
 			break;
 		case Loaders.NAMER_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());

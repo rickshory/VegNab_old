@@ -92,13 +92,6 @@
     <string name="visit_header_map_button_msg">Map more locations</string>
     <string name="visit_header_photo_button_msg">Add pictures</string>
     
-    <string name="vis_hdr_ctxmenu_loc_rstore_prev">Restore previous</string>
-    <string name="vis_hdr_ctxmenu_loc_reacquire">Re-acquire</string>
-    <string name="vis_hdr_ctxmenu_loc_accept">Accept accuracy</string>
-    <string name="vis_hdr_ctxmenu_loc_manual">Enter manually</string>
-    <string name="vis_hdr_ctxmenu_loc_details">Details</string>
-    <string name="vis_hdr_ctxmenu_loc_help">Help</string>
-    
     <string name="add_namer_title">Species Namer</string>
     <string name="add_namer_header">Person\'s name who will be deciding the species</string>
     <string name="add_namer_msg">This should be an identifiable human, not something untraceable like \"team two\"</string>
@@ -108,6 +101,17 @@
     
     <string name="edit_namer_title_edit">Edit Namer</string>
     <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has done</string>
+    
+    <string name="vis_hdr_ctxmenu_namer_edit">Edit</string>
+    <string name="vis_hdr_ctxmenu_namer_delete">Delete</string>
+    <string name="vis_hdr_ctxmenu_namer_help">Help</string>
+    
+    <string name="vis_hdr_ctxmenu_loc_rstore_prev">Restore previous</string>
+    <string name="vis_hdr_ctxmenu_loc_reacquire">Re-acquire</string>
+    <string name="vis_hdr_ctxmenu_loc_accept">Accept accuracy</string>
+    <string name="vis_hdr_ctxmenu_loc_manual">Enter manually</string>
+    <string name="vis_hdr_ctxmenu_loc_details">Details</string>
+    <string name="vis_hdr_ctxmenu_loc_help">Help</string>
     
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>

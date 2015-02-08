@@ -743,13 +743,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	public void onCreateContextMenu(ContextMenu menu, View v, 
 	   ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getActivity().getMenuInflater();
 		switch (v.getId()) {
 		case R.id.txt_visit_name:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.sel_spp_namer_spinner:
-			menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, "Edit");
-			menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete");
+			inflater.inflate(R.menu.context_visit_header_namer, menu);
 			break;
 		case R.id.lbl_spp_namer_spinner_cover:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
@@ -758,7 +758,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.txt_visit_location:
-			MenuInflater inflater = getActivity().getMenuInflater();
 			inflater.inflate(R.menu.context_visit_header_location, menu);
 //			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
@@ -780,37 +779,60 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	} else {
 		Log.v(LOG_TAG, "onContextItemSelected info: " + info.toString());
 	}
-	UnderConstrDialog msgDlg = new UnderConstrDialog();
+	UnderConstrDialog notYetDlg = new UnderConstrDialog();
+	HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
 	switch (item.getItemId()) {
+	case R.id.vis_hdr_namer_edit:
+		Log.v(LOG_TAG, "'Edit Namer' selected");
+		// edit Namer
+		notYetDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_namer_delete:
+		Log.v(LOG_TAG, "'Delete Namer' selected");
+		// delete Namer
+		notYetDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_namer_help:
+		Log.v(LOG_TAG, "'Namer Help' selected");
+		// Namer help
+		hlpDlg.show(getFragmentManager(), null);
+		return true;
+
+/*			SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+			long defaultProjId = sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 1);
+			editProjDlg = EditProjectDialog.newInstance(defaultProjId);
+			editProjDlg.show(fm, "frg_edit_proj");
+			return true;
+*/
 	case R.id.vis_hdr_loc_restore_prev:
 		Log.v(LOG_TAG, "'Restore Previous' selected");
 		// re-acquire location
-		msgDlg.show(getFragmentManager(), null);
+		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_reacquire:
 		Log.v(LOG_TAG, "'Re-acquire' selected");
 		// re-acquire location
-		msgDlg.show(getFragmentManager(), null);
+		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_accept:
 		Log.v(LOG_TAG, "'Accept accuracy' selected");
 		// accept location even with poor accuracy
-		msgDlg.show(getFragmentManager(), null);
+		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_manual:
 		Log.v(LOG_TAG, "'Enter manually' selected");
 		// enter location manually
-		msgDlg.show(getFragmentManager(), null);
+		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_details:
 		Log.v(LOG_TAG, "'Details' selected");
 		// show location details
-		msgDlg.show(getFragmentManager(), null);
+		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_help:
 		Log.v(LOG_TAG, "'Help' selected");
 		// show help on locations
-		msgDlg.show(getFragmentManager(), null);
+		hlpDlg.show(getFragmentManager(), null);
 		return true;
 	case MENU_EDIT:
 		Log.v(LOG_TAG, "MENU_EDIT selected");
@@ -822,7 +844,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    return true;
 	case MENU_HELP:
 		Log.v(LOG_TAG, "MENU_HELP selected");
-		HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
 		hlpDlg.show(getFragmentManager(), null);
 		return true;
     default:

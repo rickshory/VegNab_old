@@ -387,11 +387,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			break;
 //		case R.id.sel_spp_namer_spinner: // does not receive onClick
 		case R.id.lbl_spp_namer_spinner_cover:
-			AddSpeciesNamerDialog addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+//			AddSpeciesNamerDialog addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
 //			addSppNamerDlg.setTargetFragment(this, 0); // does not work
-			FragmentManager fm = getActivity().getSupportFragmentManager();
+//			FragmentManager fm = getActivity().getSupportFragmentManager();
 			Log.v(LOG_TAG, "Starting 'add new' for Namer from onClick of 'lbl_spp_namer_spinner_cover'");
-			addSppNamerDlg.show(fm, "sppNamerDialog_TextClick");
+//			addSppNamerDlg.show(fm, "sppNamerDialog_TextClick");
+			EditNamerDialog newNmrDlg = EditNamerDialog.newInstance(0);
+			newNmrDlg.show(getFragmentManager(), "frg_new_namer_fromCover");
+
 			break;
 		case R.id.visit_header_go_button:
 			mButtonCallback.onVisitHeaderGoButtonClicked();
@@ -665,14 +668,18 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mNamerId = id;
 			if (mNamerId == 0) { // picked '(add new)'
 				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");
-				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
-				FragmentManager fm = getActivity().getSupportFragmentManager();
-				addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
+//				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
+//				FragmentManager fm = getActivity().getSupportFragmentManager();
+//				addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
+				EditNamerDialog newNmrDlg = EditNamerDialog.newInstance(0);
+				newNmrDlg.show(getFragmentManager(), "frg_new_namer_fromSpinner");
+
 			} else { // (mNamerId != 0) 
 				// save in app Preferences as the default Namer
 				saveDefaultNamerId(mNamerId);
 			}
 			setNamerSpinnerSelectionFromDefaultNamer(); // in either case, reset selection
+			return;
 		}
 		// write code for any other spinner(s) here
 	}

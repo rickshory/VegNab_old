@@ -140,26 +140,14 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		int numUpdated = saveNamerRecord();
 		mEditNamerListener.onEditNamerComplete(EditNamerDialog.this);
 	}
-	
-	public static String stringToHex(String strInput) {
-		byte[] a = strInput.getBytes();
-		StringBuilder sb = new StringBuilder(a.length * 2);
-		for(byte b: a)
-			sb.append(String.format("%02x", b & 0xff));
-		return sb.toString();
-		}
+
 	
 	private int saveNamerRecord () {
 		Context c = getActivity();
 		// test field for validity
 		String namerString = mValues.getAsString("NamerName");
-		Log.v(LOG_TAG, "NamerName retrieved from mValues: " + namerString);
-		Log.v(LOG_TAG, "NamerName as Hex bytes: " + stringToHex(namerString));
-		Log.v(LOG_TAG, "NamerName as Hex bytes, after toString: " + stringToHex(namerString.toString()));
-		Log.v(LOG_TAG, "Empty string as Hex bytes: " + stringToHex(""));
-		Log.v(LOG_TAG, "NamerName length: " + namerString.length());
 		
-		if (namerString == "") {
+		if (namerString.length() == 0) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.add_namer_missing),
 					Toast.LENGTH_LONG).show();

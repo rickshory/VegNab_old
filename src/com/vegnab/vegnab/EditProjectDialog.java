@@ -220,7 +220,7 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		Context c = getActivity();
 		// test field for validity
 		String projCodeString = mValues.getAsString("ProjCode");
-		if (projCodeString == "") {
+		if (projCodeString.length() == 0) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_no_proj),
 					Toast.LENGTH_LONG).show();

@@ -117,10 +117,12 @@
 
     <string name="vis_hdr_help_visname_title">\"Visit Name\" Help</string>
     <string name="vis_hdr_help_visname_text">Enter a brief name for you to track this Visit. Typically, you use some abbreviation of the place name, such as \"LostLakeAug15\"\n\r\n\rIf you use the same name for different visits it can be very confusing later, but this app allows duplicate names for your convenience.</string>
-    <string name="vis_hdr_help_loc_title">\"Location\" Help</string>
-    <string name="vis_hdr_help_loc_text">The \"Location\" is the GPS coordinates for this Visit. This app will try to acquire the Location automatically, but you can override it in various ways by using other context menu items.</string>
+    <string name="vis_hdr_help_namer_title">\"Namer\" Help</string>
+    <string name="vis_hdr_help_namer_text">You, as the \"Namer\", decide what the species are. Put in your real name. Something like \"team two\" does not allow traceability.\n\r\n\rIt\'s OK if there are species you don\'t know. You will be able to create \"Placeholder Names\" for those. You can take pictures and collect specimens that will allow identifying these species later.\n\r\n\rYour Placeholders will be available on any future Visits where you are the Namer.</string>
     <string name="vis_hdr_help_scribe_title">\"Scribe\" Help</string>
     <string name="vis_hdr_help_scribe_text">In rare cases where someone besides the Namer is physically entering the data, this person is the \"Scribe\". If you, as the Namer, are inputting your own data, leave \"Scribe\" blank.</string>
+    <string name="vis_hdr_help_loc_title">\"Location\" Help</string>
+    <string name="vis_hdr_help_loc_text">The \"Location\" is the GPS coordinates for this Visit. This app will try to acquire the Location automatically, but you can override it in various ways by using other context menu items.</string>
     <string name="vis_hdr_help_azimuth_title">\"Azimuth\" Help</string>
     <string name="vis_hdr_help_azimuth_text">If it applies, \"Azimuth\" would be the compass direction of a plot, in degrees from true North. For some plot types, such as Transects, this is crucial to relocate them. Other plot types, like Species Lists, have no orientation so you would leave \"Azimuth\" blank.</string>
     <string name="vis_hdr_help_notes_title">\"Notes\" Help</string>

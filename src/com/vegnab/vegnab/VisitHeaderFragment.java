@@ -262,6 +262,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// use a TextView on top of the spinner, named "lbl_spp_namer_spinner_cover"
 		mLblNewNamerSpinnerCover = (TextView) rootView.findViewById(R.id.lbl_spp_namer_spinner_cover);
 		mLblNewNamerSpinnerCover.setOnClickListener(this);
+		registerForContextMenu(mLblNewNamerSpinnerCover); // enable long-press
 		// Prepare the loader. Either re-connect with an existing one or start a new one
 		getLoaderManager().initLoader(Loaders.NAMERS, null, this);
 		// in layout, TextView is in front of Spinner and takes precedence
@@ -759,7 +760,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			inflater.inflate(R.menu.context_visit_header_namer, menu);
 			break;
 		case R.id.lbl_spp_namer_spinner_cover:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			inflater.inflate(R.menu.context_visit_header_namer_cover, menu);
 			break;
 		case R.id.txt_visit_scribe:
 			inflater.inflate(R.menu.context_visit_header_scribe, menu);
@@ -816,11 +817,23 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_namer_help:
+		// same Help for the text view that covers the Namer spinner to catch the first '(add new)' click
+	case R.id.vis_hdr_namer_cover_help: 
 		Log.v(LOG_TAG, "'Namer Help' selected");
 		// Namer help
-		hlpDlg.show(getFragmentManager(), null);
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_namer_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_namer_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_namer");
 		return true;
-
+	case R.id.vis_hdr_scribe_help:
+		Log.v(LOG_TAG, "'Scribe Help' selected");
+		// Scribe help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_scribe_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_scribe_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_scribe");
+		return true;
 	case R.id.vis_hdr_loc_restore_prev:
 		Log.v(LOG_TAG, "'Restore Previous' selected");
 		// re-acquire location
@@ -853,14 +866,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_loc_text);
 		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_loc");
-		return true;
-	case R.id.vis_hdr_scribe_help:
-		Log.v(LOG_TAG, "'Scribe Help' selected");
-		// Scribe help
-		helpTitle = c.getResources().getString(R.string.vis_hdr_help_scribe_title);
-		helpMessage = c.getResources().getString(R.string.vis_hdr_help_scribe_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
-		flexHlpDlg.show(getFragmentManager(), "frg_help_scribe");
 		return true;
 	case R.id.vis_hdr_azimuth_help:
 		Log.v(LOG_TAG, "'Azimuth Help' selected");

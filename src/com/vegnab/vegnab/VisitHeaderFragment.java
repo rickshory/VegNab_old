@@ -753,7 +753,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		MenuInflater inflater = getActivity().getMenuInflater();
 		switch (v.getId()) {
 		case R.id.txt_visit_name:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			inflater.inflate(R.menu.context_visit_header_visname, menu);
 			break;
 		case R.id.sel_spp_namer_spinner:
 			inflater.inflate(R.menu.context_visit_header_namer, menu);
@@ -791,6 +791,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	ConfigurableHelpDialog flexHlpDlg = new ConfigurableHelpDialog();
 	String helpTitle, helpMessage;
 	switch (item.getItemId()) {
+	case R.id.vis_hdr_visname_help:
+		Log.v(LOG_TAG, "'Visit Name Help' selected");
+		// Visit Name help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_visname_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_visname_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_visname");
+		return true;
 	case R.id.vis_hdr_namer_edit:
 		Log.v(LOG_TAG, "'Edit Namer' selected");
 		// edit Namer
@@ -839,9 +847,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		notYetDlg.show(getFragmentManager(), null);
 		return true;
 	case R.id.vis_hdr_loc_help:
-		Log.v(LOG_TAG, "'Help' selected");
-		// show help on locations
-		hlpDlg.show(getFragmentManager(), null);
+		Log.v(LOG_TAG, "'Location Help' selected");
+		// Location help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_loc_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_loc_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_loc");
 		return true;
 	case R.id.vis_hdr_scribe_help:
 		Log.v(LOG_TAG, "'Scribe Help' selected");

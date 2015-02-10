@@ -114,7 +114,11 @@
     <string name="vis_hdr_ctxmenu_loc_help">Help</string>
     
     <string name="help_generic_text">(Help text will go here)</string>
-    
+
+    <string name="vis_hdr_help_visname_title">\"Visit Name\" Help</string>
+    <string name="vis_hdr_help_visname_text">Enter a brief name for you to track this Visit. Typically, you use some abbreviation of the place name, such as \"LostLakeAug15\"\n\r\n\rIf you use the same name for different visits it can be very confusing later, but this app allows duplicate names for your convenience.</string>
+    <string name="vis_hdr_help_loc_title">\"Location\" Help</string>
+    <string name="vis_hdr_help_loc_text">The \"Location\" is the GPS coordinates for this Visit. This app will try to acquire the Location automatically, but you can override it in various ways by using other context menu items.</string>
     <string name="vis_hdr_help_scribe_title">\"Scribe\" Help</string>
     <string name="vis_hdr_help_scribe_text">In rare cases where someone besides the Namer is physically entering the data, this person is the \"Scribe\". If you, as the Namer, are inputting your own data, leave \"Scribe\" blank.</string>
     <string name="vis_hdr_help_azimuth_title">\"Azimuth\" Help</string>

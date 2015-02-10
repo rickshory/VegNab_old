@@ -113,6 +113,16 @@
     <string name="vis_hdr_ctxmenu_loc_details">Details</string>
     <string name="vis_hdr_ctxmenu_loc_help">Help</string>
     
+    <string name="help_generic_text">(Help text will go here)</string>
+    
+    <string name="vis_hdr_help_scribe_title">\"Scribe\" Help</string>
+    <string name="vis_hdr_help_scribe_text">In rare cases where someone besides the Namer is physically entering the data, this person is the \"Scribe\". If you, as the Namer, are inputting your own data, leave \"Scribe\" blank.</string>
+    <string name="vis_hdr_help_azimuth_title">\"Azimuth\" Help</string>
+    <string name="vis_hdr_help_azimuth_text">Some plot types have an Azimuth, such the compass direction of a transect. For other plot types, such as Species Lists, this orientation has no meaning. In this case, leave \"Azimuth\" blank.</string>
+    <string name="vis_hdr_help_notes_title">\"Notes\" Help</string>
+    <string name="vis_hdr_help_notes_text">Enter brief notes about the Visit here. For information longer than 256 characters, use separate documentation.</string>
+    
+    
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>
     <string name="veg_subplot_name_msg">Subplot: </string>

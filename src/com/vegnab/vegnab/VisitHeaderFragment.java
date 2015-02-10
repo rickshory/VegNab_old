@@ -768,10 +768,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			inflater.inflate(R.menu.context_visit_header_location, menu);
 			break;
 		case R.id.txt_visit_azimuth:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			inflater.inflate(R.menu.context_visit_header_azimuth, menu);
 			break;
 		case R.id.txt_visit_notes:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			inflater.inflate(R.menu.context_visit_header_notes, menu);
 			break;
 		}
 	}
@@ -850,6 +850,22 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_scribe_text);
 		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_scribe");
+		return true;
+	case R.id.vis_hdr_azimuth_help:
+		Log.v(LOG_TAG, "'Azimuth Help' selected");
+		// Azimuth help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_azimuth_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_azimuth_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_azimuth");
+		return true;
+	case R.id.vis_hdr_notes_help:
+		Log.v(LOG_TAG, "'Notes Help' selected");
+		// Notes help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_notes_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_notes_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_notes");
 		return true;
 	case MENU_EDIT:
 		Log.v(LOG_TAG, "MENU_EDIT selected");

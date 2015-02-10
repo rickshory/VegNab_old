@@ -118,7 +118,7 @@
     <string name="vis_hdr_help_scribe_title">\"Scribe\" Help</string>
     <string name="vis_hdr_help_scribe_text">In rare cases where someone besides the Namer is physically entering the data, this person is the \"Scribe\". If you, as the Namer, are inputting your own data, leave \"Scribe\" blank.</string>
     <string name="vis_hdr_help_azimuth_title">\"Azimuth\" Help</string>
-    <string name="vis_hdr_help_azimuth_text">Some plot types have an Azimuth, such the compass direction of a transect. For other plot types, such as Species Lists, this orientation has no meaning. In this case, leave \"Azimuth\" blank.</string>
+    <string name="vis_hdr_help_azimuth_text">If it applies, \"Azimuth\" would be the compass direction of a plot, in degrees from true North. For some plot types, such as Transects, this is crucial to relocate them. Other plot types, like Species Lists, have no orientation so you would leave \"Azimuth\" blank.</string>
     <string name="vis_hdr_help_notes_title">\"Notes\" Help</string>
     <string name="vis_hdr_help_notes_text">Enter brief notes about the Visit here. For information longer than 256 characters, use separate documentation.</string>
     

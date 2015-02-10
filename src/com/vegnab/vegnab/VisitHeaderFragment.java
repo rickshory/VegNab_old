@@ -762,11 +762,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.txt_visit_scribe:
-			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
+			inflater.inflate(R.menu.context_visit_header_scribe, menu);
 			break;
 		case R.id.txt_visit_location:
 			inflater.inflate(R.menu.context_visit_header_location, menu);
-//			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
 			break;
 		case R.id.txt_visit_azimuth:
 			menu.add(Menu.NONE, MENU_HELP, Menu.NONE, "Help");
@@ -786,8 +785,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	} else {
 		Log.v(LOG_TAG, "onContextItemSelected info: " + info.toString());
 	}
+	Context c = getActivity();
 	UnderConstrDialog notYetDlg = new UnderConstrDialog();
 	HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
+	ConfigurableHelpDialog flexHlpDlg = new ConfigurableHelpDialog();
+	String helpTitle, helpMessage;
 	switch (item.getItemId()) {
 	case R.id.vis_hdr_namer_edit:
 		Log.v(LOG_TAG, "'Edit Namer' selected");
@@ -840,6 +842,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		Log.v(LOG_TAG, "'Help' selected");
 		// show help on locations
 		hlpDlg.show(getFragmentManager(), null);
+		return true;
+	case R.id.vis_hdr_scribe_help:
+		Log.v(LOG_TAG, "'Scribe Help' selected");
+		// Scribe help
+		helpTitle = c.getResources().getString(R.string.vis_hdr_help_scribe_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_help_scribe_text);
+		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_help_scribe");
 		return true;
 	case MENU_EDIT:
 		Log.v(LOG_TAG, "MENU_EDIT selected");

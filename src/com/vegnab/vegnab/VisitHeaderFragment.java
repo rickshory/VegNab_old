@@ -789,7 +789,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Context c = getActivity();
 	UnderConstrDialog notYetDlg = new UnderConstrDialog();
 	HelpUnderConstrDialog hlpDlg = new HelpUnderConstrDialog();
-	ConfigurableHelpDialog flexHlpDlg = new ConfigurableHelpDialog();
+	ConfigurableMsgDialog flexHlpDlg = new ConfigurableMsgDialog();
 	String helpTitle, helpMessage;
 	switch (item.getItemId()) {
 	case R.id.vis_hdr_visname_help:
@@ -797,7 +797,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Visit Name help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_visname_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_visname_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_visname");
 		return true;
 	case R.id.vis_hdr_namer_edit:
@@ -825,7 +825,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Namer help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_namer_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_namer_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_namer");
 		return true;
 	case R.id.vis_hdr_scribe_help:
@@ -833,7 +833,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Scribe help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_scribe_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_scribe_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_scribe");
 		return true;
 	case R.id.vis_hdr_loc_restore_prev:
@@ -866,7 +866,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Location help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_loc_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_loc_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_loc");
 		return true;
 	case R.id.vis_hdr_azimuth_help:
@@ -874,7 +874,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Azimuth help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_azimuth_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_azimuth_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_azimuth");
 		return true;
 	case R.id.vis_hdr_notes_help:
@@ -882,7 +882,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// Notes help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_notes_title);
 		helpMessage = c.getResources().getString(R.string.vis_hdr_help_notes_text);
-		flexHlpDlg = ConfigurableHelpDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 		flexHlpDlg.show(getFragmentManager(), "frg_help_notes");
 		return true;
 	case MENU_EDIT:

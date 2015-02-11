@@ -82,13 +82,6 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// request existing project codes ASAP, this doesn't use the UI
-		getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
-	}
-	
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
 
@@ -152,8 +145,10 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			mProjRecId = args.getLong("mProjRecId");
-			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
+			// request existing project codes ASAP, this doesn't use the UI
+			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			// will insert values into screen when cursor is finished
+			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
 		}
 	}
 

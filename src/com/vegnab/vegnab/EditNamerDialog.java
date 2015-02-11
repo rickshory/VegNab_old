@@ -183,6 +183,7 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 			return 1;
 		} else {
 			mUri = ContentUris.withAppendedId(mNamersUri, mNamerRecId);
+			Log.v(LOG_TAG, "about to update record in saveNamerRecord; mValues: " + mValues.toString() + "; URI: " + mUri.toString());
 			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveNamerRecord; numUpdated: " + numUpdated);
 			return numUpdated;

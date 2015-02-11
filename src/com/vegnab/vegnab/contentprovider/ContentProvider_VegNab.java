@@ -253,50 +253,50 @@ public class ContentProvider_VegNab extends ContentProvider {
 			rowsUpdated = cur.getInt(0);
 			break;
 		case PROJECTS:
-			rowsUpdated = sqlDB.update("Projects", values, selection, selectionArgs);
+			rowsUpdated = sqlDB.updateWithOnConflict("Projects", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			break;
 		case PROJECT_ID:
 			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update("Projects", values, "_id=" + id, null);
+				rowsUpdated = sqlDB.updateWithOnConflict("Projects", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
 			} else {
-				rowsUpdated = sqlDB.update("Projects", values, "_id=" + id, selectionArgs);
+				rowsUpdated = sqlDB.updateWithOnConflict("Projects", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 			break;
 
 		case VISITS:
-			rowsUpdated = sqlDB.update("Visits", values, selection, selectionArgs);
+			rowsUpdated = sqlDB.updateWithOnConflict("Visits", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			break;
 		case VISIT_ID:
 			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update("Visits", values, "_id=" + id, null);
+				rowsUpdated = sqlDB.updateWithOnConflict("Visits", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
 			} else {
-				rowsUpdated = sqlDB.update("Visits", values, "_id=" + id, selectionArgs);
+				rowsUpdated = sqlDB.updateWithOnConflict("Visits", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 			break;
 		
 		case LOCATIONS:
-			rowsUpdated = sqlDB.update("Locations", values, selection, selectionArgs);
+			rowsUpdated = sqlDB.updateWithOnConflict("Locations", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			break;
 		case LOCATION_ID:
 			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update("Locations", values, "_id=" + id, null);
+				rowsUpdated = sqlDB.updateWithOnConflict("Locations", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
 			} else {
-				rowsUpdated = sqlDB.update("Locations", values, "_id=" + id, selectionArgs);
+				rowsUpdated = sqlDB.updateWithOnConflict("Locations", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 			break;
 
 		case NAMERS:
-			rowsUpdated = sqlDB.update("Namers", values, selection, selectionArgs);
+			rowsUpdated = sqlDB.updateWithOnConflict("Namers", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			break;
 		case NAMER_ID:
 			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update("Namers", values, "_id=" + id, null);
+				rowsUpdated = sqlDB.updateWithOnConflict("Namers", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
 			} else {
-				rowsUpdated = sqlDB.update("Namers", values, "_id=" + id, selectionArgs);
+				rowsUpdated = sqlDB.updateWithOnConflict("Namers", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 			break;
 			

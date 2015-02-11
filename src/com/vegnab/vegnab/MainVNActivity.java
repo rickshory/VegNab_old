@@ -33,7 +33,8 @@ public class MainVNActivity extends ActionBarActivity
 		VisitHeaderFragment.OnButtonListener, 
 		VegSubplotFragment.OnButtonListener, 
 		AddSpeciesNamerDialog.AddNamerDialogListener,
-		EditNamerDialog.EditNamerDialogListener{
+		EditNamerDialog.EditNamerDialogListener,
+		ConfirmDelNamerDialog.EditNamerDialogListener{
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;

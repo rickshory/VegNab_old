@@ -103,7 +103,7 @@
     <string name="edit_namer_title_edit">Edit Namer</string>
     <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has already done.</string>
 
-    <string name="del_namer_details">Can\'t delete current Namer, or Namer who has done Visits</string>
+    <string name="del_namer_details">Can\'t delete the current Namer, or any Namer who has done Visits</string>
     <string name="del_namer_confirm">Delete Namer?</string>
     
     <string name="vis_hdr_ctxmenu_namer_edit">Edit</string>

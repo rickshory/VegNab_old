@@ -1,5 +1,6 @@
 package com.vegnab.vegnab;
 
+import com.vegnab.vegnab.EditNamerDialog.EditNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 
 import android.app.AlertDialog;
@@ -16,6 +17,10 @@ import android.util.Log;
 
 public class ConfirmDelNamerDialog extends DialogFragment {
 	private static final String LOG_TAG = ConfirmDelNamerDialog.class.getSimpleName();
+	public interface EditNamerDialogListener {
+		public void onEditNamerComplete(DialogFragment dialog);
+	}
+	EditNamerDialogListener mEditNamerListener;
 	long mNamerRecId = 0;
 	String mStringNamer = "";
 	
@@ -28,6 +33,17 @@ public class ConfirmDelNamerDialog extends DialogFragment {
 		f.setArguments(args);
 		return f;
 	};
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+        try {
+        	mEditNamerListener = (EditNamerDialogListener) getActivity();
+        	Log.v(LOG_TAG, "(EditNamerDialogListener) getActivity()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Main Activity must implement EditNamerDialogListener interface");
+        }
+	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,6 +54,7 @@ public class ConfirmDelNamerDialog extends DialogFragment {
 //			Log.v(LOG_TAG, "In DialogFragment, onCreateDialog, mNamerRecId: " + mNamerRecId);
 //			Log.v(LOG_TAG, "In DialogFragment, onCreateDialog, mStringNamer: " + mStringNamer);
 		}
+		
 		AlertDialog.Builder bld = new AlertDialog.Builder(getActivity());
 		bld.setTitle(R.string.del_namer_confirm).setMessage(mStringNamer)
 			.setPositiveButton(R.string.action_affirm, new DialogInterface.OnClickListener() {
@@ -54,6 +71,7 @@ public class ConfirmDelNamerDialog extends DialogFragment {
 					ContentResolver rs = getActivity().getContentResolver();
 					int numDeleted = rs.delete(uri, null, null);
 					Log.v(LOG_TAG, "numDeleted: " + numDeleted);
+					mEditNamerListener.onEditNamerComplete(ConfirmDelNamerDialog.this);
 				}
 			})
 			.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {

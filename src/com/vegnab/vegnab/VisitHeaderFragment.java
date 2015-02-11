@@ -537,7 +537,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	}
 
 	
-	private int saveVisitRecord () {
+	private int saveVisitRecord() {
 		// if anything invalid, don't save record, and return zero to indicate failure
 		if ("" + mViewVisitName.getText().toString().trim() == "") {
 			Toast.makeText(this.getActivity(),
@@ -814,11 +814,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	case R.id.vis_hdr_namer_delete:
 		Log.v(LOG_TAG, "'Delete Namer' selected");
 		// delete Namer
-		notYetDlg.show(getFragmentManager(), null);
+		DelNamerDialog delNamerDlg = new DelNamerDialog();
+		delNamerDlg.show(getFragmentManager(), "frg_del_namer");
 		return true;
 	case R.id.vis_hdr_namer_help:
-		// same Help for the text view that covers the Namer spinner to catch the first '(add new)' click
-	case R.id.vis_hdr_namer_cover_help: 
+		// drop through to the same Help for the text view that covers the
+		//  Namer spinner to catch the first '(add new)' click
+	case R.id.vis_hdr_namer_cover_help:
 		Log.v(LOG_TAG, "'Namer Help' selected");
 		// Namer help
 		helpTitle = c.getResources().getString(R.string.vis_hdr_help_namer_title);

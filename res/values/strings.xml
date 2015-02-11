@@ -14,6 +14,7 @@
     <string name="action_visit_info">Visit details</string>
     <string name="action_delete_visit">Delete Visit</string>
     <string name="action_export_visit">Export Visit</string>
+    <string name="action_delete_namer">Delete Namer</string>
    
     <string name="default_project">MyProject</string>
     <string name="default_plottype">Species List</string>
@@ -101,6 +102,9 @@
     
     <string name="edit_namer_title_edit">Edit Namer</string>
     <string name="edit_namer_label_namername">This will change the spelling in any Visits this Namer has already done.</string>
+
+    <string name="del_namer_details">Can\'t delete current Namer, or Namer who has done Visits</string>
+    <string name="del_namer_confirm">Delete Namer?</string>
     
     <string name="vis_hdr_ctxmenu_namer_edit">Edit</string>
     <string name="vis_hdr_ctxmenu_namer_delete">Delete</string>

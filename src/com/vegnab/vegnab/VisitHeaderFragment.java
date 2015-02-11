@@ -695,10 +695,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		switch (v.getId()) {
 		case R.id.sel_spp_namer_spinner:
 			if (hasFocus) {
-				Log.v(LOG_TAG, "Starting 'add new' for Namer from onFocusChange");
-				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
-				FragmentManager fm = getActivity().getSupportFragmentManager();
-				addSppNamerDlg.show(fm, "");
+				Log.v(LOG_TAG, "onFocusChange of Namer spinner");
+//				EditNamerDialog  addSppNamerDlg = EditNamerDialog.newInstance(0);
+//				FragmentManager fm = getActivity().getSupportFragmentManager();
+//				addSppNamerDlg.show(fm, "");
 			}
 
 			break;

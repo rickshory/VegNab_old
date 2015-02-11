@@ -31,8 +31,7 @@ import android.os.Build;
 public class MainVNActivity extends ActionBarActivity 
 		implements NewVisitFragment.OnButtonListener, 
 		VisitHeaderFragment.OnButtonListener, 
-		VegSubplotFragment.OnButtonListener, 
-		AddSpeciesNamerDialog.AddNamerDialogListener,
+		VegSubplotFragment.OnButtonListener,
 		EditNamerDialog.EditNamerDialogListener,
 		ConfirmDelNamerDialog.EditNamerDialogListener{
 	
@@ -251,14 +250,6 @@ public class MainVNActivity extends ActionBarActivity
 	    	mUniqueDeviceId = UUID.randomUUID().toString();
     		return;	    	
 	    }
-	}
-
-	@Override
-	public void onAddNamerSaveClick(DialogFragment dialog) {
-		Log.v(LOG_TAG, "onAddNamerSaveClick(DialogFragment dialog)");
-		VisitHeaderFragment visHdrFragment = (VisitHeaderFragment) 
-				getSupportFragmentManager().findFragmentByTag(Tags.VISIT_HEADER);
-		visHdrFragment.refreshNamerSpinner();		
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package com.vegnab.vegnab;
 
 import java.util.HashMap;
 
-import com.vegnab.vegnab.AddSpeciesNamerDialog.AddNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;

@@ -152,6 +152,12 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
+		if (!(namerString.length() >= 2)) {
+			Toast.makeText(this.getActivity(),
+					c.getResources().getString(R.string.err_need_2_chars),
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
 		if (mExistingNamers.containsValue(namerString)) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.add_namer_duplicate),

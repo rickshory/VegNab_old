@@ -226,6 +226,12 @@ public class EditProjectDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
+		if (!(projCodeString.length() >= 2)) {
+			Toast.makeText(this.getActivity(),
+					c.getResources().getString(R.string.err_need_2_chars),
+					Toast.LENGTH_LONG).show();
+			return 0;
+		}
 		if (mExistingProjCodes.containsValue(projCodeString)) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,

@@ -28,6 +28,9 @@
     <string name="msg_help">Help</string>
     <string name="msg_help_apology">Help is Under Construction</string>
     
+    <string name="err_need_2_chars">Need at least 2 characters</string>
+    <string name="err_need_3_chars">Need at least 3 characters</string>
+    
     <string name="new_visit_title">Start a new visit</string>
     <string name="new_visit_plot_type">Of Plot Type</string>
     <string name="new_visit_plot_type_prompt">Plot Type</string>

@@ -29,6 +29,7 @@
         android:layout_below="@id/lbl_projcode"
         android:hint="@string/edit_proj_hint_projcode"
         android:inputType="text"
+        android:maxLines="1"
         android:maxLength="10"
 		/>
 
@@ -78,8 +79,9 @@
         android:layout_alignLeft="@id/lbl_person"
         android:layout_below="@id/lbl_person"
         android:hint="@string/edit_proj_hint_person"
-        android:inputType="textMultiLine"
+        android:inputType="textPersonName|textCapWords"
         android:gravity="top|left"
+        android:maxLines="1"
         android:maxLength="255"
          />
     

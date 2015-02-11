@@ -28,7 +28,8 @@
         android:layout_alignLeft="@id/lbl_namer"
         android:layout_below="@id/lbl_namer"
         android:hint="@string/add_namer_hint"
-        android:inputType="text"
+        android:inputType="textPersonName|textCapWords"
+        android:maxLines="1"
         android:maxLength="16"
 		/>
         

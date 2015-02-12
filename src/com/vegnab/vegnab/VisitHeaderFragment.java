@@ -399,7 +399,25 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 			break;
 		case R.id.visit_header_go_button:
-			mButtonCallback.onVisitHeaderGoButtonClicked();
+			// create update the Visit record in the database, if everything valid		
+			mValues.clear();
+			mValues.put("VisitName", mProjCode.getText().toString().trim());
+			
+			//	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
+
+			
+			mValues.put("Description", mDescription.getText().toString().trim());
+			mValues.put("Context", mContext.getText().toString().trim());
+			mValues.put("Caveats", mCaveats.getText().toString().trim());
+			mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
+			mValues.put("StartDate", mStartDate.getText().toString().trim());
+			mValues.put("EndDate", mEndDate.getText().toString().trim());
+			Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
+			int numUpdated = saveProjRecord();
+
+			mm
+			// while testing, do not go to other screen
+//			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
 	}
@@ -536,6 +554,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			break;
 		}
 	}
+	
+	private boolean getAllContentValues() {
+		mValues.clear();
+		xx
+		
+		return true;
+	}
+	
+	
 
 	
 	private int saveVisitRecord() {

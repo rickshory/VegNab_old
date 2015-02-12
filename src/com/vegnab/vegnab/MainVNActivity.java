@@ -220,7 +220,8 @@ public class MainVNActivity extends ActionBarActivity
 		// this ID may be useful in sorting out field work chaos, to tell where the data came from
 	    String deviceId;
 	    try {
-	    	deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+	    	TelephonyManager tMgr = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
+	    	deviceId = tMgr.getDeviceId();
 		    if (deviceId != null) { // won't have this if device is not a phone, and
 		    						//not always reliable to read even if it is a phone
 		    	mDeviceIdSource = "Phone";

@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -89,6 +90,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
+    // how much noise to make when the Visit record is invalid
+    private static final int VALIDATE_SILENT = 0;
+    private static final int VALIDATE_QUIET = 1;
+    private static final int VALIDATE_CRITICAL = 2;
+    private int mValidationLevel = VALIDATE_SILENT;
     protected GoogleApiClient mGoogleApiClient;
     // track the state of Google API Client, to isolate errors
     private static final int GAC_STATE_LOCATION = 1;
@@ -114,6 +120,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	Uri mVisitsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "visits");
 	Uri mLocationsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "locations");
 	ContentValues mValues = new ContentValues();
+	HashMap<Long, String> mExistingVisitNames = new HashMap<Long, String>();
 	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
 	private Spinner mNamerSpinner;
 	private TextView mLblNewNamerSpinnerCover;
@@ -238,6 +245,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mLocTime = savedInstanceState.getString(ARG_LOC_TIME);
 			}
 		}
+		// fire this one off ASAP, doesn't use the UI
+		getLoaderManager().initLoader(Loaders.EXISTING_VISITS, null, this);
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
 		mViewVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
@@ -399,24 +408,22 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 			break;
 		case R.id.visit_header_go_button:
-			// create update the Visit record in the database, if everything valid		
+			// create or update the Visit record in the database, if everything is valid		
 			mValues.clear();
-			mValues.put("VisitName", mProjCode.getText().toString().trim());
-			
-			//	private EditText mViewVisitName, mViewVisitDate, mViewVisitScribe, mViewVisitLocation, mViewAzimuth, mViewVisitNotes;
-
-			
-			mValues.put("Description", mDescription.getText().toString().trim());
-			mValues.put("Context", mContext.getText().toString().trim());
-			mValues.put("Caveats", mCaveats.getText().toString().trim());
-			mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
-			mValues.put("StartDate", mStartDate.getText().toString().trim());
-			mValues.put("EndDate", mEndDate.getText().toString().trim());
-			Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
-			int numUpdated = saveProjRecord();
-
-			mm
-			// while testing, do not go to other screen
+			// fill in the parameters from visible TextView fields, will test validity later
+			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
+			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
+			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+			mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
+			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+		    mValidationLevel = VALIDATE_CRITICAL; // give user lots of information if anything is wrong
+			Log.v(LOG_TAG, "Saving record in go button click; mValues: " + mValues.toString());
+			int numUpdated = saveVisitRecord();
+			if (numUpdated == 0) {
+				break;
+			}
+			// while testing, do not go to next screen
+			Log.v(LOG_TAG, "Would have gone to next screen here, if not Testing mode");
 //			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
@@ -471,6 +478,16 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;
+		case Loaders.EXISTING_VISITS:
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT _id, VisitName FROM Visits "
+					+ "WHERE IsDeleted = 0 AND _id != ?;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, new String[] { "" + mVisitId }, null);
+			break;
+			
+//			
+			
 		}
 		return cl;
 	}
@@ -480,6 +497,16 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// there will be various loaders, switch them out here
 		mRowCt = c.getCount();
 		switch (loader.getId()) {
+		case Loaders.EXISTING_VISITS:
+			mExistingVisitNames.clear();
+			while (c.moveToNext()) {
+				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("VisitName")));
+				mExistingVisitNames.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+						c.getString(c.getColumnIndexOrThrow("VisitName")));
+			}
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingProjCodes: " + mExistingVisitNames.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingProjCodes: " + mExistingVisitNames.toString());
+			break;
 		case Loaders.VISIT_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, VISIT_TO_EDIT, records: " + c.getCount());
 			if (c.moveToFirst()) {
@@ -544,6 +571,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
+		case Loaders.EXISTING_VISITS:
+			Log.v(LOG_TAG, "onLoaderReset, EXISTING_VISITS.");
+//			don't need to do anything here, no cursor adapter
+			break;
 		case Loaders.VISIT_TO_EDIT:
 			Log.v(LOG_TAG, "onLoaderReset, VISIT_TO_EDIT.");
 //			don't need to do anything here, no cursor adapter
@@ -555,17 +586,200 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 	
-	private boolean getAllContentValues() {
-		mValues.clear();
-		xx
+	private boolean validateRecordValues() {
+		// validate all items on the screen the user can see
+		Context c = getActivity();
+		String stringProblem;
+		String errTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
+		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
+		// assure mValues contains all required fields
+		if (!mValues.containsKey("VisitName")) {
+			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
+		}
+		String stringVisitName = mValues.getAsString("VisitName");
+		if (stringVisitName.length() == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_none");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!(stringVisitName.length() >= 2)) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_short);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_short");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (mExistingVisitNames.containsValue(stringVisitName)) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_dup);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_duplicate");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!mValues.containsKey("VisitDate")) {
+			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
+		}
+		String stringVisitDate = mValues.getAsString("VisitDate");
+		if (stringVisitDate.length() == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_none");
+					mViewVisitDate.requestFocus();
+				}
+			}
+			return false;
+		}
+		/*
+		try {
+			Date date = mDateFormat.parse(stringVisitDate);
+		} catch (ParseException e) {
+			Log.v(LOG_TAG, "Date error: " + e.toString());
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_bad);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_bad");
+					mViewVisitDate.requestFocus();
+				}
+			}
+			return false;
+		}
+		*/
+		if (mNamerId == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_namer_none");
+					mViewVisitDate.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!mValues.containsKey("NamerID")) { // valid if we are to this point
+			mValues.put("NamerID", mNamerId);
+		}
+
+		if (!mValues.containsKey("Scribe")) { // optional, no validation
+			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+		}
 		
+		if (mLocIsGood) {
+			mValues.put("RefLocIsGood", 1);
+		} else {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_loc_not_ready");
+				}
+			}
+			return false;
+		}
+
+		// validate Azimuth
+		String stringAz = mViewAzimuth.getText().toString().trim();
+		if (stringAz.length() > 0) { // null is valid but empty string is not
+			int Az = 0;
+			try {
+				Az = Integer.parseInt(stringAz);
+				if ((Az < 0) || (Az > 360)) {
+					if (mValidationLevel > VALIDATE_SILENT) {
+						stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
+						if (mValidationLevel == VALIDATE_QUIET) {
+							Toast.makeText(this.getActivity(),
+									stringProblem,
+									Toast.LENGTH_LONG).show();
+						}
+						if (mValidationLevel == VALIDATE_CRITICAL) {
+							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+							flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_out_of_range");
+							mViewAzimuth.requestFocus();
+						}
+					}
+					return false;
+				} else {
+					mValues.put("Azimuth", Az);
+				}
+			} catch(NumberFormatException e) {
+				if (mValidationLevel > VALIDATE_SILENT) {
+					stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
+					if (mValidationLevel == VALIDATE_QUIET) {
+						Toast.makeText(this.getActivity(),
+								stringProblem,
+								Toast.LENGTH_LONG).show();
+					}
+					if (mValidationLevel == VALIDATE_CRITICAL) {
+						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+						flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_bad_number");
+						mViewAzimuth.requestFocus();
+					}
+				}
+			}
+		}
+		
+		if (!mValues.containsKey("VisitNotes")) { // optional, no validation
+			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+		}
 		return true;
 	}
-	
-	
 
 	
 	private int saveVisitRecord() {
+		if (!validateRecordValues()) {
+			return 0;
+		}
 		// if anything invalid, don't save record, and return zero to indicate failure
 		if ("" + mViewVisitName.getText().toString().trim() == "") {
 			Toast.makeText(this.getActivity(),
@@ -632,7 +846,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mValues.put("AdditionalLocationsType", 1); // 1=points, 2=line, 3=polygon			
 			mUri = rs.insert(mVisitsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; returned URI: " + mUri.toString());
-			mVisitId = Long.parseLong(mUri.getLastPathSegment());
+			long newRecId = Long.parseLong(mUri.getLastPathSegment());
+			if (newRecId < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
+				Log.v(LOG_TAG, "new record in saveVisitRecord has Id == " + newRecId + "); canceled");
+				return 0;
+			}
+			mVisitId = newRecId;
+			getLoaderManager().restartLoader(Loaders.EXISTING_VISITS, null, this);
 			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -649,16 +869,24 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mValues.put("TimeStamp", mLocTime);
 				mValues.put("Accuracy", mAccuracy);
 				mUri = rs.insert(mLocationsUri, mValues);
-				mLocId = Long.parseLong(mUri.getLastPathSegment());
-				Log.v(LOG_TAG, "saveVisitRecord; new Location record created, locID = " + mLocId);
-				// update the Visit record to include the Location
-				mValues.clear();
-				mValues.put("RefLocID", mLocId);
-				mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
-				numUpdated = rs.update(mUri, mValues, null, null);
-				Log.v(LOG_TAG, "saveVisitRecord; new Visit record updated with locID = " + mLocId);
+				long newLocID = Long.parseLong(mUri.getLastPathSegment());
+				if (newLocID < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
+					Log.v(LOG_TAG, "new Location record in saveVisitRecord has Id == " + newLocID + "); canceled");
+				} else {
+					mLocId = newLocID;
+					Log.v(LOG_TAG, "saveVisitRecord; new Location record created, locID = " + mLocId);
+					// update the Visit record to include the Location
+					mValues.clear();
+					mValues.put("RefLocID", mLocId);
+					mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
+					numUpdated = rs.update(mUri, mValues, null, null);
+					if (numUpdated == 0) {
+						Log.v(LOG_TAG, "saveVisitRecord; new Visit record NOT updated with locID = " + mLocId);
+					} else {
+						Log.v(LOG_TAG, "saveVisitRecord; new Visit record updated with locID = " + mLocId);
+					}
+				}
 			}
-
 			return 1;
 		} else { // update the existing record
 			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
@@ -720,41 +948,44 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
-		switch (v.getId()) {
-		case R.id.sel_spp_namer_spinner:
-			if (hasFocus) {
-				Log.v(LOG_TAG, "onFocusChange of Namer spinner");
-//				EditNamerDialog  addSppNamerDlg = EditNamerDialog.newInstance(0);
-//				FragmentManager fm = getActivity().getSupportFragmentManager();
-//				addSppNamerDlg.show(fm, "");
-			}
-
-			break;
-/*	public void onFocusChange(View v, boolean hasFocus) {
 		if(!hasFocus) { // something lost focus
 			mValues.clear();
 			switch (v.getId()) {
 			case R.id.txt_visit_name:
 				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
 				break;
-			case R.id.txt_visit_date:
-				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-				break;
 			case R.id.txt_visit_scribe:
 				mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+				break;
+			case R.id.txt_visit_azimuth:
+				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
+				break;
+			case R.id.txt_visit_notes:
+				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+				break;
+			}
+			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString());
+			mValidationLevel = VALIDATE_QUIET; // save if possible, but notify minimally
+			int numUpdated = saveVisitRecord();
+		}
+	}			
+/*	public void onFocusChange(View v, boolean hasFocus) {
+		switch (v.getId()) {
+		// this part probably never occurs
+		case R.id.sel_spp_namer_spinner:
+			if (hasFocus) {
+				Log.v(LOG_TAG, "onFocusChange of Namer spinner");
+			}
+			break;
+		}
+			case R.id.txt_visit_date:
+				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
 				break;
 			case R.id.txt_visit_location:
 				if (mLocId != 0) {
 					mValues.put("RefLocID", mLocId);
 				}
 				break;
-			case R.id.txt_visit_azimuth:
-				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
-				break;			
-			case R.id.txt_visit_notes:
-				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
-				break;			
-
 			default: // save everything
 				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
 				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
@@ -763,17 +994,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					mValues.put("RefLocID", mLocId);
 				}
 				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
-				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
-				
-				}
-			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
-			int numUpdated = saveVisitRecord();
-			}		
+				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());		
 		}
 */
 
-		}
-	}
+
 	// create context menus
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, 

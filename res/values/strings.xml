@@ -134,7 +134,16 @@
     <string name="vis_hdr_help_azimuth_text">If it applies, \"Azimuth\" would be the compass direction of a plot, in degrees from true North. For some plot types, such as Transects, this is crucial to relocate them. Other plot types, like Species Lists, have no orientation so you would leave \"Azimuth\" blank.</string>
     <string name="vis_hdr_help_notes_title">\"Notes\" Help</string>
     <string name="vis_hdr_help_notes_text">Enter brief notes about the Visit here. For information longer than 256 characters, use separate documentation.</string>
-    
+
+    <string name="vis_hdr_validate_generic_title">Critical Error</string>
+    <string name="vis_hdr_validate_name_none">No Name for this Visit</string>
+    <string name="vis_hdr_validate_name_short">Visit Name must be at least 2 characters</string>
+    <string name="vis_hdr_validate_name_dup">Duplicate Name for this Visit, already used.</string>
+    <string name="vis_hdr_validate_date_none">Need a Date for this Visit</string>
+    <string name="vis_hdr_validate_date_bad">Invalid Date for this Visit</string>
+    <string name="vis_hdr_validate_namer_none">Need a Species Namer for this Visit (the person naming the species)</string>
+    <string name="vis_hdr_validate_loc_not_ready">Wait till Location is valid, or long-press for options.</string>
+    <string name="vis_hdr_validate_azimuth_bad">Azimuth must be 0 to 360</string>    
     
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>

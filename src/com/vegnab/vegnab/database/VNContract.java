@@ -37,12 +37,15 @@ public final class VNContract {
 		public static final int EXISTING_PROJCODES = 11; // to disallow duplicates
 		public static final int PROJECT_TO_EDIT = 12; //
 		// in Visit Header
-		public static final int VISIT_TO_EDIT = 21;
-		public static final int EXISTING_NAMERS = 22;
-		public static final int NAMERS = 23;
-		public static final int LOCATIONS = 24;
-		public static final int VALID_DEL_NAMERS = 25; // Loader Id for the list of Namers that are valid to delete
-		public static final int NAMER_TO_EDIT = 26;
+		public static final int VISIT_TO_EDIT = 21; // the current Visit
+		public static final int EXISTING_VISITS = 22; // Visits other than the current, to check duplicates
+		public static final int NAMERS = 23; // all Namers, to choose from
+		public static final int LOCATIONS = 27;
+		// in Edit Namer
+		public static final int NAMER_TO_EDIT = 31;
+		public static final int EXISTING_NAMERS = 32; // Namers other than the current, to check duplicates
+		// in Delete Namer
+		public static final int VALID_DEL_NAMERS = 41; // Namers that are valid to delete
 
 		
 	}

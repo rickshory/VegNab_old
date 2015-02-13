@@ -95,6 +95,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private static final int VALIDATE_QUIET = 1;
     private static final int VALIDATE_CRITICAL = 2;
     private int mValidationLevel = VALIDATE_SILENT;
+    private static final int INTERNAL_GPS = 1;
+    private static final int NETWORK = 2;
+    private static final int MANUAL_ENTRY = 3;
+    private int mLocationSource = INTERNAL_GPS; // default till changed
     protected GoogleApiClient mGoogleApiClient;
     // track the state of Google API Client, to isolate errors
     private static final int GAC_STATE_LOCATION = 1;
@@ -780,46 +784,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		if (!validateRecordValues()) {
 			return 0;
 		}
-		// if anything invalid, don't save record, and return zero to indicate failure
-		if ("" + mViewVisitName.getText().toString().trim() == "") {
-			Toast.makeText(this.getActivity(),
-					"Need Visit Name",
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
-		// test and warn if duplicate name, but allow
-//		if (mExistingProjCodes.contains("" + mProjCode.getText().toString().trim())) {
-//			Toast.makeText(this.getActivity(),
-//					"Duplicate Project Code",
-//					Toast.LENGTH_LONG).show();
-//			return 0;
-//		}
-
-		if ("" + mViewVisitDate.getText().toString().trim() == "") {
-			Toast.makeText(this.getActivity(),
-					"Need Visit Date",
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
-		if (mNamerId == 0) {
-			Toast.makeText(this.getActivity(),
-					"Need a Namer for species",
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
-		
-		if (!mLocIsGood) {
-			Toast.makeText(this.getActivity(),
-					"Wait till Location is valid, or long-press for options.",
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
-		// mVisitId = 0, mNamerId = 0;
-		// mLocIsGood
-		// , mViewVisitLocation
-		
-// none of these are required: mViewVisitScribe, mViewAzimuth, mViewVisitNotes;
-//		private Spinner mNamerSpinner;
 
 		ContentResolver rs = getActivity().getContentResolver();
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -830,10 +794,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mValues.put("PlotTypeID", sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0));
 			mValues.put("StartTime", mTimeFormat.format(new Date()));
 			mValues.put("LastChanged", mTimeFormat.format(new Date()));
-			mValues.put("NamerID", mNamerId);
+//			mValues.put("NamerID", mNamerId);
 			// wait on 'RefLocID', location record cannot be created until the Visit record has an ID assigned
 //			mValues.put("RefLocID", ); // save the Location to get this ID
-			mValues.put("RefLocIsGood", mLocIsGood ? 1 : 0);
+//			mValues.put("RefLocIsGood", mLocIsGood ? 1 : 0);
 			mValues.put("DeviceType", 2); // 1='unknown', 2='Android', this may be redundant, but flags that this was explicitly set
 			mValues.put("DeviceID", sharedPref.getString(Prefs.UNIQUE_DEVICE_ID, "")); // set on first app start
 			mValues.put("DeviceIDSource", sharedPref.getString(Prefs.DEVICE_ID_SOURCE, ""));
@@ -853,6 +817,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			}
 			mVisitId = newRecId;
 			getLoaderManager().restartLoader(Loaders.EXISTING_VISITS, null, this);
+			
 			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			Log.v(LOG_TAG, "new record in saveVisitRecord; URI re-parsed: " + mUri.toString());
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -861,6 +826,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			if (mLocIsGood) { // add the location record
 				mValues.clear();
 				mValues.put("LocName", "Reference Location");
+				mValues.put("SourceID", mLocationSource);
 				mValues.put("VisitID", mVisitId);
 				//mValues.put("SubplotID", 0); // N/A, for the whole site, not any subplot
 				//mValues.put("ListingOrder", 0); // use the default=0

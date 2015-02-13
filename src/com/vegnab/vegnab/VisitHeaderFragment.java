@@ -98,6 +98,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     private static final int INTERNAL_GPS = 1;
     private static final int NETWORK = 2;
     private static final int MANUAL_ENTRY = 3;
+    private static final int USER_OKD_ACCURACY = 4;
     private int mLocationSource = INTERNAL_GPS; // default till changed
     protected GoogleApiClient mGoogleApiClient;
     // track the state of Google API Client, to isolate errors
@@ -106,7 +107,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     // we use LocationServices, and Drive, but not at the same time; start with LocationServices
     private int mGACState = GAC_STATE_LOCATION;
     private LocationRequest mLocationRequest;
-    private boolean mLocIsGood = false; // default until retrieved or established true
+    private boolean mLocIsGood = false, mLocIsSaved = false; // default until retrieved or established true
     private double mLatitude, mLongitude;
     private float mAccuracy, mAccuracyTargetForVisitLoc;
     private String mLocTime;
@@ -1067,8 +1068,35 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		return true;
 	case R.id.vis_hdr_loc_accept:
 		Log.v(LOG_TAG, "'Accept accuracy' selected");
+		if (mLocIsGood == true) { // message that accuracy is already OK
+			helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_prev_ok);
+			if (mLocationSource == USER_OKD_ACCURACY) {
+				helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_ok_text_pre);
+			} else {
+				helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_ok_text_pre)
+					+ " " + mAccuracy
+					+ c.getResources().getString(R.string.vis_hdr_loc_good_ok_text_post);
+			}
+			flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
+			flexHlpDlg.show(getFragmentManager(), "frg_loc_acc_already_ok");
+			return true;
+		}
+		if (mCurLocation == null) { // no location at all yet
+			helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_ok_title);
+			helpMessage = c.getResources().getString(R.string.vis_hdr_loc_none);
+			flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
+			flexHlpDlg.show(getFragmentManager(), "frg_loc_err_none");
+			return true;
+		}
 		// accept location even with poor accuracy
-		notYetDlg.show(getFragmentManager(), null);
+	    mLocationSource = USER_OKD_ACCURACY;
+	    finalizeLocation(); // depends on mCurLocation, tested above
+		helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_ack_title);
+		helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_ack_text_pre)
+				+ " " + mAccuracy
+				+ c.getResources().getString(R.string.vis_hdr_loc_good_ack_text_post);
+		flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
+		flexHlpDlg.show(getFragmentManager(), "frg_loc_acc_accept");
 		return true;
 	case R.id.vis_hdr_loc_manual:
 		Log.v(LOG_TAG, "'Enter manually' selected");
@@ -1401,30 +1429,43 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	
 	public void handleLocation(Location loc) {
 		String s;
-		mLatitude = loc.getLatitude();
-		mLongitude = loc.getLongitude();
+		mCurLocation = new Location(loc); // hold the latest value
 		mAccuracy = loc.getAccuracy();
-		s = "" + mLatitude + ", " + mLongitude
+		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
+			finalizeLocation();
+		} else {
+			long n = mCurLocation.getTime();
+			mLocTime = mTimeFormat.format(new Date(n));
+			mLatitude = loc.getLatitude();
+			mLongitude = loc.getLongitude();
+			s = "" + mLatitude + ", " + mLongitude
 				+ "\naccuracy " + mAccuracy + "m"
 				+ "\ntarget accuracy " + mAccuracyTargetForVisitLoc + "m"
 				+ "\ncontinuing to acquire";
-		mViewVisitLocation.setText(s);
-		if (mAccuracy <= mAccuracyTargetForVisitLoc) {
-			mLocIsGood = true;
-			long n = loc.getTime();
-			mLocTime = mTimeFormat.format(new Date(n));
-			// test that this is correct
-			Log.v(LOG_TAG, "Time: " + mLocTime);
-			if (mGoogleApiClient.isConnected()) {
-		        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-		        mGoogleApiClient.disconnect();
-		        // overwrite the message
-				s = "" + mLatitude + ", " + mLongitude
-						+ "\naccuracy " + mAccuracy + "m";
-				mViewVisitLocation.setText(s);
-				// write to database here, or just flag?
-		    }
+			mViewVisitLocation.setText(s);
 		}
+	}
+	
+	public void finalizeLocation() {
+		String s;
+		if (mCurLocation == null) {
+			return;
+		}
+		mLocIsGood = true;
+		mLatitude = mCurLocation.getLatitude();
+		mLongitude = mCurLocation.getLongitude();
+		mAccuracy = mCurLocation.getAccuracy();
+		long n = mCurLocation.getTime();
+		mLocTime = mTimeFormat.format(new Date(n));
+		Log.v(LOG_TAG, "Location time: " + mLocTime);
+		if (mGoogleApiClient.isConnected()) {
+	        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+	        mGoogleApiClient.disconnect();
+	        // overwrite the message
+			s = "" + mLatitude + ", " + mLongitude
+					+ "\naccuracy " + mAccuracy + "m";
+			mViewVisitLocation.setText(s);
+	    }
 	}
 	
 	// if Google Play Services not available, would Location Services be?

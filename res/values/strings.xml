@@ -143,7 +143,16 @@
     <string name="vis_hdr_validate_date_bad">Invalid Date for this Visit</string>
     <string name="vis_hdr_validate_namer_none">Need a Species Namer for this Visit (the person naming the species)</string>
     <string name="vis_hdr_validate_loc_not_ready">Wait till Location is valid, or long-press for options.</string>
-    <string name="vis_hdr_validate_azimuth_bad">Azimuth must be 0 to 360</string>    
+    <string name="vis_hdr_validate_azimuth_bad">Azimuth must be 0 to 360</string>
+    
+    <string name="vis_hdr_loc_good_ok_title">Accuracy accepted</string>
+    <string name="vis_hdr_loc_good_ok_text_pre">Accuracy has reached target of </string>
+    <string name="vis_hdr_loc_good_ok_text_post">m, is already accepted.</string>
+    <string name="vis_hdr_loc_good_prev_ok">Accuracy was already manually accepted.</string>
+    <string name="vis_hdr_loc_none">No Location is acquired yet.\n\r\n\rWait for acquire, or Enter Manually.</string>
+    <string name="vis_hdr_loc_good_ack_title">Accuracy accepted</string>
+    <string name="vis_hdr_loc_good_ack_text_pre">Current location accepted, at </string>
+    <string name="vis_hdr_loc_good_ack_text_post">m accuracy</string>
     
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>

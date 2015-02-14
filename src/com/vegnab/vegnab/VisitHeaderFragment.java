@@ -147,6 +147,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	final static String ARG_SUBPLOT = "subplot"; // dummy value, eventually get rid of this one
 	final static String ARG_VISIT_ID = "visitId";
 	final static String ARG_LOC_GOOD_FLAG = "locGood";
+	final static String ARG_CUR_LOCATION = "curLocation";
+	final static String ARG_PREV_LOCATION = "prevLocation";
 	final static String ARG_LOC_LATITUDE = "locLatitude";
 	final static String ARG_LOC_LONGITUDE = "locLongitude";
 	final static String ARG_LOC_ACCURACY = "locAccuracy";
@@ -243,6 +245,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
 			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
 			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
+			mCurLocation = savedInstanceState.getParcelable(ARG_CUR_LOCATION);
+			mPrevLocation = savedInstanceState.getParcelable(ARG_PREV_LOCATION);
 			if (mLocIsGood) {
 				mLatitude = savedInstanceState.getDouble(ARG_LOC_LATITUDE);
 				mLongitude = savedInstanceState.getDouble(ARG_LOC_LONGITUDE);
@@ -387,6 +391,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
 		outState.putLong(ARG_VISIT_ID, mVisitId);
 		outState.putBoolean(ARG_LOC_GOOD_FLAG, mLocIsGood);
+		outState.putParcelable(ARG_CUR_LOCATION, mCurLocation);
+		outState.putParcelable(ARG_PREV_LOCATION, mPrevLocation);
 		if (mLocIsGood) {
 			outState.putDouble(ARG_LOC_LATITUDE, mLatitude);
 			outState.putDouble(ARG_LOC_LONGITUDE, mLongitude);
@@ -1069,9 +1075,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	case R.id.vis_hdr_loc_accept:
 		Log.v(LOG_TAG, "'Accept accuracy' selected");
 		if (mLocIsGood == true) { // message that accuracy is already OK
-			helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_prev_ok);
+			helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_ok_title);
 			if (mLocationSource == USER_OKD_ACCURACY) {
-				helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_ok_text_pre);
+				helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_prev_ok);
 			} else {
 				helpMessage = c.getResources().getString(R.string.vis_hdr_loc_good_ok_text_pre)
 					+ " " + mAccuracy
@@ -1082,7 +1088,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			return true;
 		}
 		if (mCurLocation == null) { // no location at all yet
-			helpTitle = c.getResources().getString(R.string.vis_hdr_loc_good_ok_title);
+			helpTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
 			helpMessage = c.getResources().getString(R.string.vis_hdr_loc_none);
 			flexHlpDlg = ConfigurableMsgDialog.newInstance(helpTitle, helpMessage);
 			flexHlpDlg.show(getFragmentManager(), "frg_loc_err_none");

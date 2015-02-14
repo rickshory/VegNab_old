@@ -31,6 +31,7 @@ import android.os.Build;
 public class MainVNActivity extends ActionBarActivity 
 		implements NewVisitFragment.OnButtonListener, 
 		VisitHeaderFragment.OnButtonListener, 
+		VisitHeaderFragment.EditVisitDialogListener,
 		VegSubplotFragment.OnButtonListener,
 		EditNamerDialog.EditNamerDialogListener,
 		ConfirmDelNamerDialog.EditNamerDialogListener{
@@ -84,7 +85,7 @@ public class MainVNActivity extends ActionBarActivity
 			// the tag is for the fragment now being added
 			// it will stay with this fragment when put on the backstack
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();			
-			transaction.add(R.id.fragment_container, newVisitFrag, "new_visit");
+			transaction.add(R.id.fragment_container, newVisitFrag, Tags.NEW_VISIT);
 			transaction.commit();
 		}
 	}
@@ -259,6 +260,14 @@ public class MainVNActivity extends ActionBarActivity
 		VisitHeaderFragment visHdrFragment = (VisitHeaderFragment) 
 				getSupportFragmentManager().findFragmentByTag(Tags.VISIT_HEADER);
 		visHdrFragment.refreshNamerSpinner();				
+	}
+
+	@Override
+	public void onEditVisitComplete(VisitHeaderFragment visitHeaderFragment) {
+		Log.v(LOG_TAG, "onEditVisitComplete(VisitHeaderFragment visitHeaderFragment)");
+		NewVisitFragment newVisFragment = (NewVisitFragment) 
+				getSupportFragmentManager().findFragmentByTag(Tags.NEW_VISIT);
+		newVisFragment.refreshVisitsList();
 	}
 
 }

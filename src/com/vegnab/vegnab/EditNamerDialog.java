@@ -137,7 +137,9 @@ public class EditNamerDialog extends DialogFragment implements android.view.View
 		mValues.put("NamerName", mEditNamerName.getText().toString().trim());
 		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
 		int numUpdated = saveNamerRecord();
-		mEditNamerListener.onEditNamerComplete(EditNamerDialog.this);
+		if (numUpdated > 0) {
+			mEditNamerListener.onEditNamerComplete(EditNamerDialog.this);
+		}
 	}
 
 	

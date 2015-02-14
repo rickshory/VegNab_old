@@ -221,6 +221,11 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 		"_id", "ProjCode",
 	};
 
+	public void refreshVisitsList() {
+		// when the referred Loader callback returns, will update the list of Visits
+		getLoaderManager().restartLoader(Loaders.PREV_VISITS, null, this);
+	}
+	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// This is called when a new Loader needs to be created.

@@ -27,6 +27,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.vegnab.vegnab.EditNamerDialog.EditNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
@@ -83,6 +84,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		ConnectionCallbacks, OnConnectionFailedListener, 
         LocationListener {
+	
+	public interface EditVisitDialogListener {
+		public void onEditVisitComplete(VisitHeaderFragment visitHeaderFragment);
+	}
+	EditVisitDialogListener mEditVisitListener;	
 
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
 	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
@@ -165,7 +171,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+        try {
+        	mEditVisitListener = (EditVisitDialogListener) getActivity();
+        	Log.v(LOG_TAG, "(EditVisitDialogListener) getActivity()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Main Activity must implement EditVisitDialogListener interface");
+        }
+	setHasOptionsMenu(true);
 	}
 	
 	@Override
@@ -791,7 +803,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		if (!validateRecordValues()) {
 			return 0;
 		}
-
 		ContentResolver rs = getActivity().getContentResolver();
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 		int numUpdated;
@@ -860,14 +871,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					}
 				}
 			}
-			return 1;
+			numUpdated = 1;
 		} else { // update the existing record
 			mValues.put("LastChanged", mTimeFormat.format(new Date())); // update the last-changed time
 			mUri = ContentUris.withAppendedId(mVisitsUri, mVisitId);
 			numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Updated record in saveVisitRecord; numUpdated: " + numUpdated);
-			return numUpdated;
 		}
+		if (numUpdated > 0) {
+			mEditVisitListener.onEditVisitComplete(VisitHeaderFragment.this);
+		}
+		return numUpdated;
 	}	
 	
 	@Override

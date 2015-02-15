@@ -266,8 +266,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mLocTime = savedInstanceState.getString(ARG_LOC_TIME);
 			}
 		}
-		// fire this one off ASAP, doesn't use the UI
-		getLoaderManager().initLoader(Loaders.EXISTING_VISITS, null, this);
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
 		mViewVisitName = (EditText) rootView.findViewById(R.id.txt_visit_name);
@@ -337,6 +335,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// to the fragment
 		Bundle args = getArguments();
 		if (args != null) {
+			mVisitId = args.getLong(ARG_VISIT_ID, 0);
+			// fire off loaders
+			getLoaderManager().initLoader(Loaders.VISIT_TO_EDIT, null, this);
+			getLoaderManager().initLoader(Loaders.EXISTING_VISITS, null, this);
+			
 			// set up subplot based on arguments passed in
 			updateSubplotViews(args.getInt(ARG_SUBPLOT));
 		} else if (mCurrentSubplot != -1) {

@@ -259,7 +259,9 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			break;
 		case Loaders.PREV_VISITS:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id, VisitName, VisitDate FROM Visits ORDER BY VisitDate, LastChanged DESC;";
+			select = "SELECT _id, VisitName, VisitDate FROM Visits " 
+					+ "WHERE ShowOnMobile = 1 AND IsDeleted = 0 " 
+					+ "ORDER BY LastChanged DESC;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;

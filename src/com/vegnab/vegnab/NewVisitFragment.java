@@ -189,7 +189,7 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	
     @Override
     public void onListItemClick(ListView l, View v, int pos, long id) {
-        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
         mListClickCallback.onExistingVisitListClicked(id);
     }
 

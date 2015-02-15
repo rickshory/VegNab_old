@@ -27,7 +27,6 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.vegnab.vegnab.EditNamerDialog.EditNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
@@ -58,8 +57,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.internal.widget.AdapterViewCompat.AdapterContextMenuInfo;
-import android.support.v7.internal.widget.AdapterViewCompat.OnItemSelectedListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -339,7 +336,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			// fire off loaders
 			getLoaderManager().initLoader(Loaders.VISIT_TO_EDIT, null, this);
 			getLoaderManager().initLoader(Loaders.EXISTING_VISITS, null, this);
-			
 			// set up subplot based on arguments passed in
 			updateSubplotViews(args.getInt(ARG_SUBPLOT));
 		} else if (mCurrentSubplot != -1) {
@@ -545,8 +541,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mViewVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
 				// write code to save/retrieve Locations
 				mLocIsGood = (c.getInt(c.getColumnIndexOrThrow("RefLocIsGood")) == 0) ? false : true;
-				
-//		mViewVisitLocation = (EditText) rootView.findViewById(R.id.txt_visit_location);
+				if (mLocIsGood) {
+					if (mGoogleApiClient.isConnected()) {
+						LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+						mGoogleApiClient.disconnect();
+						mViewVisitLocation.setText("(retrieving previously recorded visit location)");
+					}
+				}
+
+
 				mViewAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
 				mViewVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
 			}

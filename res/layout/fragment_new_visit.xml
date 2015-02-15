@@ -60,12 +60,20 @@
         android:layout_below="@id/project_label_text"
         />
     
+    <View android:id="@+id/divider_line"
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="@android:color/darker_gray"
+	    android:layout_alignLeft="@id/new_visit_go_button"
+        android:layout_below="@id/new_visit_go_button"
+	    />
+    
     <ListView android:id="@id/android:list"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:drawSelectorOnTop="false"
-         android:layout_alignLeft="@id/new_visit_go_button"
-         android:layout_below="@id/new_visit_go_button"
+         android:layout_alignLeft="@id/divider_line"
+         android:layout_below="@id/divider_line"
          />
     
     <TextView android:id="@id/android:empty"

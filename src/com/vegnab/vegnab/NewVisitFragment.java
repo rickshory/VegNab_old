@@ -49,12 +49,17 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	int mCurrentSubplot = -1;
 	Spinner mProjSpinner, mPlotTypeSpinner;
 	SimpleCursorAdapter mProjAdapter, mPlotTypeAdapter, mVisitListAdapter;
-	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
 		public void onNewVisitGoButtonClicked();
 	}
+	OnButtonListener mButtonCallback; // declare the interface
+	public interface OnVisitClickListener {
+		// methods that must be implemented in the container Activity
+		public void onExistingVisitListClicked(long visitId);
+	}
+	OnVisitClickListener mListClickCallback;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +151,13 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 			mButtonCallback = (OnButtonListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException (activity.toString() + " must implement OnButtonListener");
-		}	
+		}
+		// OnVisitClickListener mListClickCallback;
+		try {
+			mListClickCallback = (OnVisitClickListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException (activity.toString() + " must implement OnVisitClickListener");
+		}
 	}
 	
 	public void updateSubplotViews(int subplotNum) {
@@ -178,7 +189,8 @@ public class NewVisitFragment extends ListFragment implements OnClickListener,
 	
     @Override
     public void onListItemClick(ListView l, View v, int pos, long id) {
-        Toast.makeText(this.getActivity(), "Clicked position " + pos , Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
+        mListClickCallback.onExistingVisitListClicked(id);
     }
 
 	@Override

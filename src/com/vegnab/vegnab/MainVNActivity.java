@@ -30,6 +30,7 @@ import android.os.Build;
 
 public class MainVNActivity extends ActionBarActivity 
 		implements NewVisitFragment.OnButtonListener, 
+		NewVisitFragment.OnVisitClickListener,
 		VisitHeaderFragment.OnButtonListener, 
 		VisitHeaderFragment.EditVisitDialogListener,
 		VegSubplotFragment.OnButtonListener,
@@ -268,6 +269,11 @@ public class MainVNActivity extends ActionBarActivity
 		NewVisitFragment newVisFragment = (NewVisitFragment) 
 				getSupportFragmentManager().findFragmentByTag(Tags.NEW_VISIT);
 		newVisFragment.refreshVisitsList();
+	}
+
+	@Override
+	public void onExistingVisitListClicked(long visitId) {
+		goToVisitHeaderScreen(visitId);
 	}
 
 }

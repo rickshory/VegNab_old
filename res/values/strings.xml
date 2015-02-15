@@ -153,6 +153,7 @@
     <string name="vis_hdr_loc_good_ack_title">Accuracy accepted</string>
     <string name="vis_hdr_loc_good_ack_text_pre">Current location accepted, at </string>
     <string name="vis_hdr_loc_good_ack_text_post">m accuracy</string>
+    <string name="vis_hdr_loc_retrieving">(retrieving previously recorded visit location)</string>
     
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>

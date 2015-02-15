@@ -508,8 +508,13 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					null, select, new String[] { "" + mVisitId }, null);
 			break;
 			
-//			
-			
+		case Loaders.VISIT_REF_LOCATION:
+			Uri oneLocUri = ContentUris.withAppendedId(
+							Uri.withAppendedPath(
+							ContentProvider_VegNab.CONTENT_URI, "locations"), mLocId);
+			cl = new CursorLoader(getActivity(), oneLocUri,
+					null, select, null, null);
+			break;
 		}
 		return cl;
 	}
@@ -541,18 +546,33 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mViewVisitScribe.setText(c.getString(c.getColumnIndexOrThrow("Scribe")));
 				// write code to save/retrieve Locations
 				mLocIsGood = (c.getInt(c.getColumnIndexOrThrow("RefLocIsGood")) == 0) ? false : true;
+				mLocId = c.getLong(c.getColumnIndexOrThrow("RefLocID"));
 				if (mLocIsGood) {
 					if (mGoogleApiClient.isConnected()) {
 						LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 						mGoogleApiClient.disconnect();
-						mViewVisitLocation.setText("(retrieving previously recorded visit location)");
+						// set a temporary "retrieving..." message
+						String msg = getActivity().getResources().getString(R.string.vis_hdr_loc_retrieving);
+						mViewVisitLocation.setText(msg);
+						// fetch the stored location
+						getLoaderManager().initLoader(Loaders.VISIT_REF_LOCATION, null, this);
 					}
 				}
-
-
 				mViewAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
 				mViewVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));
 			}
+			break;
+			
+		case Loaders.VISIT_REF_LOCATION:
+			Log.v(LOG_TAG, "onLoadFinished, VISIT_REF_LOCATION, records: " + c.getCount());
+			if (c.moveToFirst()) {
+				mLatitude = c.getDouble(c.getColumnIndexOrThrow("Latitude"));
+				mLongitude = c.getDouble(c.getColumnIndexOrThrow("Longitude"));
+				mAccuracy = c.getFloat(c.getColumnIndexOrThrow("Accuracy"));
+				mViewVisitLocation.setText("" + mLatitude + ", " + mLongitude
+					+ "\naccuracy " + mAccuracy + "m");
+			}
+			
 			break;
 		
 		case Loaders.NAMERS:
@@ -611,6 +631,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			
 		case Loaders.NAMERS:
 			mNamerAdapter.swapCursor(null);
+			break;
+			
+		case Loaders.VISIT_REF_LOCATION:
+			Log.v(LOG_TAG, "onLoaderReset, VISIT_REF_LOCATION.");
+//			don't need to do anything here, no cursor adapter
 			break;
 		}
 	}

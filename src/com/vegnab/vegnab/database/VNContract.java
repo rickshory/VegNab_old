@@ -40,7 +40,8 @@ public final class VNContract {
 		public static final int VISIT_TO_EDIT = 21; // the current Visit
 		public static final int EXISTING_VISITS = 22; // Visits other than the current, to check duplicates
 		public static final int NAMERS = 23; // all Namers, to choose from
-		public static final int LOCATIONS = 27;
+		public static final int LOCATIONS = 24;
+		public static final int VISIT_REF_LOCATION = 25; // the reference Location for this Visit
 		// in Edit Namer
 		public static final int NAMER_TO_EDIT = 31;
 		public static final int EXISTING_NAMERS = 32; // Namers other than the current, to check duplicates

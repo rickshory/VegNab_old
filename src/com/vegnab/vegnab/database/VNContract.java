@@ -56,6 +56,7 @@ public final class VNContract {
 	public static abstract class Tags {
 		public static final String NEW_VISIT = "NewVisit";
 		public static final String VISIT_HEADER = "VisitHeader";
+		public static final String TEST_WEBVIEW = "TestWebview";
 		
 	}
 	

@@ -134,7 +134,8 @@ public class MainVNActivity extends ActionBarActivity
 			delProjDlg.show(fm, "frg_del_proj");
 			return true;
 		case R.id.action_new_plottype:
-			Toast.makeText(getApplicationContext(), "''New Plot Type'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "''New Plot Type'' is still under construction", Toast.LENGTH_SHORT).show();
+			testWebviewScreen();
 			return true;
 		case R.id.action_old_visit:
 			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
@@ -208,6 +209,19 @@ public class MainVNActivity extends ActionBarActivity
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced
 		transaction.replace(R.id.fragment_container, visHdrFrag, Tags.VISIT_HEADER);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+	
+	public void testWebviewScreen() {
+		TestWebviewFragment webVwFrag = new TestWebviewFragment();
+		Bundle args = new Bundle();
+		webVwFrag.setArguments(args);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		// replace the fragment in the fragment container with this new fragment and
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, webVwFrag, Tags.TEST_WEBVIEW);
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}

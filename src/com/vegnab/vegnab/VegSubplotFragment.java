@@ -1,16 +1,26 @@
 package com.vegnab.vegnab;
 
+import com.google.android.gms.location.LocationServices;
+import com.vegnab.vegnab.VisitHeaderFragment.EditVisitDialogListener;
+
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class VegSubplotFragment extends ListFragment implements OnClickListener {
 	final static String ARG_SUBPLOT = "subplot";
@@ -20,6 +30,52 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
 		public void onNextSubplotButtonClicked(int subpNum);
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+/*        try {
+        	mEditVisitListener = (EditVisitDialogListener) getActivity();
+        	Log.v(LOG_TAG, "(EditVisitDialogListener) getActivity()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Main Activity must implement EditVisitDialogListener interface");
+        } */
+	setHasOptionsMenu(true);
+	}	
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.veg_subplot, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		FragmentManager fm = getActivity().getSupportFragmentManager();
+//		DialogFragment editProjDlg;
+		switch (item.getItemId()) { // the Activity has first opportunity to handle these
+		// any not handled come here to this Fragment
+//		case R.id.action_app_info:
+//			Toast.makeText(getActivity(), "''App Info'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
+//			return true;
+		case R.id.action_add_item:
+			Toast.makeText(getActivity(), "''Add item'' of Veg Subplot is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.action_veg_help:
+			Toast.makeText(getActivity(), "''Help'' of Veg Subplot is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.action_mark_no_veg:
+			Toast.makeText(getActivity(), "''Mark no-veg'' of Veg Subplot is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.action_go_to:
+			Toast.makeText(getActivity(), "''Go to...'' of Veg Subplot is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override

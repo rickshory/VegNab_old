@@ -155,9 +155,15 @@
     <string name="vis_hdr_loc_good_ack_text_post">m accuracy</string>
     <string name="vis_hdr_loc_retrieving">(retrieving previously recorded visit location)</string>
     
+    <string name="veg_subplot_menu_add_item">Add item</string>
+    <string name="veg_subplot_menu_help">Help</string>
+    <string name="veg_subplot_menu_mark_no_veg">Mark \""no veg\"</string>
+    <string name="veg_subplot_menu_go_to">Go to...</string>
+    
     <string name="veg_subplot_header_msg">This is where you work on a subplot</string>
     <string name="veg_subplot_next_button_msg">Next subplot</string>
     <string name="veg_subplot_name_msg">Subplot: </string>
+    <string name="veg_subplot_no_items">No items yet</string>
     
 
 </resources>

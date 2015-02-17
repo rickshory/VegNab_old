@@ -135,7 +135,11 @@ public class MainVNActivity extends ActionBarActivity
 			return true;
 		case R.id.action_new_plottype:
 			Toast.makeText(getApplicationContext(), "''New Plot Type'' is still under construction", Toast.LENGTH_SHORT).show();
-			testWebviewScreen();
+			showWebViewScreen(Tags.WEBVIEW_PLOT_TYPES);
+			/*		public static final String WEBVIEW_TUTORIAL = "WebviewTutorial";
+			public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
+			public static final String WEBVIEW_REGIONAL_LISTS = "WebviewSppLists";
+	*/
 			return true;
 		case R.id.action_old_visit:
 			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
@@ -212,6 +216,21 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
+
+	public void showWebViewScreen(String screenTag) {
+		ConfigurableWebviewFragment webVwFrag = new ConfigurableWebviewFragment();
+		Bundle args = new Bundle();
+		// screenTag serves both as this fn's switch and the tag name of the fragment instance
+		args.putString(ConfigurableWebviewFragment.ARG_TAG_ID, screenTag);
+		webVwFrag.setArguments(args);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		// replace the fragment in the fragment container with this new fragment and
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, webVwFrag, screenTag);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}	
 	
 	public void testWebviewScreen() {
 		TestWebviewFragment webVwFrag = new TestWebviewFragment();

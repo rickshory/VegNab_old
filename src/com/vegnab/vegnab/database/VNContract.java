@@ -57,9 +57,11 @@ public final class VNContract {
 		public static final String NEW_VISIT = "NewVisit";
 		public static final String VISIT_HEADER = "VisitHeader";
 		public static final String TEST_WEBVIEW = "TestWebview";
+		public static final String WEBVIEW_TUTORIAL = "WebviewTutorial";
+		public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
+		public static final String WEBVIEW_REGIONAL_LISTS = "WebviewSppLists";
 		
 	}
-	
 	
 	// inner classes to define tables
 	public static abstract class Project implements BaseColumns {

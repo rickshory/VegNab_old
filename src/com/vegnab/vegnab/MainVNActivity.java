@@ -134,7 +134,7 @@ public class MainVNActivity extends ActionBarActivity
 			delProjDlg.show(fm, "frg_del_proj");
 			return true;
 		case R.id.action_new_plottype:
-			Toast.makeText(getApplicationContext(), "''New Plot Type'' is still under construction", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(getApplicationContext(), "''New Plot Type'' is still under construction", Toast.LENGTH_SHORT).show();
 			showWebViewScreen(Tags.WEBVIEW_PLOT_TYPES);
 			/*		public static final String WEBVIEW_TUTORIAL = "WebviewTutorial";
 			public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
@@ -231,19 +231,6 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}	
-	
-	public void testWebviewScreen() {
-		TestWebviewFragment webVwFrag = new TestWebviewFragment();
-		Bundle args = new Bundle();
-		webVwFrag.setArguments(args);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		// replace the fragment in the fragment container with this new fragment and
-		// put the present fragment on the backstack so the user can navigate back to it
-		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, webVwFrag, Tags.TEST_WEBVIEW);
-		transaction.addToBackStack(null);
-		transaction.commit();
-	}
 	
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public void getUniqueDeviceId(Context context) {

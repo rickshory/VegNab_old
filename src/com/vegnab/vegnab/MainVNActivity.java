@@ -143,10 +143,24 @@ public class MainVNActivity extends ActionBarActivity
 	*/
 			return true;
 		case R.id.action_get_species:
-			Toast toast = Toast.makeText(getApplicationContext(),
-					"''Get species'' is not implemented yet", Toast.LENGTH_SHORT);
-			toast.setGravity(Gravity.TOP, 25, 400);
-			toast.show();
+//			Toast toast = Toast.makeText(getApplicationContext(),
+//					"''Get species'' is not implemented yet", Toast.LENGTH_SHORT);
+//			toast.setGravity(Gravity.TOP, 25, 400);
+//			toast.show();
+			TestDownloadFragment tstDnLdFrag = new TestDownloadFragment();
+//			Bundle args = new Bundle();
+			// screenTag serves both as this fn's switch and the tag name of the fragment instance
+//			args.putString(ConfigurableWebviewFragment.ARG_TAG_ID, screenTag);
+//			tstDnLdFrag.setArguments(args);
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			// replace the fragment in the fragment container with this new fragment and
+			// put the present fragment on the backstack so the user can navigate back to it
+			// the tag is for the fragment now being added, not the one replaced
+			transaction.replace(R.id.fragment_container, tstDnLdFrag, "frg_tst_download");
+//			transaction.replace(R.id.fragment_container, webVwFrag, screenTag);
+			transaction.addToBackStack(null);
+			transaction.commit();
+
 			return true;
 		case R.id.action_old_visit:
 			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();

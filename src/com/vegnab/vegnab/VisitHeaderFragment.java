@@ -551,12 +551,12 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					if (mGoogleApiClient.isConnected()) {
 						LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 						mGoogleApiClient.disconnect();
-						// set a temporary "retrieving..." message
-						String msg = getActivity().getResources().getString(R.string.vis_hdr_loc_retrieving);
-						mViewVisitLocation.setText(msg);
-						// fetch the stored location
-						getLoaderManager().initLoader(Loaders.VISIT_REF_LOCATION, null, this);
 					}
+					// set a temporary "retrieving..." message
+					String msg = getActivity().getResources().getString(R.string.vis_hdr_loc_retrieving);
+					mViewVisitLocation.setText(msg);
+					// fetch the stored location
+					getLoaderManager().initLoader(Loaders.VISIT_REF_LOCATION, null, this);
 				}
 				mViewAzimuth.setText("" + c.getInt(c.getColumnIndexOrThrow("Azimuth")));
 				mViewVisitNotes.setText(c.getString(c.getColumnIndexOrThrow("VisitNotes")));

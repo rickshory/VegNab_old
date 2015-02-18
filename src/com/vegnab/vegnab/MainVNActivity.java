@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -140,6 +141,12 @@ public class MainVNActivity extends ActionBarActivity
 			public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
 			public static final String WEBVIEW_REGIONAL_LISTS = "WebviewSppLists";
 	*/
+			return true;
+		case R.id.action_get_species:
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"''Get species'' is not implemented yet", Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.TOP, 25, 400);
+			toast.show();
 			return true;
 		case R.id.action_old_visit:
 			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();

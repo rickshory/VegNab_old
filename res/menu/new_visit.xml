@@ -26,7 +26,13 @@
         android:orderInCategory="130"
         android:title="@string/action_new_plottype"
         app:showAsAction="never"/>
-
+    
+    <item
+        android:id="@+id/action_get_species"
+        android:orderInCategory="135"
+        android:title="@string/action_get_species"
+        app:showAsAction="never"/>
+    
     <item
         android:id="@+id/action_old_visit"
         android:orderInCategory="140"

@@ -6,35 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Calendar;
-
-import com.google.android.gms.location.LocationRequest;
-import com.vegnab.vegnab.database.VNContract.Loaders;
-import com.vegnab.vegnab.database.VNContract.Prefs;
-
-import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
-import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,9 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -295,6 +275,8 @@ public class TestDownloadFragment extends Fragment
 	       "Downloading of data just finished", Toast.LENGTH_LONG);
 	     toast.setGravity(Gravity.TOP, 25, 400);
 	     toast.show();
+	     
+	     
 	      
 	    } catch (FileNotFoundException e) {
 	     e.printStackTrace();

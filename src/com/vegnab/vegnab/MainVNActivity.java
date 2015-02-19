@@ -160,11 +160,16 @@ public class MainVNActivity extends ActionBarActivity
 //			transaction.replace(R.id.fragment_container, webVwFrag, screenTag);
 			transaction.addToBackStack(null);
 			transaction.commit();
-
 			return true;
-		case R.id.action_old_visit:
-			Toast.makeText(getApplicationContext(), "''Re-open Visit'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			
+		case R.id.action_export_db:
+			Toast.makeText(getApplicationContext(), "''Export Database'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
+			
+		case R.id.action_unhide_visits:
+			Toast.makeText(getApplicationContext(), "''Un-hide Visits'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			return true;
+			
 		case R.id.action_settings:
 			Toast.makeText(getApplicationContext(), "''Settings'' is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;

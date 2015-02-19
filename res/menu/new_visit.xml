@@ -32,11 +32,17 @@
         android:orderInCategory="135"
         android:title="@string/action_get_species"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_export_db"
+        android:orderInCategory="140"
+        android:title="@string/action_export_db"
+        app:showAsAction="never"/>
     
     <item
-        android:id="@+id/action_old_visit"
-        android:orderInCategory="140"
-        android:title="@string/action_old_visit"
+        android:id="@+id/action_unhide_visits"
+        android:orderInCategory="150"
+        android:title="@string/action_unhide_visits"
         app:showAsAction="never"/>
     
 </menu>

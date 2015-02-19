@@ -332,8 +332,6 @@ public class MainVNActivity extends ActionBarActivity
 	}
 	
 	private static final String DATABASE_NAME = "VegNab.db";
-	//        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "toDatabaseName"); // for example "my_data_backup.db"
-//    File currentDB = getApplicationContext().getDatabasePath("databaseName"); //databaseName=your current application database name, for example "my_data.db"
 
 	public File getBackupDatabaseFile() {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-", Locale.US);
@@ -341,22 +339,12 @@ public class MainVNActivity extends ActionBarActivity
 		Log.v(LOG_TAG, "uniqueTime: " + uniqueTime);
 		String dbBkupName = uniqueTime + DATABASE_NAME;
 		Log.v(LOG_TAG, "dbBkupName: " + dbBkupName);
-//		String dirDnLds = Environment.DIRECTORY_DOWNLOADS;
-//		File backupDB = new File(Environment.getExternalStoragePublicDirectory(dirDnLds), dbBkupName);
-//		File dirOutput  = Environment.getExternalStorageDirectory();
-//		File backupDB = new File(dirOutput, dbBkupName);
-//		File dirBkup = new File(Environment.getExternalStoragePublicDirectory();
-//		File dir = new File(getStorageBaseDirectory().getAbsolutePath() + "/backup");
-//		if (!dir.exists()) {
-//			dir.mkdirs();
-//		}
+
 		File sdCard = Environment.getExternalStorageDirectory();
 		// create the folder
 		File vnFolder = new File(sdCard.getAbsolutePath() + "/VegNab");
 		vnFolder.mkdirs();
 		Log.v(LOG_TAG, "folder created 'VegNab'");
-		// create the file
-//		File logFile = new File(folder, "VegNabLog.txt");
 		File backupDB = new File(vnFolder, dbBkupName);
 
 		return backupDB;
@@ -374,28 +362,6 @@ public class MainVNActivity extends ActionBarActivity
 		return false;
 	}
 
-	/*
-	private void exportDB() {
-		File sd = Environment.getExternalStorageDirectory();
-		File data = Environment.getDataDirectory();
-		FileChannel source=null;
-		FileChannel destination=null;
-		String currentDBPath = "/data/"+ "com.authorwjf.sqliteexport" +"/databases/"+SAMPLE_DB_NAME;
-		String backupDBPath = SAMPLE_DB_NAME;
-		File currentDB = new File(data, currentDBPath);
-		File backupDB = new File(sd, backupDBPath);
-		try {
-				source = new FileInputStream(currentDB).getChannel();
-				destination = new FileOutputStream(backupDB).getChannel();
-				destination.transferFrom(source, 0, source.size());
-				source.close();
-				destination.close();
-				Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
-	}
-	*/
 	public static void copyFile(File src, File dst) throws IOException {
 		FileInputStream in = new FileInputStream(src);
 		FileOutputStream out = new FileOutputStream(dst);

@@ -343,13 +343,22 @@ public class MainVNActivity extends ActionBarActivity
 		Log.v(LOG_TAG, "dbBkupName: " + dbBkupName);
 //		String dirDnLds = Environment.DIRECTORY_DOWNLOADS;
 //		File backupDB = new File(Environment.getExternalStoragePublicDirectory(dirDnLds), dbBkupName);
-		File dirOutput  = Environment.getExternalStorageDirectory();
-		File backupDB = new File(dirOutput, dbBkupName);
+//		File dirOutput  = Environment.getExternalStorageDirectory();
+//		File backupDB = new File(dirOutput, dbBkupName);
 //		File dirBkup = new File(Environment.getExternalStoragePublicDirectory();
 //		File dir = new File(getStorageBaseDirectory().getAbsolutePath() + "/backup");
 //		if (!dir.exists()) {
 //			dir.mkdirs();
 //		}
+		File sdCard = Environment.getExternalStorageDirectory();
+		// create the folder
+		File vnFolder = new File(sdCard.getAbsolutePath() + "/VegNab");
+		vnFolder.mkdirs();
+		Log.v(LOG_TAG, "folder created 'VegNab'");
+		// create the file
+//		File logFile = new File(folder, "VegNabLog.txt");
+		File backupDB = new File(vnFolder, dbBkupName);
+
 		return backupDB;
 	}
 	public final boolean exportDB() {
@@ -357,7 +366,7 @@ public class MainVNActivity extends ActionBarActivity
 		File to = this.getBackupDatabaseFile();
 		try {
 			copyFile(from, to);
-			Log.v(LOG_TAG, "DB backed up to: " + to.getPath() + to.getName());
+			Log.v(LOG_TAG, "DB backed up to: " + to.getPath());
 			return true;
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "Error backuping up database: " + e.getMessage(), e);

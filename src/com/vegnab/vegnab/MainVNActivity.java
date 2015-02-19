@@ -341,9 +341,10 @@ public class MainVNActivity extends ActionBarActivity
 		Log.v(LOG_TAG, "uniqueTime: " + uniqueTime);
 		String dbBkupName = uniqueTime + DATABASE_NAME;
 		Log.v(LOG_TAG, "dbBkupName: " + dbBkupName);
-		String dirDnLds = Environment.DIRECTORY_DOWNLOADS;
-		File backupDB = new File(Environment.getExternalStoragePublicDirectory(dirDnLds), dbBkupName);
-		
+//		String dirDnLds = Environment.DIRECTORY_DOWNLOADS;
+//		File backupDB = new File(Environment.getExternalStoragePublicDirectory(dirDnLds), dbBkupName);
+		File dirOutput  = Environment.getExternalStorageDirectory();
+		File backupDB = new File(dirOutput, dbBkupName);
 //		File dirBkup = new File(Environment.getExternalStoragePublicDirectory();
 //		File dir = new File(getStorageBaseDirectory().getAbsolutePath() + "/backup");
 //		if (!dir.exists()) {

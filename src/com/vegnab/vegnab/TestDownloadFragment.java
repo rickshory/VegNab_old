@@ -1,8 +1,12 @@
 package com.vegnab.vegnab;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Calendar;
 
 import com.google.android.gms.location.LocationRequest;
@@ -274,27 +278,31 @@ public class TestDownloadFragment extends Fragment
 	    StringBuffer strContent = new StringBuffer("");
 	    StringBuffer sppData = new StringBuffer("");
 	     
-	    //parse the JSON data and display on the screen
+	    //parse the data
 	    try {
 	     file = downloadManager.openDownloadedFile(downloadReference);
-	     FileInputStream fileInputStream
-	     = new ParcelFileDescriptor.AutoCloseInputStream(file);
+	     // 'file' here is a pointer, cannot directly read InputStream
+	     InputStream is = new FileInputStream(file.getFileDescriptor()); // use getFileDescriptor to get InputStream
+	     // wrap InputStream with an InputStreamReader, which is wrapped by a BufferedReader, "trick" to use readLine() fn
+	     BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+	     StringBuilder lines = new StringBuilder();
+	     String line;
+	     while ((line = br.readLine()) != null) {
+	    	 // gets the lines one at a time, strips the delimiters
+	    	 lines.append(line); // mashes all the lines together, with no delimiters
+	     }
+	     br.close();
+//	     Reader fileStream = new Reader(file.getFileDescriptor());
+//	     reader = new BufferedReader((BufferedReader)fileStream);
+//	     FileInputStream fileInputStream = new ParcelFileDescriptor.AutoCloseInputStream(file);
+	     
 	 
-	     while( (ch = fileInputStream.read()) != -1)
-	      strContent.append((char)ch);
-	      
-//	     JSONObject responseObj = new JSONObject(strContent.toString()); 
-//	     JSONArray countriesObj = responseObj.getJSONArray("countries");
-	 
-//	     for (int i=0; i<countriesObj.length(); i++){
-//	      Gson gson = new Gson();
-//	      String countryInfo = countriesObj.getJSONObject(i).toString();
-//	      Country country = gson.fromJson(countryInfo, Country.class);
-//	      sppData.append(country.getCode() + ": " + country.getName() +"\n");
-//	     }
+//	     while( (ch = fileInputStream.read()) != -1)
+//	      strContent.append((char)ch);
 	     
 //	     mTxtVwShowSpp.setText(sppData.toString());
-	     mTxtVwShowSpp.setText(strContent.toString());
+//	     mTxtVwShowSpp.setText(strContent.toString());
+	     mTxtVwShowSpp.setText(lines.toString()); // lines are all combined, will parse them into DB in final version
 	      
 	     Toast toast = Toast.makeText(getActivity(), 
 	       "Downloading of data just finished", Toast.LENGTH_LONG);

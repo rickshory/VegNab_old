@@ -86,22 +86,22 @@ public class TestDownloadFragment extends Fragment
 	 
 	  //start the download process
 	  case R.id.startDownload:
-	 
-	   downloadManager = (DownloadManager)getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
-	   Uri Download_Uri = Uri.parse("http://www.vegnab.com/specieslists/AFewSpp.txt");
-	   DownloadManager.Request request = new DownloadManager.Request(Download_Uri);
-	    
-	   //Restrict the types of networks over which this download may proceed.
-	   request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-	   //Set whether this download may proceed over a roaming connection.
-	   request.setAllowedOverRoaming(false);
-	   //Set the title of this download, to be displayed in notifications (if enabled).
-	   request.setTitle("My Data Download");
-	   //Set a description of this download, to be displayed in notifications (if enabled)
-	   request.setDescription("Android Data download using DownloadManager.");
-	   //Set the local destination for the downloaded file to a path within the application's external files directory
-	   request.setDestinationInExternalFilesDir(getActivity(),Environment.DIRECTORY_DOWNLOADS,"CountryList.json");
-	 
+	
+		downloadManager = (DownloadManager)getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+		Uri Download_Uri = Uri.parse("http://www.vegnab.com/specieslists/AFewSpp.txt");
+		DownloadManager.Request request = new DownloadManager.Request(Download_Uri);
+		    
+		//Restrict the types of networks over which this download may proceed.
+		request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+		//Set whether this download may proceed over a roaming connection.
+		request.setAllowedOverRoaming(false);
+		//Set the title of this download, to be displayed in notifications (if enabled).
+		request.setTitle("Species Download");
+		//Set a description of this download, to be displayed in notifications (if enabled)
+		request.setDescription("Android Data download using DownloadManager.");
+		//Set the local destination for the downloaded file to a path within the application's external files directory
+		request.setDestinationInExternalFilesDir(getActivity(),Environment.DIRECTORY_DOWNLOADS,"VegNabSpeciesList.txt");
+ 
 	   //Enqueue a new download and same the referenceId
 	   downloadReference = downloadManager.enqueue(request);
 	   
@@ -166,7 +166,7 @@ public class TestDownloadFragment extends Fragment
 	  //get the download filename
 	  int filenameIndex = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
 	  String filename = cursor.getString(filenameIndex);
-	 
+
 	  String statusText = "";
 	  String reasonText = "";
 	 
@@ -276,7 +276,8 @@ public class TestDownloadFragment extends Fragment
 	     toast.setGravity(Gravity.TOP, 25, 400);
 	     toast.show();
 	     
-	     
+	     // delete the file when done
+	     downloadManager.remove(downloadReference);
 	      
 	    } catch (FileNotFoundException e) {
 	     e.printStackTrace();

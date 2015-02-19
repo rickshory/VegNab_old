@@ -1,5 +1,13 @@
 package com.vegnab.vegnab;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import com.vegnab.vegnab.database.VNContract.Loaders;
@@ -17,6 +25,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -163,7 +172,7 @@ public class MainVNActivity extends ActionBarActivity
 			return true;
 			
 		case R.id.action_export_db:
-			Toast.makeText(getApplicationContext(), "''Export Database'' is not implemented yet", Toast.LENGTH_SHORT).show();
+			exportDB();
 			return true;
 			
 		case R.id.action_unhide_visits:
@@ -320,6 +329,79 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onExistingVisitListClicked(long visitId) {
 		goToVisitHeaderScreen(visitId);
+	}
+	
+	private static final String DATABASE_NAME = "VegNab.db";
+	//        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "toDatabaseName"); // for example "my_data_backup.db"
+//    File currentDB = getApplicationContext().getDatabasePath("databaseName"); //databaseName=your current application database name, for example "my_data.db"
+
+	public File getBackupDatabaseFile() {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-", Locale.US);
+		String uniqueTime = timeFormat.format(new Date()).toString();
+		Log.v(LOG_TAG, "uniqueTime: " + uniqueTime);
+		String dbBkupName = uniqueTime + DATABASE_NAME;
+		Log.v(LOG_TAG, "dbBkupName: " + dbBkupName);
+		String dirDnLds = Environment.DIRECTORY_DOWNLOADS;
+		File backupDB = new File(Environment.getExternalStoragePublicDirectory(dirDnLds), dbBkupName);
+		
+//		File dirBkup = new File(Environment.getExternalStoragePublicDirectory();
+//		File dir = new File(getStorageBaseDirectory().getAbsolutePath() + "/backup");
+//		if (!dir.exists()) {
+//			dir.mkdirs();
+//		}
+		return backupDB;
+	}
+	public final boolean exportDB() {
+		File from = getApplicationContext().getDatabasePath(DATABASE_NAME);
+		File to = this.getBackupDatabaseFile();
+		try {
+			copyFile(from, to);
+			Log.v(LOG_TAG, "DB backed up to: " + to.getPath() + to.getName());
+			return true;
+		} catch (IOException e) {
+			Log.e(LOG_TAG, "Error backuping up database: " + e.getMessage(), e);
+		}
+		return false;
+	}
+
+	/*
+	private void exportDB() {
+		File sd = Environment.getExternalStorageDirectory();
+		File data = Environment.getDataDirectory();
+		FileChannel source=null;
+		FileChannel destination=null;
+		String currentDBPath = "/data/"+ "com.authorwjf.sqliteexport" +"/databases/"+SAMPLE_DB_NAME;
+		String backupDBPath = SAMPLE_DB_NAME;
+		File currentDB = new File(data, currentDBPath);
+		File backupDB = new File(sd, backupDBPath);
+		try {
+				source = new FileInputStream(currentDB).getChannel();
+				destination = new FileOutputStream(backupDB).getChannel();
+				destination.transferFrom(source, 0, source.size());
+				source.close();
+				destination.close();
+				Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+	}
+	*/
+	public static void copyFile(File src, File dst) throws IOException {
+		FileInputStream in = new FileInputStream(src);
+		FileOutputStream out = new FileOutputStream(dst);
+		FileChannel fromChannel = null, toChannel = null;
+		try {
+			fromChannel = in.getChannel();
+			toChannel = out.getChannel();
+			fromChannel.transferTo(0, fromChannel.size(), toChannel); 
+		} finally {
+			if (fromChannel != null) 
+				fromChannel.close();
+			if (toChannel != null) 
+				toChannel.close();
+		}
+		in.close();
+		out.close();
 	}
 
 }

@@ -272,12 +272,8 @@ public class TestDownloadFragment extends Fragment
 	   if(downloadReference == referenceId){
 	    
 	    mBtnCancelDownload.setEnabled(false);
-	     
-	    int ch;
+
 	    ParcelFileDescriptor file;
-	    StringBuffer strContent = new StringBuffer("");
-	    StringBuffer sppData = new StringBuffer("");
-	     
 	    //parse the data
 	    try {
 	     file = downloadManager.openDownloadedFile(downloadReference);
@@ -292,16 +288,7 @@ public class TestDownloadFragment extends Fragment
 	    	 lines.append(line); // mashes all the lines together, with no delimiters
 	     }
 	     br.close();
-//	     Reader fileStream = new Reader(file.getFileDescriptor());
-//	     reader = new BufferedReader((BufferedReader)fileStream);
-//	     FileInputStream fileInputStream = new ParcelFileDescriptor.AutoCloseInputStream(file);
-	     
-	 
-//	     while( (ch = fileInputStream.read()) != -1)
-//	      strContent.append((char)ch);
-	     
-//	     mTxtVwShowSpp.setText(sppData.toString());
-//	     mTxtVwShowSpp.setText(strContent.toString());
+
 	     mTxtVwShowSpp.setText(lines.toString()); // lines are all combined, will parse them into DB in final version
 	      
 	     Toast toast = Toast.makeText(getActivity(), 

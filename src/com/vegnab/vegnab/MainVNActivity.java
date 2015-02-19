@@ -24,6 +24,7 @@ import android.telephony.TelephonyManager;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -362,7 +363,7 @@ public class MainVNActivity extends ActionBarActivity
 		return false;
 	}
 
-	public static void copyFile(File src, File dst) throws IOException {
+	public void copyFile(File src, File dst) throws IOException {
 		FileInputStream in = new FileInputStream(src);
 		FileOutputStream out = new FileOutputStream(dst);
 		FileChannel fromChannel = null, toChannel = null;
@@ -378,6 +379,8 @@ public class MainVNActivity extends ActionBarActivity
 		}
 		in.close();
 		out.close();
+		// must do following or file is not visible externally
+		MediaScannerConnection.scanFile(getApplicationContext(), new String[] { dst.getAbsolutePath() }, null, null);
 	}
 
 }

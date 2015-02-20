@@ -1,22 +1,14 @@
 package com.vegnab.vegnab;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
-import com.vegnab.vegnab.database.VNContract.Prefs;
-
+import com.vegnab.vegnab.database.DataBaseHelper;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,8 +17,6 @@ import android.os.ParcelFileDescriptor;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -36,7 +26,7 @@ import android.widget.Toast;
 
 public class TestDownloadFragment extends Fragment 
 		implements OnClickListener {
-	
+	private DataBaseHelper mDb;
 	private DownloadManager downloadManager;
 	private long downloadReference;
 	Button mBtnStartDownload, mBtnDisplayDownload, mBtnCheckStatus, mBtnCancelDownload;
@@ -251,12 +241,15 @@ public class TestDownloadFragment extends Fragment
 				//parse the data
 				try {
 					file = downloadManager.openDownloadedFile(downloadReference);
+					mDb = new DataBaseHelper(getActivity());
+					mDb.fillSpeciesTable(file);					
 					// 'file' here is a pointer, cannot directly read InputStream
+/*
 					InputStream is = new FileInputStream(file.getFileDescriptor()); // use getFileDescriptor to get InputStream
 					// wrap InputStream with an InputStreamReader, which is wrapped by a BufferedReader, "trick" to use readLine() fn
 					BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 					StringBuilder lines = new StringBuilder();
-					String line;
+					String line, code, descr;
 					String[] lineParts;
 					long ct = 0;
 					while ((line = br.readLine()) != null) {
@@ -269,16 +262,19 @@ public class TestDownloadFragment extends Fragment
 						} else {
 							// readLine gets the lines one at a time, strips the delimiters
 							lineParts = line.split("\t");
-							lines.append("('").append(lineParts[0]).append("', '").append(lineParts[1]).append("'), \n\r");
+							code = lineParts[0].replace('\'', '`');
+							descr = lineParts[1].replace('\'', '`');
+							lines.append("('").append(code).append("', '").append(descr).append("'), \n\r");
 						}
 						ct++;
 					}
 					br.close();
 			
 					mTxtVwShowSpp.setText(lines.toString()); // lines are all combined, will parse them into DB in final version
-					
+*/					
+					mTxtVwShowSpp.setText("File parsed into Database");
 					Toast toast = Toast.makeText(getActivity(), 
-					"Downloading of data just finished", Toast.LENGTH_LONG);
+						"Downloading of data just finished", Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 25, 400);
 					toast.show();
 					

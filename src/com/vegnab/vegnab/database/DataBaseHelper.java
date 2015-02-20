@@ -1,17 +1,26 @@
 package com.vegnab.vegnab.database;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.os.Build;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
 public class DataBaseHelper extends SQLiteOpenHelper{
+	private static final String LOG_TAG = DataBaseHelper.class.getSimpleName();
  
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/vegnab/databases/";
@@ -118,4 +127,60 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         // Add your public helper methods to access and get content from the database.
        // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
        // for you to create adapters for your views.
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public String fillSpeciesTable(ParcelFileDescriptor fileDescr) {
+		// expects the file to be text
+		// first line is geographical area of the species list, such as a state like "Oregon"
+		// appropriate for forming a message like, "species list for Oregon"
+		// this first line is what is returned
+		// after the first line,
+		// each row has short 'code' and long 'description' separated by Tab character
+		//
+		StringBuilder lines = new StringBuilder();
+		String listName = "", line, code, descr;
+		String[] lineParts;
+		long ct = 0;
+		// clear existing codes from the table
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM RegionalSpeciesList;");
+        String sSql = "INSERT INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
+//        db.beginTransaction();
+        db.beginTransactionNonExclusive();
+        SQLiteStatement stmt = db.compileStatement(sSql);
+
+		try {
+			InputStream is = new FileInputStream(fileDescr.getFileDescriptor()); // use getFileDescriptor to get InputStream
+			// wrap InputStream with an InputStreamReader, which is wrapped by a BufferedReader, "trick" to use readLine() fn
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			
+			while ((line = br.readLine()) != null) {
+				if (ct == 0) { // the internal description of the list
+					listName = line.toString();
+				} else { // a species code and description separated by a tab
+					// readLine gets the lines one at a time, strips the delimiters
+					lineParts = line.split("\t");
+					code = lineParts[0].replace('\'', '`');
+					descr = lineParts[1].replace('\'', '`');
+					Log.v(LOG_TAG, "Code: '" + code + "', Description: '" + descr + "'");
+					lines.append("('").append(code).append("', '").append(descr).append("'), \n\r");
+					stmt.bindString(1, lineParts[0]);
+					stmt.bindString(2, lineParts[1]);
+					stmt.execute();
+					stmt.clearBindings();
+				}
+				ct++;
+			}
+			br.close();
+			db.setTransactionSuccessful();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+		} catch (IOException e) {
+			Log.v(LOG_TAG, "IOException " + e.getMessage());
+		}
+		
+		db.endTransaction();
+		db.close();
+		return listName;
+	}
 }

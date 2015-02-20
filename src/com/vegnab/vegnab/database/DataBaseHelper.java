@@ -144,7 +144,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		// clear existing codes from the table
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM RegionalSpeciesList;");
-        String sSql = "INSERT INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
+        String sSql = "INSERT OR REPLACE INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
 //        db.beginTransaction();
         db.beginTransactionNonExclusive();
         SQLiteStatement stmt = db.compileStatement(sSql);

@@ -6,12 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+import com.vegnab.vegnab.database.VNContract.Prefs;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -252,9 +257,21 @@ public class TestDownloadFragment extends Fragment
 					BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 					StringBuilder lines = new StringBuilder();
 					String line;
+					String[] lineParts;
+					long ct = 0;
 					while ((line = br.readLine()) != null) {
-						// gets the lines one at a time, strips the delimiters
-						lines.append(line); // mashes all the lines together, with no delimiters
+						if (ct == 0) { // first line in the file is the geographical area of the species list, such as a state like "Oregon"
+							// appropriate for forming a message like, "species list for Oregon"
+							SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+							SharedPreferences.Editor prefEditor = sharedPref.edit();
+							prefEditor.putString(Prefs.SPECIES_LIST_DESCRIPTION, line.toString());
+							prefEditor.commit();
+						} else {
+							// readLine gets the lines one at a time, strips the delimiters
+							lineParts = line.split("\t");
+							lines.append("('").append(lineParts[0]).append("', '").append(lineParts[1]).append("'), \n\r");
+						}
+						ct++;
 					}
 					br.close();
 			

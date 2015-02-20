@@ -335,7 +335,7 @@ public class MainVNActivity extends ActionBarActivity
 	private static final String DATABASE_NAME = "VegNab.db";
 
 	public File getBackupDatabaseFile() {
-		SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-", Locale.US);
+		SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-", Locale.US);
 		String uniqueTime = timeFormat.format(new Date()).toString();
 		Log.v(LOG_TAG, "uniqueTime: " + uniqueTime);
 		String dbBkupName = uniqueTime + DATABASE_NAME;

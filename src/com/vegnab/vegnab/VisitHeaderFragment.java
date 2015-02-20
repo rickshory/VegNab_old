@@ -134,7 +134,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private TextView mLblNewNamerSpinnerCover;
 	SimpleCursorAdapter mVisitAdapter, mNamerAdapter;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	private Calendar mCalendar = Calendar.getInstance();
 	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 	    @Override
@@ -1311,7 +1311,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     		}
     		final DriveContents driveContents = result.getDriveContents();
     		String visName = "" + mViewVisitName.getText().toString().trim();
-    		SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.US);
+    		SimpleDateFormat fileNameFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
     		final String fileName = "VegNab" + " " + ((visName == "" ? "" : visName + " ")) 
     				+ fileNameFormat.format(new Date());
     		final long visId = mVisitId;

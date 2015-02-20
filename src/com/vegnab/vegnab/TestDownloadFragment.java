@@ -3,12 +3,15 @@ package com.vegnab.vegnab;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import com.vegnab.vegnab.database.DataBaseHelper;
+import com.vegnab.vegnab.database.VNContract.Prefs;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -242,7 +245,13 @@ public class TestDownloadFragment extends Fragment
 				try {
 					file = downloadManager.openDownloadedFile(downloadReference);
 					mDb = new DataBaseHelper(getActivity());
-					mDb.fillSpeciesTable(file);					
+					String listLabel = mDb.fillSpeciesTable(file);
+					// returns the description of the species list from the first line in the file, e.g. "Oregon"
+					SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+					SharedPreferences.Editor prefEditor = sharedPref.edit();
+					prefEditor.putString(Prefs.SPECIES_LIST_DESCRIPTION, listLabel);
+					prefEditor.commit();
+					
 					// 'file' here is a pointer, cannot directly read InputStream
 /*
 					InputStream is = new FileInputStream(file.getFileDescriptor()); // use getFileDescriptor to get InputStream
@@ -253,23 +262,14 @@ public class TestDownloadFragment extends Fragment
 					String[] lineParts;
 					long ct = 0;
 					while ((line = br.readLine()) != null) {
-						if (ct == 0) { // first line in the file is the geographical area of the species list, such as a state like "Oregon"
-							// appropriate for forming a message like, "species list for Oregon"
-							SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-							SharedPreferences.Editor prefEditor = sharedPref.edit();
-							prefEditor.putString(Prefs.SPECIES_LIST_DESCRIPTION, line.toString());
-							prefEditor.commit();
-						} else {
-							// readLine gets the lines one at a time, strips the delimiters
-							lineParts = line.split("\t");
-							code = lineParts[0].replace('\'', '`');
-							descr = lineParts[1].replace('\'', '`');
-							lines.append("('").append(code).append("', '").append(descr).append("'), \n\r");
-						}
+						// readLine gets the lines one at a time, strips the delimiters
+						lineParts = line.split("\t");
+						code = lineParts[0].replace('\'', '`');
+						descr = lineParts[1].replace('\'', '`');
+						lines.append("('").append(code).append("', '").append(descr).append("'), \n\r");
 						ct++;
 					}
 					br.close();
-			
 					mTxtVwShowSpp.setText(lines.toString()); // lines are all combined, will parse them into DB in final version
 */					
 					mTxtVwShowSpp.setText("File parsed into Database");

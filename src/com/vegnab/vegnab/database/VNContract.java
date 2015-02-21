@@ -48,6 +48,8 @@ public final class VNContract {
 		public static final int EXISTING_NAMERS = 32; // Namers other than the current, to check duplicates
 		// in Delete Namer
 		public static final int VALID_DEL_NAMERS = 41; // Namers that are valid to delete
+		// in Species Select
+		public static final int SPP_MATCHES = 51; // Namers that are valid to delete
 
 		
 	}

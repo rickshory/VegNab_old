@@ -46,7 +46,8 @@ public class MainVNActivity extends ActionBarActivity
 		VisitHeaderFragment.EditVisitDialogListener,
 		VegSubplotFragment.OnButtonListener,
 		EditNamerDialog.EditNamerDialogListener,
-		ConfirmDelNamerDialog.EditNamerDialogListener{
+		ConfirmDelNamerDialog.EditNamerDialogListener,
+		SelectSpeciesFragment.OnSppResultClickListener{
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
@@ -350,6 +351,11 @@ public class MainVNActivity extends ActionBarActivity
 	public void onExistingVisitListClicked(long visitId) {
 		goToVisitHeaderScreen(visitId);
 	}
+
+	@Override
+	public void onSppMatchListClicked(int sourceId, long recId) {
+		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId);
+	}	
 	
 	private static final String DATABASE_NAME = "VegNab.db";
 

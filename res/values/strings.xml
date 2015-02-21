@@ -156,6 +156,14 @@
     <string name="vis_hdr_loc_good_ack_text_pre">Current location accepted, at </string>
     <string name="vis_hdr_loc_good_ack_text_post">m accuracy</string>
     <string name="vis_hdr_loc_retrieving">(retrieving previously recorded visit location)</string>
+
+    <string name="sel_spp_search_hint_found_code">Search found species by code</string>
+    <string name="sel_spp_search_hint_found_text">Search found species by full text</string>
+    <string name="sel_spp_search_hint_all_code">Search all species by code</string>
+    <string name="sel_spp_search_hint_all_text">Search all species by full text</string>
+    <string name="sel_spp_search_msg_no_results">(matches will appear here)</string>
+    <string name="sel_spp_search_msg_no_match">No matches</string>
+    <string name="sel_spp_search_msg_3chars">Enter at least 3 characters</string>
     
     <string name="veg_subplot_menu_add_item">Add item</string>
     <string name="veg_subplot_menu_help">Help</string>

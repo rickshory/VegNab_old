@@ -212,20 +212,23 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked() {
-//		Toast.makeText(getApplicationContext(), "Main Activity received event from Visit Header", Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), 
+				"Testing Species Select screen", 
+				Toast.LENGTH_LONG).show();
+		showSppSelectScreen();
 		// swap Subplot fragment in place of Header fragment
-		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
-		Bundle args = new Bundle();
-		int subpNum = 1;
-		args.putInt(VegSubplotFragment.ARG_SUBPLOT, subpNum); // start with subplot 1
-		vegSbpFrag.setArguments(args);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
+//		Bundle args = new Bundle();
+//		int subpNum = 1;
+//		args.putInt(VegSubplotFragment.ARG_SUBPLOT, subpNum); // start with subplot 1
+//		vegSbpFrag.setArguments(args);
+//		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
-		transaction.addToBackStack(null);
-		transaction.commit();
+//		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
+//		transaction.addToBackStack(null);
+//		transaction.commit();
 	}
 
 	@Override
@@ -266,7 +269,23 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.replace(R.id.fragment_container, webVwFrag, screenTag);
 		transaction.addToBackStack(null);
 		transaction.commit();
-	}	
+	}
+	
+	public void showSppSelectScreen() {
+		SelectSpeciesFragment selSppFrag = new SelectSpeciesFragment();
+		Bundle args = new Bundle();
+		// don't presently need to send anything to the fragment
+		// screenTag can serve both as this fn's switch and the tag name of the fragment instance
+		// args.putString(SelectSpeciesFragment.ARG_TAG_ID, screenTag);
+		selSppFrag.setArguments(args);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		// replace the fragment in the fragment container with this new fragment and
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, selSppFrag, "frg_sel_spp");
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
 	
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public void getUniqueDeviceId(Context context) {

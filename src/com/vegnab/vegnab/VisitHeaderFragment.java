@@ -445,7 +445,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				break;
 			}
 			// while testing, do not go to next screen
-			Log.v(LOG_TAG, "Would have gone to next screen here, if not Testing mode");
+//			Log.v(LOG_TAG, "Would have gone to next screen here, if not Testing mode");
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}

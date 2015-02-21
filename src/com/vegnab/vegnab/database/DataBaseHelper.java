@@ -137,8 +137,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		// after the first line,
 		// each row has short 'code' and long 'description' separated by Tab character
 		//
-		StringBuilder lines = new StringBuilder();
-		String listName = "", line, code, descr;
+		String listName = "", line;
 		String[] lineParts;
 		long ct = 0;
 		// clear existing codes from the table
@@ -160,16 +159,26 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 				} else { // a species code and description separated by a tab
 					// readLine gets the lines one at a time, strips the delimiters
 					lineParts = line.split("\t");
-					code = lineParts[0].replace('\'', '`');
-					descr = lineParts[1].replace('\'', '`');
-					Log.v(LOG_TAG, "Code: '" + code + "', Description: '" + descr + "'");
-					lines.append("('").append(code).append("', '").append(descr).append("'), \n\r");
 					stmt.bindString(1, lineParts[0]);
 					stmt.bindString(2, lineParts[1]);
 					stmt.execute();
 					stmt.clearBindings();
+					Log.v(LOG_TAG, line.toString());
 				}
 				ct++;
+				if ((ct % 100) == 0) {
+					Log.v(LOG_TAG, "item " + ct + ", currentTimeMillis = " + System.currentTimeMillis());
+				}
+				if ((ct % 5000) == 0) { 
+					// reportedly, can do 7000 records at at time, but to be on the safe side
+					// do 5000 records at a time
+					db.setTransactionSuccessful();
+					db.endTransaction();
+					Log.v(LOG_TAG, "re-starting bulk transactions at item " + ct
+							+ ", currentTimeMillis = " + System.currentTimeMillis());
+					db.beginTransactionNonExclusive();
+			        stmt = db.compileStatement(sSql);
+				}
 			}
 			br.close();
 			db.setTransactionSuccessful();

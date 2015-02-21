@@ -89,7 +89,7 @@ public class TestDownloadFragment extends Fragment
 		//start the download process
 		case R.id.startDownload:
 			downloadManager = (DownloadManager)getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-			Uri Download_Uri = Uri.parse("http://www.vegnab.com/specieslists/CommonSpp.txt");
+			Uri Download_Uri = Uri.parse("http://www.vegnab.com/specieslists/USASpecies.txt");
 			DownloadManager.Request request = new DownloadManager.Request(Download_Uri);
 				
 			//Restrict the types of networks over which this download may proceed.

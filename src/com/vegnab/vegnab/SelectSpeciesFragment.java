@@ -36,6 +36,14 @@ public class SelectSpeciesFragment extends ListFragment
 	}
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
+	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+			+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
+	// mUseRegionalList false = search only species previously found, plus Placeholders
+	// mUseRegionalList true = search the entire big regional list of species
+	// mUseFullText false = search only the codes (species plus Placeholders), matching the start of the code
+	// mUseFullText true = search all positions of the concatenated code + description
+	Boolean mUseRegionalList = false, mUseFullText = false;
+	// add option checkboxes or radio buttons to set the above; or do from menu items
 	EditText mViewSearchChars;
 	TextWatcher sppCodeTextWatcher = new TextWatcher() {
 		@Override
@@ -43,6 +51,17 @@ public class SelectSpeciesFragment extends ListFragment
 			// use this method; test length of string; e.g. 'count' of other methods does not give this length
 			//Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "'");
 			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "', length: " + s.length());
+			mStSearch = s.toString();
+			if (s.length() == 0) {
+				mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+						+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
+			} else {
+				mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+					+ "FROM RegionalSpeciesList " 
+					+ "WHERE Code LIKE '" + mStSearch + "%' " 
+					+ "ORDER BY Code;";
+			}
+			getLoaderManager().restartLoader(Loaders.SPP_MATCHES, null, SelectSpeciesFragment.this);
 		}
 
 		@Override
@@ -59,14 +78,6 @@ public class SelectSpeciesFragment extends ListFragment
 			
 		}
 	};
-	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
-			+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
-	// mUseRegionalList false = search only species previously found, plus Placeholders
-	// mUseRegionalList true = search the entire big regional list of species
-	// mUseFullText false = search only the codes (species plus Placeholders), matching the start of the code
-	// mUseFullText true = search all positions of the concatenated code + description
-	Boolean mUseRegionalList = false, mUseFullText = false;
-	// add option checkboxes or radio buttons to set the above; or do from menu items
 	
 /*
 	@Override
@@ -150,10 +161,7 @@ public class SelectSpeciesFragment extends ListFragment
 
 		case Loaders.SPP_MATCHES:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
-					+ "FROM RegionalSpeciesList " 
-					+ "WHERE Code LIKE 'CACA%' " 
-					+ "ORDER BY Code;";
+			select = mStSQL;
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;		

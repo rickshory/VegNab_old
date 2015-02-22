@@ -11,6 +11,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +33,31 @@ public class SelectSpeciesFragment extends ListFragment
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
 	EditText mViewSearchChars;
-	// add option checkboxes or radio buttons
+	TextWatcher sppCodeTextWatcher = new TextWatcher() {
+		@Override
+		public void afterTextChanged(Editable s) {
+			// TODO Auto-generated method stub
+			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "'");
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			// TODO Auto-generated method stub
+			Log.v(LOG_TAG, "beforeTextChanged, s: '" + s.toString() 
+					+ "', start: " + start + ", count: " + count + ", after: " + after);
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			// TODO Auto-generated method stub
+			Log.v(LOG_TAG, "onTextChanged, s: '" + s.toString()
+					+ "', start: " + start + ", before: " + before + ", count: " + count);
+			
+		}
+	};
+	
+	// add option checkboxes or radio buttons, or do as menu items
 	
 /*
 	@Override
@@ -59,6 +86,8 @@ public class SelectSpeciesFragment extends ListFragment
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_sel_species, container, false);
 		mViewSearchChars = (EditText) rootView.findViewById(R.id.txt_search_chars);
+		
+		mViewSearchChars.addTextChangedListener(sppCodeTextWatcher);
 
 		// use query to return 'MatchTxt', concatenated from code and description; more reading room
 		mSppResultsAdapter = new SimpleCursorAdapter(getActivity(),

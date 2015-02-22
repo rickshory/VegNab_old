@@ -23,6 +23,10 @@ import android.widget.ListView;
 public class SelectSpeciesFragment extends ListFragment 
 		implements LoaderManager.LoaderCallbacks<Cursor>{
 	private static final String LOG_TAG = SelectSpeciesFragment.class.getSimpleName();
+	final static String ARG_SEARCH_TEXT = "search_text";
+	final static String ARG_SQL_TEXT = "sql_text";
+	final static String ARG_USE_REGIONAL_LIST = "regional_list";
+	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
 	SimpleCursorAdapter mSppResultsAdapter;
 	// declare that the container Activity must implement this interface
 
@@ -55,8 +59,14 @@ public class SelectSpeciesFragment extends ListFragment
 			
 		}
 	};
-	
-	// add option checkboxes or radio buttons, or do as menu items
+	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+			+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
+	// mUseRegionalList false = search only species previously found, plus Placeholders
+	// mUseRegionalList true = search the entire big regional list of species
+	// mUseFullText false = search only the codes (species plus Placeholders), matching the start of the code
+	// mUseFullText true = search all positions of the concatenated code + description
+	Boolean mUseRegionalList = false, mUseFullText = false;
+	// add option checkboxes or radio buttons to set the above; or do from menu items
 	
 /*
 	@Override
@@ -80,8 +90,11 @@ public class SelectSpeciesFragment extends ListFragment
 		// This is mostly needed in fixed-pane layouts
 		if (savedInstanceState != null) {
 			// restore search text and any search options
-//			mViewSearchChars = savedInstanceState.getString(ARG_SEARCH_CHARS);
-		}
+			mStSearch = savedInstanceState.getString(ARG_SEARCH_TEXT);
+			mStSQL = savedInstanceState.getString(ARG_SQL_TEXT);
+			mUseRegionalList = savedInstanceState.getBoolean(ARG_USE_REGIONAL_LIST);
+			mUseFullText = savedInstanceState.getBoolean(ARG_USE_FULLTEXT_SEARCH);
+		} /*SELECT _id, Code || ': ' || SppDescr AS MatchTxt FROM SpeciesFound WHERE Code LIKE '' ;*/
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_sel_species, container, false);
 		mViewSearchChars = (EditText) rootView.findViewById(R.id.txt_search_chars);
@@ -114,7 +127,10 @@ public class SelectSpeciesFragment extends ListFragment
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current search text and any options
-//		outState.putInt(ARG_SEARCH_TEXT, mCurrentSubplot);
+		outState.putString(ARG_SEARCH_TEXT, mStSearch);
+		outState.putString(ARG_SQL_TEXT, mStSQL);
+		outState.putBoolean(ARG_USE_REGIONAL_LIST, mUseRegionalList);
+		outState.putBoolean(ARG_USE_FULLTEXT_SEARCH, mUseFullText);
 	}
 	
     @Override

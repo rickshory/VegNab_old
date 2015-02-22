@@ -37,22 +37,21 @@ public class SelectSpeciesFragment extends ListFragment
 		@Override
 		public void afterTextChanged(Editable s) {
 			// use this method; test length of string; e.g. 'count' of other methods does not give this length
-			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "'");
+			//Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "'");
+			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "', length: " + s.length());
 		}
 
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			// the 'count' characters beginning at 'start' are about to be replaced by new text with length 'after'
-			Log.v(LOG_TAG, "beforeTextChanged, s: '" + s.toString() 
-					+ "', start: " + start + ", count: " + count + ", after: " + after);
+			//Log.v(LOG_TAG, "beforeTextChanged, s: '" + s.toString() + "', start: " + start + ", count: " + count + ", after: " + after);
 			
 		}
 
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			// the 'count' characters beginning at 'start' have just replaced old text that had length 'before'
-			Log.v(LOG_TAG, "onTextChanged, s: '" + s.toString()
-					+ "', start: " + start + ", before: " + before + ", count: " + count);
+			//Log.v(LOG_TAG, "onTextChanged, s: '" + s.toString() + "', start: " + start + ", before: " + before + ", count: " + count);
 			
 		}
 	};

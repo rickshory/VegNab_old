@@ -36,13 +36,13 @@ public class SelectSpeciesFragment extends ListFragment
 	TextWatcher sppCodeTextWatcher = new TextWatcher() {
 		@Override
 		public void afterTextChanged(Editable s) {
-			// TODO Auto-generated method stub
+			// use this method; test length of string; e.g. 'count' of other methods does not give this length
 			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "'");
 		}
 
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			// TODO Auto-generated method stub
+			// the 'count' characters beginning at 'start' are about to be replaced by new text with length 'after'
 			Log.v(LOG_TAG, "beforeTextChanged, s: '" + s.toString() 
 					+ "', start: " + start + ", count: " + count + ", after: " + after);
 			
@@ -50,7 +50,7 @@ public class SelectSpeciesFragment extends ListFragment
 
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			// TODO Auto-generated method stub
+			// the 'count' characters beginning at 'start' have just replaced old text that had length 'before'
 			Log.v(LOG_TAG, "onTextChanged, s: '" + s.toString()
 					+ "', start: " + start + ", before: " + before + ", count: " + count);
 			

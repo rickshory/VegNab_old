@@ -56,7 +56,7 @@ public class SelectSpeciesFragment extends ListFragment
 				mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
 						+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
 			} else {
-				mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+				mStSQL = "SELECT _id, Code AS Cd, SppDescr AS Descr, Code || ': ' || SppDescr AS MatchTxt " 
 					+ "FROM RegionalSpeciesList " 
 					+ "WHERE Code LIKE '" + mStSearch + "%' " 
 					+ "ORDER BY Code;";

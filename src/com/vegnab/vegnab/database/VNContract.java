@@ -50,7 +50,8 @@ public final class VNContract {
 		public static final int VALID_DEL_NAMERS = 41; // Namers that are valid to delete
 		// in Species Select
 		public static final int SPP_MATCHES = 51; // Namers that are valid to delete
-
+		// in Main Activity
+		public static final int CURRENT_SUBPLOTS = 61; // Subplots for the current visit
 		
 	}
 
@@ -63,6 +64,7 @@ public final class VNContract {
 		public static final String WEBVIEW_TUTORIAL = "WebviewTutorial";
 		public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
 		public static final String WEBVIEW_REGIONAL_LISTS = "WebviewSppLists";
+		public static final String VEG_SUBPLOT = "VegSubplot";
 		
 	}
 	

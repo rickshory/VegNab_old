@@ -185,7 +185,7 @@ public class SelectSpeciesFragment extends ListFragment
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
-		case Loaders.PREV_VISITS:
+		case Loaders.SPP_MATCHES:
 			mSppResultsAdapter.swapCursor(null);
 			break;
 		}

@@ -6,10 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
@@ -20,11 +22,17 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.telephony.TelephonyManager;
 import android.annotation.TargetApi;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -38,9 +46,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.os.Build;
 
-
 public class MainVNActivity extends ActionBarActivity 
-		implements NewVisitFragment.OnButtonListener, 
+		implements LoaderManager.LoaderCallbacks<Cursor>, 
+		NewVisitFragment.OnButtonListener, 
 		NewVisitFragment.OnVisitClickListener,
 		VisitHeaderFragment.OnButtonListener, 
 		VisitHeaderFragment.EditVisitDialogListener,
@@ -51,6 +59,8 @@ public class MainVNActivity extends ActionBarActivity
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
+	long mSubplotNum, mRowCt, mNumSubplots;
+	ArrayList<Long> mSubPlotNumbersList = new ArrayList();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -196,7 +206,7 @@ public class MainVNActivity extends ActionBarActivity
 	}
 */	
 	public void onNextSubplotButtonClicked(int subpNum) {
-		Toast.makeText(getApplicationContext(), "Received value " + subpNum + ", going to " + (subpNum + 1), Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(), "Received value " + subpNum + ", going to next", Toast.LENGTH_SHORT).show();
 		// swap new Subplot frag in place of existing one
 		// can we use the same name as existing?
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
@@ -213,6 +223,12 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked() {
+		// generate a list of subplots for the current plot type
+		// will eventually also deal with auxiliary data screens
+		
+		/*	long mSubplotNum;
+	ArrayList mSubPlotNumbersList = new ArrayList( );
+*/
 		Toast.makeText(getApplicationContext(), 
 				"Testing Species Select screen", 
 				Toast.LENGTH_LONG).show();
@@ -257,6 +273,31 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.commit();
 	}
 
+	public void goToSubplotScreen() {
+		// swap Subplot fragment in place of existing fragment
+		FragmentManager fm = getSupportFragmentManager();
+		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
+		Bundle args = new Bundle();
+		args.putLong(VegSubplotFragment.ARG_SUBPLOT, mSubplotNum);
+		vegSbpFrag.setArguments(args);
+		FragmentTransaction transaction = fm.beginTransaction();
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, vegSbpFrag, Tags.VEG_SUBPLOT);
+		transaction.addToBackStack(null);
+		transaction.commit();
+		// only allow one Subplot fragment on the the backstack, multiple could interfere with each other's species lists
+		boolean wasRemoved = false;
+		try {
+			// this pops all fragments back to and including the last veg subplot
+			if (fm.popBackStackImmediate (Tags.VEG_SUBPLOT, FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+				wasRemoved = true;
+			}
+		} catch (Exception e) {
+			Log.v(LOG_TAG, "stack pop exception: " + e.getMessage());
+		}
+	}
+	
 	public void showWebViewScreen(String screenTag) {
 		ConfigurableWebviewFragment webVwFrag = new ConfigurableWebviewFragment();
 		Bundle args = new Bundle();
@@ -407,5 +448,59 @@ public class MainVNActivity extends ActionBarActivity
 		// must do following or file is not visible externally
 		MediaScannerConnection.scanFile(getApplicationContext(), new String[] { dst.getAbsolutePath() }, null, null);
 	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.
+		// switch out based on id
+		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
+		switch (id) {
+
+		case Loaders.CURRENT_SUBPLOTS:
+			// current plot type is the default plot type stored in Preferences
+			SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
+			Uri curSbpsUri = ContentUris.withAppendedId(
+					Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "subplottypes"), plotTypeId);
+			cl = new CursorLoader(this, curSbpsUri, null, select, null, null);
+			break;		
+		}
+		return cl;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
+		// there will be various loaders, switch them out here
+		mRowCt = finishedCursor.getCount();
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOTS:
+			// store the list of subplots and then go to the first one
+			mSubPlotNumbersList.clear();
+			while (finishedCursor.moveToNext()) {
+				mSubPlotNumbersList.add(finishedCursor.getLong(finishedCursor.getColumnIndexOrThrow("_id")));
+			}
+			// mSubPlotNumbersList
+			mNumSubplots = mSubPlotNumbersList.size();
+			// test for no subplots?
+			mSubplotNum = mSubPlotNumbersList.get(0);
+			goToSubplotScreen();
+			break;
+		}
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// is about to be closed. Need to make sure it is no longer is use.
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOTS:
+			// no adapter, nothing to do
+			break;
+		}
+	}
+
 
 }

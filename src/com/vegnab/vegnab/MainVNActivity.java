@@ -223,29 +223,12 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked() {
-		// generate a list of subplots for the current plot type
-		// will eventually also deal with auxiliary data screens
-		
-		/*	long mSubplotNum;
-	ArrayList mSubPlotNumbersList = new ArrayList( );
-*/
-		Toast.makeText(getApplicationContext(), 
-				"Testing Species Select screen", 
-				Toast.LENGTH_LONG).show();
-		showSppSelectScreen();
-		// swap Subplot fragment in place of Header fragment
-//		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
-//		Bundle args = new Bundle();
-//		int subpNum = 1;
-//		args.putInt(VegSubplotFragment.ARG_SUBPLOT, subpNum); // start with subplot 1
-//		vegSbpFrag.setArguments(args);
-//		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		// replace the fragment in the fragment container with this new fragment and
-		// put the present fragment on the backstack so the user can navigate back to it
-		// the tag is for the fragment now being added, not the one replaced
-//		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
-//		transaction.addToBackStack(null);
-//		transaction.commit();
+		goToSubplotScreen();
+
+//		Toast.makeText(getApplicationContext(), 
+//				"Testing Species Select screen", 
+//				Toast.LENGTH_LONG).show();
+//		showSppSelectScreen();
 	}
 
 	@Override

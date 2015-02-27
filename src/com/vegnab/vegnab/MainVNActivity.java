@@ -49,13 +49,36 @@ public class MainVNActivity extends FragmentActivity
 		VegSubplotFragment.OnButtonListener,
 		EditNamerDialog.EditNamerDialogListener,
 		ConfirmDelNamerDialog.EditNamerDialogListener,
-		SelectSpeciesFragment.OnSppResultClickListener{
+		SelectSpeciesFragment.OnSppResultClickListener {
+	
+	interface DataScreenSetupListener {
+		void onSubplotArrayCreated(Object obj);
+	}
+	DataScreenSetupListener mSubpArrayCompletListener;
+	public void setHandlerListener(DataScreenSetupListener listener) {
+		mSubpArrayCompletListener=listener;
+	}
+	
+	protected void myEventFired(Object myObj) {
+		Log.v(LOG_TAG, "In 'myEventFired(Object myObj)', about to call 'mSubpArrayCompletListener.onSubplotArrayCreated(myObj)'");
+		if (mSubpArrayCompletListener!=null) {
+			mSubpArrayCompletListener.onSubplotArrayCreated(myObj);
+		}
+	}
+	
+//	interface onDispatcherSetUp {
+//	void implementDispatcherSetUp(Object obj);
+//}	
+
+
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
 	long mSubplotNum, mRowCt, mNumSubplots;
-	ArrayList<Long> mSubPlotNumbersList = new ArrayList();
-
+	boolean mDispatcherStructNewlySetUp = false;
+	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
+	//  maybe use JSONArray to include aux data screens?
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -227,7 +250,20 @@ public class MainVNActivity extends FragmentActivity
 //				Toast.LENGTH_LONG).show();
 //		showSppSelectScreen();
 	}
-
+	
+	public void dispatchDataEntryScreen() {
+		// for testing, just go to the first veg subplot screen
+		// ultimately will dispatch to relevent veg or aux screen
+		// mSubPlotNumbersList
+		mNumSubplots = mSubPlotNumbersList.size();
+		// test for no subplots?
+		mSubplotNum = mSubPlotNumbersList.get(0);
+		Log.v(LOG_TAG, "About to call 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
+		goToSubplotScreen();
+		Log.v(LOG_TAG, "Called 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
+		goToSubplotScreen();
+	}
+	
 	@Override
 	public void onNewVisitGoButtonClicked() {
 		goToVisitHeaderScreen(0);
@@ -462,11 +498,11 @@ public class MainVNActivity extends FragmentActivity
 			while (finishedCursor.moveToNext()) {
 				mSubPlotNumbersList.add(finishedCursor.getLong(finishedCursor.getColumnIndexOrThrow("_id")));
 			}
-			// mSubPlotNumbersList
-			mNumSubplots = mSubPlotNumbersList.size();
-			// test for no subplots?
-			mSubplotNum = mSubPlotNumbersList.get(0);
-			goToSubplotScreen();
+			mDispatcherStructNewlySetUp = true;
+			// fire an event to announce that this dispatcher has been set up 
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to call 'myEventFired(mSubPlotNumbersList)'");
+			myEventFired(mSubPlotNumbersList);
+			Log.v(LOG_TAG, "In 'onLoadFinished', after 'myEventFired(mSubPlotNumbersList)'");
 			break;
 		}
 	}

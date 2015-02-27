@@ -37,6 +37,9 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,16 +65,6 @@ public class MainVNActivity extends FragmentActivity
 	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
 	//  maybe use JSONArray to include aux data screens?
 	
-	// register the following in onResume(), and un-regiser in onPause
-	private BroadcastReceiver mSbDoneMessageReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.v(LOG_TAG, "In BroadcastReceiver, about to call 'goToSubplotScreen'");
-			goToSubplotScreen();
-			Log.v(LOG_TAG, "In BroadcastReceiver, after 'goToSubplotScreen'");
-		}
-	};
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -206,19 +199,6 @@ public class MainVNActivity extends FragmentActivity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-	
-	protected void onResume() {
-		super.onResume();
-		// Register to receive message that Loader has finished the Subplots list
-		// register an observer (mMessageReceiver) to receive Intents with actions named "subplots_done".
-        IntentFilter iFltr= new IntentFilter("subplots_done");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mSbDoneMessageReceiver, iFltr);
-	}
-	
-	protected void onPause() {
-		super.onPause();
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mSbDoneMessageReceiver);
 	}
 
 /*	
@@ -506,13 +486,27 @@ public class MainVNActivity extends FragmentActivity
 				mSubPlotNumbersList.add(finishedCursor.getLong(finishedCursor.getColumnIndexOrThrow("_id")));
 			}
 			mDispatcherStructNewlySetUp = true;
-			// fire an event to announce that this dispatcher has been set up 
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to call LocalBroadcastManager");
-			Intent intent = new Intent("subplots_done");
-			// can include extra data.
-			// intent.putExtra("msg", "Additional string");
-			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-			Log.v(LOG_TAG, "In 'onLoadFinished', after LocalBroadcastManager");
+			// use a callback to continue program flow outside this fn, where direct calls to 
+			// 'goToSubplotScreen' are not legal
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");
+			Message msgSupbNumbersDone = Message.obtain();
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to create callback");
+			Callback cbkSbsDone = new Callback() {
+
+				@Override
+				public boolean handleMessage(Message msg) {
+					// execute this during callback
+					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'goToSubplotScreen'");
+					goToSubplotScreen();
+					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'goToSubplotScreen'");
+					return false;
+				}
+			};
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to create handler");
+			Handler hnd = new Handler(cbkSbsDone);
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to send message");
+			hnd.sendMessage(msgSupbNumbersDone);
+			Log.v(LOG_TAG, "In 'onLoadFinished', message sent");
 			break;
 		}
 	}

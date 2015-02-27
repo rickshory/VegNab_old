@@ -23,10 +23,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
@@ -51,27 +55,6 @@ public class MainVNActivity extends FragmentActivity
 		ConfirmDelNamerDialog.EditNamerDialogListener,
 		SelectSpeciesFragment.OnSppResultClickListener {
 	
-	interface DataScreenSetupListener {
-		void onSubplotArrayCreated(Object obj);
-	}
-	DataScreenSetupListener mSubpArrayCompletListener;
-	public void setHandlerListener(DataScreenSetupListener listener) {
-		mSubpArrayCompletListener=listener;
-	}
-	
-	protected void myEventFired(Object myObj) {
-		Log.v(LOG_TAG, "In 'myEventFired(Object myObj)', about to call 'mSubpArrayCompletListener.onSubplotArrayCreated(myObj)'");
-		if (mSubpArrayCompletListener!=null) {
-			mSubpArrayCompletListener.onSubplotArrayCreated(myObj);
-		}
-	}
-	
-//	interface onDispatcherSetUp {
-//	void implementDispatcherSetUp(Object obj);
-//}	
-
-
-	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
 	long mSubplotNum, mRowCt, mNumSubplots;
@@ -79,6 +62,16 @@ public class MainVNActivity extends FragmentActivity
 	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
 	//  maybe use JSONArray to include aux data screens?
 	
+	// register the following in onResume(), and un-regiser in onPause
+	private BroadcastReceiver mSbDoneMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.v(LOG_TAG, "In BroadcastReceiver, about to call 'goToSubplotScreen'");
+			goToSubplotScreen();
+			Log.v(LOG_TAG, "In BroadcastReceiver, after 'goToSubplotScreen'");
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -214,6 +207,20 @@ public class MainVNActivity extends FragmentActivity
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	protected void onResume() {
+		super.onResume();
+		// Register to receive message that Loader has finished the Subplots list
+		// register an observer (mMessageReceiver) to receive Intents with actions named "subplots_done".
+        IntentFilter iFltr= new IntentFilter("subplots_done");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mSbDoneMessageReceiver, iFltr);
+	}
+	
+	protected void onPause() {
+		super.onPause();
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mSbDoneMessageReceiver);
+	}
+
 /*	
 	@Override
 	public void onBackPressed() {
@@ -500,9 +507,12 @@ public class MainVNActivity extends FragmentActivity
 			}
 			mDispatcherStructNewlySetUp = true;
 			// fire an event to announce that this dispatcher has been set up 
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to call 'myEventFired(mSubPlotNumbersList)'");
-			myEventFired(mSubPlotNumbersList);
-			Log.v(LOG_TAG, "In 'onLoadFinished', after 'myEventFired(mSubPlotNumbersList)'");
+			Log.v(LOG_TAG, "In 'onLoadFinished', about to call LocalBroadcastManager");
+			Intent intent = new Intent("subplots_done");
+			// can include extra data.
+			// intent.putExtra("msg", "Additional string");
+			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+			Log.v(LOG_TAG, "In 'onLoadFinished', after LocalBroadcastManager");
 			break;
 		}
 	}

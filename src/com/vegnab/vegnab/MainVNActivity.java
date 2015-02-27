@@ -60,11 +60,16 @@ public class MainVNActivity extends FragmentActivity
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
-	long mSubplotNum, mRowCt, mNumSubplots;
+	long mSubplotNum, mRowCt, mVisitId = 0;
 	boolean mDispatcherStructNewlySetUp = false;
 	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
 	//  maybe use JSONArray to include aux data screens?
 	
+	final static String ARG_SUBPLOT = "subplot";
+	final static String ARG_SUBPLOT_FIRST_TIME = "justStartedScreens";
+	final static String ARG_SUBPLOTS_LIST = "subplotsList";
+	final static String ARG_VISIT_ID = "visitId";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -241,15 +246,45 @@ public class MainVNActivity extends FragmentActivity
 	public void dispatchDataEntryScreen() {
 		// for testing, just go to the first veg subplot screen
 		// ultimately will dispatch to relevent veg or aux screen
-		// mSubPlotNumbersList
-		mNumSubplots = mSubPlotNumbersList.size();
-		// test for no subplots?
-		mSubplotNum = mSubPlotNumbersList.get(0);
+		if (mDispatcherStructNewlySetUp == true) {
+			mDispatcherStructNewlySetUp = false;
+			// test for no subplots?
+			mSubplotNum = mSubPlotNumbersList.get(0);
+		} else { // not the first
+			int sbListPos = mSubPlotNumbersList.indexOf(mSubplotNum);
+			sbListPos++;
+			if (sbListPos >= mSubPlotNumbersList.size()) {
+				// done with Subplots, go back to Visit Header
+				mDispatcherStructNewlySetUp = true;
+				mSubplotNum = 0;
+				// deal with adjusting anything on the backstack
+				Log.v(LOG_TAG, "About to call 'goToVisitHeaderScreen', mVisitId=" + mVisitId);
+				goToVisitHeaderScreen(mVisitId);
+				return;
+			} else {
+				mSubplotNum = mSubPlotNumbersList.get(sbListPos);
+				// for now, drop through to 'goToSubplotScreen'
+				// will deal with aux data screens here
+			}
+		}
 		Log.v(LOG_TAG, "About to call 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
 		goToSubplotScreen();
-		Log.v(LOG_TAG, "Called 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
-		goToSubplotScreen();
 	}
+
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		// save the current subplot arguments in case we need to re-create the activity
+		outState.putLong(ARG_SUBPLOT, mSubplotNum);
+		outState.putBoolean(ARG_SUBPLOT_FIRST_TIME, mDispatcherStructNewlySetUp);
+		
+//		outState.putParcelableArrayList(ARG_SUBPLOTS_LIST, mSubPlotNumbersList);
+		
+		outState.putLong(ARG_VISIT_ID, mVisitId);
+
+	}
+	
 	
 	@Override
 	public void onNewVisitGoButtonClicked() {
@@ -393,6 +428,7 @@ public class MainVNActivity extends FragmentActivity
 
 	@Override
 	public void onExistingVisitListClicked(long visitId) {
+		mVisitId = visitId;
 		goToVisitHeaderScreen(visitId);
 	}
 
@@ -497,7 +533,7 @@ public class MainVNActivity extends FragmentActivity
 				public boolean handleMessage(Message msg) {
 					// execute this during callback
 					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'goToSubplotScreen'");
-					goToSubplotScreen();
+					dispatchDataEntryScreen();
 					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'goToSubplotScreen'");
 					return false;
 				}

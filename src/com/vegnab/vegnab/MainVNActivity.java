@@ -223,14 +223,18 @@ public class MainVNActivity extends FragmentActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-/*	
 	@Override
 	public void onBackPressed() {
-		Log.v("Main", "In MainActivity, caught 'onBackPressed'");
+		Log.v(LOG_TAG, "Caught 'onBackPressed'");
 		super.onBackPressed();
 	return;
 	}
-*/	
+	
+	@Override
+	public void onNewItemButtonClicked() {
+		showSppSelectScreen();
+	}
+
 	public void onNextSubplotButtonClicked(int subpNum) {
 		dispatchDataEntryScreen(); // determine and go to next screen
 	}
@@ -571,6 +575,4 @@ public class MainVNActivity extends FragmentActivity
 			break;
 		}
 	}
-
-
 }

@@ -554,49 +554,31 @@ public class MainVNActivity extends FragmentActivity
 				} catch (JSONException e) {
 					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
 				}
-				// can put in the auxilary data specs, here or in post-processing
+				// can put in the auxiliary data specs, here or in post-processing
 				mPlotSpecs.put(mSubplotSpec);
 			}
 			mDispatcherStructNewlySetUp = true;
-			// use a Runnable to continue program flow outside this fn, where direct calls to 
-			// 'dispatchDataEntryScreen' are not legal
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Log.v(LOG_TAG, "In Runnable, about to call 'dispatchDataEntryScreen'");
-					dispatchDataEntryScreen();
-					Log.v(LOG_TAG, "In Runnable, after 'dispatchDataEntryScreen'");
-				}
-			});
-			
-			/*runOnUiThread(new Runnable() {
-    public void run() {
-        // Update UI elements
-    }
-});*/
-			/*
 			// use a callback to continue program flow outside this fn, where direct calls to 
-			// 'goToSubplotScreen' are not legal
+			// 'dispatchDataEntryScreen' are not legal
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");
-			Message msgSupbNumbersDone = Message.obtain();
+			Message msgPlotSpecsDone = Message.obtain();
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to create callback");
 			Callback cbkSbsDone = new Callback() {
 
 				@Override
 				public boolean handleMessage(Message msg) {
 					// execute this during callback
-					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'goToSubplotScreen'");
+					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'dispatchDataEntryScreen'");
 					dispatchDataEntryScreen();
-					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'goToSubplotScreen'");
+					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'dispatchDataEntryScreen'");
 					return false;
 				}
 			};
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to create handler");
 			Handler hnd = new Handler(cbkSbsDone);
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to send message");
-			hnd.sendMessage(msgSupbNumbersDone);
+			hnd.sendMessage(msgPlotSpecsDone);
 			Log.v(LOG_TAG, "In 'onLoadFinished', message sent");
-			*/
 			break;
 		}
 	}

@@ -49,9 +49,12 @@ public final class VNContract {
 		// in Delete Namer
 		public static final int VALID_DEL_NAMERS = 41; // Namers that are valid to delete
 		// in Species Select
-		public static final int SPP_MATCHES = 51; // Namers that are valid to delete
+		public static final int SPP_MATCHES = 51; // Species that match the search string
 		// in Main Activity
 		public static final int CURRENT_SUBPLOTS = 61; // Subplots for the current visit
+		// in Veg Subplot
+		public static final int CURRENT_SUBPLOT = 71; // Header info for the current subplot
+		public static final int CURRENT_SUBPLOT_SPP = 72; // Veg species for the current subplot
 		
 	}
 

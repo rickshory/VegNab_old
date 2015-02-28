@@ -1,9 +1,19 @@
 package com.vegnab.vegnab;
 
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
+
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +25,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class VegSubplotFragment extends ListFragment implements OnClickListener {
+public class VegSubplotFragment extends ListFragment 
+		implements OnClickListener,
+		LoaderManager.LoaderCallbacks<Cursor> {
+	private static final String LOG_TAG = VegSubplotFragment.class.getSimpleName();
 	final static String ARG_SUBPLOT = "subplot";
 	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
 	int mSubplotTypeId = -1;
@@ -26,6 +39,7 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		public void onNewItemButtonClicked();
 		public void onNextSubplotButtonClicked(int subpNum);
 	}
+	SimpleCursorAdapter mVegSubplotSppAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +103,15 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
+/*
+				mVegSubplotSppAdapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_list_item_1, null,
+				new String[] {"MatchTxt"},
+				new int[] {android.R.id.text1}, 0);
+		setListAdapter(mVegSubplotSppAdapter);
+		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
+
+*/
 		return rootView;
 	}
 	
@@ -122,12 +145,15 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 	}
 	
 	public void updateSubplotViews(int subplotNum) {
-		// don't do anything yet
-		// figure out how to deal with default of -1
+
 		mSubplotTypeId = subplotNum;
+		if (mSubplotTypeId < 1) { // invalid subplot type, should never happen
+			// fill in something to help with diagnostics
+			((TextView) getActivity().findViewById(R.id.subplot_header_name)).setText("Subplot " + mSubplotTypeId);
+		} else {
+			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
+		}
 		// at this point, after inflate, the frag's objects are all child objects of the activity
-		TextView t = (TextView)getActivity().findViewById(R.id.subplot_header_name);
-		t.setText("Subplot " + mSubplotTypeId);
 	}
 	
 	@Override
@@ -149,4 +175,65 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		}
 	}
 
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.
+		// switch out based on id
+		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
+		switch (id) {
+		case Loaders.CURRENT_SUBPLOT:
+			// retrieve any needed header info
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT SubplotDescription, PresenceOnly, HasNested " 
+					+ "FROM SubplotTypes WHERE _id = " + mSubplotTypeId + ";";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;
+		case Loaders.CURRENT_SUBPLOT_SPP:
+			baseUri = ContentProvider_VegNab.SQL_URI;
+//			select = mStSQL;
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;		
+		}
+		return cl;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+		// there will be various loaders, switch them out here
+//		mRowCt = finishedCursor.getCount();
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOT:
+			// fill in any header info
+			// SubplotDescription, PresenceOnly, HasNested
+			int rowCt = c.getCount();
+			Log.v(LOG_TAG, "current subplot type, number of rows returned: " + rowCt);
+			if (c.moveToNext()) {
+				((TextView) getActivity().findViewById(R.id.subplot_header_name))
+					.setText(c.getString(c.getColumnIndexOrThrow("SubplotDescription")));
+			}
+			break;
+		case Loaders.CURRENT_SUBPLOT_SPP:
+			mVegSubplotSppAdapter.swapCursor(c);
+			break;
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// is about to be closed. Need to make sure it is no longer is use.
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOT:
+			// no adapter, nothing to do
+			break;
+		case Loaders.CURRENT_SUBPLOT_SPP:
+			mVegSubplotSppAdapter.swapCursor(null);
+			break;
+		}
+		
+	}
 }

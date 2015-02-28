@@ -558,6 +558,23 @@ public class MainVNActivity extends FragmentActivity
 				mPlotSpecs.put(mSubplotSpec);
 			}
 			mDispatcherStructNewlySetUp = true;
+			// use a Runnable to continue program flow outside this fn, where direct calls to 
+			// 'dispatchDataEntryScreen' are not legal
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Log.v(LOG_TAG, "In Runnable, about to call 'dispatchDataEntryScreen'");
+					dispatchDataEntryScreen();
+					Log.v(LOG_TAG, "In Runnable, after 'dispatchDataEntryScreen'");
+				}
+			});
+			
+			/*runOnUiThread(new Runnable() {
+    public void run() {
+        // Update UI elements
+    }
+});*/
+			/*
 			// use a callback to continue program flow outside this fn, where direct calls to 
 			// 'goToSubplotScreen' are not legal
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");
@@ -579,6 +596,7 @@ public class MainVNActivity extends FragmentActivity
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to send message");
 			hnd.sendMessage(msgSupbNumbersDone);
 			Log.v(LOG_TAG, "In 'onLoadFinished', message sent");
+			*/
 			break;
 		}
 	}

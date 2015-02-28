@@ -17,7 +17,8 @@ import android.widget.Toast;
 
 public class VegSubplotFragment extends ListFragment implements OnClickListener {
 	final static String ARG_SUBPLOT = "subplot";
-	int mCurrentSubplot = -1;
+	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
+	int mSubplotTypeId = -1;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -78,7 +79,7 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		// restore the previous subplot remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts
 		if (savedInstanceState != null) {
-			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT);
+			mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID);
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_veg_subplot, container, false);
@@ -99,10 +100,10 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 		Bundle args = getArguments();
 		if (args != null) {
 			// set up subplot based on arguments passed in
-			updateSubplotViews(args.getInt(ARG_SUBPLOT));
-		} else if (mCurrentSubplot != -1) {
+			updateSubplotViews(args.getInt(ARG_SUBPLOT_TYPE_ID));
+		} else if (mSubplotTypeId != -1) {
 			// set up subplot based on saved instance state defined in onCreateView
-			updateSubplotViews(mCurrentSubplot);
+			updateSubplotViews(mSubplotTypeId);
 		} else {
 			updateSubplotViews(-1); // figure out what to do for default state 
 		}
@@ -122,24 +123,24 @@ public class VegSubplotFragment extends ListFragment implements OnClickListener 
 	public void updateSubplotViews(int subplotNum) {
 		// don't do anything yet
 		// figure out how to deal with default of -1
-		mCurrentSubplot = subplotNum;
+		mSubplotTypeId = subplotNum;
 		// at this point, after inflate, the frag's objects are all child objects of the activity
 		TextView t = (TextView)getActivity().findViewById(R.id.subplot_header_name);
-		t.setText("Subplot " + mCurrentSubplot);
+		t.setText("Subplot " + mSubplotTypeId);
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the fragment
-		outState.putInt(ARG_SUBPLOT, mCurrentSubplot);
+		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.subplotNextButton:
-			mButtonCallback.onNextSubplotButtonClicked(mCurrentSubplot);
+			mButtonCallback.onNextSubplotButtonClicked(mSubplotTypeId);
 			break;
 		}
 	}

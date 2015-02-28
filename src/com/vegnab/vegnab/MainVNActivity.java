@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -60,14 +64,19 @@ public class MainVNActivity extends FragmentActivity
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
-	long mSubplotNum, mRowCt, mVisitId = 0;
+	int mSubplotTypeId = 0, mSubplotNum = 1;
+	long mRowCt, mVisitId = 0;
 	boolean mDispatcherStructNewlySetUp = false;
 	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
-	//  maybe use JSONArray to include aux data screens?
+	//  maybe JSONArray to be able to include aux data screens
+	private JSONObject mSubplotSpec = new JSONObject();
+	private JSONArray mPlotSpecs = new JSONArray();
 	
-	final static String ARG_SUBPLOT = "subplot";
+	final static String ARG_SUBPLOT_NUM = "subplotNum";
+	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
 	final static String ARG_SUBPLOT_FIRST_TIME = "justStartedScreens";
 	final static String ARG_SUBPLOTS_LIST = "subplotsList";
+	final static String ARG_PLOT_SPECS = "plotSpecs";
 	final static String ARG_VISIT_ID = "visitId";
 
 	@Override
@@ -101,7 +110,16 @@ public class MainVNActivity extends FragmentActivity
 		 * */
 		if (true) {
 			if (savedInstanceState != null) {
-				// if restoring from a previous state, do not create
+				mSubplotNum = savedInstanceState.getInt(ARG_SUBPLOT_NUM, 1);
+				mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID, 0);
+				mDispatcherStructNewlySetUp = savedInstanceState.getBoolean(ARG_SUBPLOT_FIRST_TIME, true);
+				String jsonArray = savedInstanceState.getString(ARG_PLOT_SPECS);
+				try {
+					mPlotSpecs = new JSONArray(jsonArray);
+				} catch (JSONException e) {
+					Log.v(LOG_TAG, "In 'onCreate' parsing bundle, JSON error: " + e.getMessage());
+				}
+				// if restoring from a previous state, do not create view
 				// could end up with overlapping views
 				return;
 			}
@@ -249,23 +267,29 @@ public class MainVNActivity extends FragmentActivity
 		if (mDispatcherStructNewlySetUp == true) {
 			mDispatcherStructNewlySetUp = false;
 			// test for no subplots?
-			mSubplotNum = mSubPlotNumbersList.get(0);
+			mSubplotNum = 0;
+			
 		} else { // not the first
 			int sbListPos = mSubPlotNumbersList.indexOf(mSubplotNum);
-			sbListPos++;
-			if (sbListPos >= mSubPlotNumbersList.size()) {
+			mSubplotNum++;
+			if (mSubplotNum >= mPlotSpecs.length()) {
 				// done with Subplots, go back to Visit Header
 				mDispatcherStructNewlySetUp = true;
-				mSubplotNum = 0;
+				mSubplotNum = -1;
 				// deal with adjusting anything on the backstack
 				Log.v(LOG_TAG, "About to call 'goToVisitHeaderScreen', mVisitId=" + mVisitId);
 				goToVisitHeaderScreen(mVisitId);
 				return;
 			} else {
-				mSubplotNum = mSubPlotNumbersList.get(sbListPos);
 				// for now, drop through to 'goToSubplotScreen'
 				// will deal with aux data screens here
 			}
+		}
+		try {
+			mSubplotSpec = mPlotSpecs.getJSONObject(mSubplotNum);
+			mSubplotTypeId = mSubplotSpec.getInt("subplotId");
+		} catch (JSONException e) {
+			Log.v(LOG_TAG, "In 'dispatchDataEntryScreen' parsing subplot spec, JSON error: " + e.getMessage());
 		}
 		Log.v(LOG_TAG, "About to call 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
 		goToSubplotScreen();
@@ -276,11 +300,11 @@ public class MainVNActivity extends FragmentActivity
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the activity
-		outState.putLong(ARG_SUBPLOT, mSubplotNum);
+		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotNum);
 		outState.putBoolean(ARG_SUBPLOT_FIRST_TIME, mDispatcherStructNewlySetUp);
 		
 //		outState.putParcelableArrayList(ARG_SUBPLOTS_LIST, mSubPlotNumbersList);
-		
+		outState.putString(ARG_PLOT_SPECS, mPlotSpecs.toString());
 		outState.putLong(ARG_VISIT_ID, mVisitId);
 
 	}
@@ -316,7 +340,7 @@ public class MainVNActivity extends FragmentActivity
 		FragmentManager fm = getSupportFragmentManager();
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
 		Bundle args = new Bundle();
-		args.putLong(VegSubplotFragment.ARG_SUBPLOT, mSubplotNum);
+		args.putInt(VegSubplotFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 		vegSbpFrag.setArguments(args);
 		FragmentTransaction transaction = fm.beginTransaction();
 		// put the present fragment on the backstack so the user can navigate back to it
@@ -493,18 +517,19 @@ public class MainVNActivity extends FragmentActivity
 		// This is called when a new Loader needs to be created.
 		// switch out based on id
 		CursorLoader cl = null;
-//		Uri baseUri;
+		Uri baseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
-
 		case Loaders.CURRENT_SUBPLOTS:
 			// current plot type is the default plot type stored in Preferences
 			SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
-			Uri curSbpsUri = ContentUris.withAppendedId(
-					Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "subplottypes"), plotTypeId);
-			cl = new CursorLoader(this, curSbpsUri, null, select, null, null);
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT _id FROM SubplotTypes "
+					+ "WHERE PlotTypeID = " + plotTypeId + " "
+					+ "ORDER BY OrderDone, _id;";
+			cl = new CursorLoader(this, baseUri,
+					null, select, null, null);
 			break;		
 		}
 		return cl;
@@ -518,8 +543,19 @@ public class MainVNActivity extends FragmentActivity
 		case Loaders.CURRENT_SUBPLOTS:
 			// store the list of subplots and then go to the first one
 			mSubPlotNumbersList.clear();
+			mPlotSpecs = new JSONArray(); // clear the array
+			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
 			while (finishedCursor.moveToNext()) {
 				mSubPlotNumbersList.add(finishedCursor.getLong(finishedCursor.getColumnIndexOrThrow("_id")));
+				mSubplotSpec = new JSONObject();
+				// for now, only put the Subplot ID number
+				try {
+					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
+				} catch (JSONException e) {
+					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
+				}
+				// can put in the auxilary data specs, here or in post-processing
+				mPlotSpecs.put(mSubplotSpec);
 			}
 			mDispatcherStructNewlySetUp = true;
 			// use a callback to continue program flow outside this fn, where direct calls to 

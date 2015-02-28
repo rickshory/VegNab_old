@@ -232,20 +232,7 @@ public class MainVNActivity extends FragmentActivity
 	}
 */	
 	public void onNextSubplotButtonClicked(int subpNum) {
-		Toast.makeText(getApplicationContext(), "Received value " + subpNum + ", going to next", Toast.LENGTH_SHORT).show();
-		// swap new Subplot frag in place of existing one
-		// can we use the same name as existing?
-		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
-		Bundle args = new Bundle();
-		args.putInt(VegSubplotFragment.ARG_SUBPLOT, subpNum + 1); // increment subplot number
-		vegSbpFrag.setArguments(args);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		// replace the existing Subplot fragment (in the container) with this new Subplot fragment
-		// and put the existing Subplot fragment on the backstack so the user can navigate back to it
-		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, vegSbpFrag, "Subplot " + subpNum);
-		transaction.addToBackStack(null);
-		transaction.commit();
+		dispatchDataEntryScreen(); // determine and go to next screen
 	}
 
 	public void onVisitHeaderGoButtonClicked() {

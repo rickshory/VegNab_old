@@ -66,8 +66,7 @@ public class MainVNActivity extends FragmentActivity
 	static String mUniqueDeviceId, mDeviceIdSource;
 	int mSubplotTypeId = 0, mSubplotNum = 1;
 	long mRowCt, mVisitId = 0;
-	boolean mDispatcherStructNewlySetUp = false;
-	private ArrayList<Long> mSubPlotNumbersList = new ArrayList();
+	boolean mPlotSpecsNewlySetUp = false;
 	//  maybe JSONArray to be able to include aux data screens
 	private JSONObject mSubplotSpec = new JSONObject();
 	private JSONArray mPlotSpecs = new JSONArray();
@@ -112,7 +111,7 @@ public class MainVNActivity extends FragmentActivity
 			if (savedInstanceState != null) {
 				mSubplotNum = savedInstanceState.getInt(ARG_SUBPLOT_NUM, 1);
 				mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID, 0);
-				mDispatcherStructNewlySetUp = savedInstanceState.getBoolean(ARG_SUBPLOT_FIRST_TIME, true);
+				mPlotSpecsNewlySetUp = savedInstanceState.getBoolean(ARG_SUBPLOT_FIRST_TIME, true);
 				String jsonArray = savedInstanceState.getString(ARG_PLOT_SPECS);
 				try {
 					mPlotSpecs = new JSONArray(jsonArray);
@@ -264,17 +263,16 @@ public class MainVNActivity extends FragmentActivity
 	public void dispatchDataEntryScreen() {
 		// for testing, just go to the first veg subplot screen
 		// ultimately will dispatch to relevent veg or aux screen
-		if (mDispatcherStructNewlySetUp == true) {
-			mDispatcherStructNewlySetUp = false;
+		if (mPlotSpecsNewlySetUp == true) {
+			mPlotSpecsNewlySetUp = false;
 			// test for no subplots?
 			mSubplotNum = 0;
 			
 		} else { // not the first
-			int sbListPos = mSubPlotNumbersList.indexOf(mSubplotNum);
 			mSubplotNum++;
 			if (mSubplotNum >= mPlotSpecs.length()) {
 				// done with Subplots, go back to Visit Header
-				mDispatcherStructNewlySetUp = true;
+				mPlotSpecsNewlySetUp = true;
 				mSubplotNum = -1;
 				// deal with adjusting anything on the backstack
 				Log.v(LOG_TAG, "About to call 'goToVisitHeaderScreen', mVisitId=" + mVisitId);
@@ -294,21 +292,16 @@ public class MainVNActivity extends FragmentActivity
 		Log.v(LOG_TAG, "About to call 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
 		goToSubplotScreen();
 	}
-
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the activity
 		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotNum);
-		outState.putBoolean(ARG_SUBPLOT_FIRST_TIME, mDispatcherStructNewlySetUp);
-		
-//		outState.putParcelableArrayList(ARG_SUBPLOTS_LIST, mSubPlotNumbersList);
+		outState.putBoolean(ARG_SUBPLOT_FIRST_TIME, mPlotSpecsNewlySetUp);
 		outState.putString(ARG_PLOT_SPECS, mPlotSpecs.toString());
 		outState.putLong(ARG_VISIT_ID, mVisitId);
-
 	}
-	
 	
 	@Override
 	public void onNewVisitGoButtonClicked() {
@@ -542,11 +535,9 @@ public class MainVNActivity extends FragmentActivity
 		switch (loader.getId()) {
 		case Loaders.CURRENT_SUBPLOTS:
 			// store the list of subplots and then go to the first one
-			mSubPlotNumbersList.clear();
 			mPlotSpecs = new JSONArray(); // clear the array
 			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
 			while (finishedCursor.moveToNext()) {
-				mSubPlotNumbersList.add(finishedCursor.getLong(finishedCursor.getColumnIndexOrThrow("_id")));
 				mSubplotSpec = new JSONObject();
 				// for now, only put the Subplot ID number
 				try {
@@ -557,7 +548,7 @@ public class MainVNActivity extends FragmentActivity
 				// can put in the auxiliary data specs, here or in post-processing
 				mPlotSpecs.put(mSubplotSpec);
 			}
-			mDispatcherStructNewlySetUp = true;
+			mPlotSpecsNewlySetUp = true;
 			// use a callback to continue program flow outside this fn, where direct calls to 
 			// 'dispatchDataEntryScreen' are not legal
 			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");

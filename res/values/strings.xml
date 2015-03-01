@@ -176,5 +176,23 @@
     <string name="veg_subplot_next_button_msg">Next screen</string>
     <string name="veg_subplot_no_items">No items yet</string>
     
+    <string name="edit_spp_item_msg_dup_general">This species is already entered on this subplot</string>
+    <string name="edit_spp_item_msg_dup_detail">You do not normally enter a species twice unless the identities are of different confidence</string>
+    <string name="edit_spp_item_msg_dup_verify">Do you want to enter it again?</string>
+    <string name="edit_spp_item_title_add">New Species Item</string>
+    <string name="edit_spp_item_title_edit">Edit Species Item</string>
+    <string name="edit_spp_item_label_sppitem">Code: Description</string>
+    <string name="edit_spp_item_label_height">Plant height, in centimeters</string>
+    <string name="edit_spp_item_hint_height">Height</string>
+    <string name="edit_spp_item_label_cover">Plant cover, percent</string>
+    <string name="edit_spp_item_hint_cover">Cover</string>
+    <string name="edit_spp_item_label_present">Present (un-check to verify absent)</string>
+    <string name="edit_spp_item_label_present_do_not_ask">Assume present and do not ask to verify again, for this session</string>
+    <string name="edit_spp_item_label_confidence">Confidence of identity</string>
+    <string name="edit_spp_item_msg_no_height">Need Height</string>
+    <string name="edit_spp_item_msg_no_cover">Need Cover</string>
+    <string name="edit_spp_item_msg_zero_height">Zero height means you verify this species is absent here</string>
+    <string name="edit_spp_item_msg_zero_cover">Zero cover means you verify this species is absent here</string>
+    
 
 </resources>

@@ -437,6 +437,7 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onSppMatchListClicked(int sourceId, long recId) {
 		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId);
+		
 	}	
 	
 	private static final String DATABASE_NAME = "VegNab.db";

@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
@@ -21,20 +20,15 @@ import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
@@ -51,7 +45,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.os.Build;
 
-public class MainVNActivity extends FragmentActivity 
+public class MainVNActivity extends ActionBarActivity 
 		implements LoaderManager.LoaderCallbacks<Cursor>, 
 		NewVisitFragment.OnButtonListener, 
 		NewVisitFragment.OnVisitClickListener,

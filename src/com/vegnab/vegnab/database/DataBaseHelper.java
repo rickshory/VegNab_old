@@ -163,12 +163,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 					stmt.bindString(2, lineParts[1]);
 					stmt.execute();
 					stmt.clearBindings();
-					Log.v(LOG_TAG, line.toString());
+//					Log.v(LOG_TAG, line.toString());
 				}
 				ct++;
-				if ((ct % 100) == 0) {
-					Log.v(LOG_TAG, "item " + ct + ", currentTimeMillis = " + System.currentTimeMillis());
-				}
+//				if ((ct % 100) == 0) {
+//					Log.v(LOG_TAG, "item " + ct + ", currentTimeMillis = " + System.currentTimeMillis());
+//				}
 				if ((ct % 5000) == 0) { 
 					// reportedly, can do 7000 records at at time, but to be on the safe side
 					// do 5000 records at a time

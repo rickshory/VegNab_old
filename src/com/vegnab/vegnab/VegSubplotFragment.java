@@ -2,8 +2,11 @@ package com.vegnab.vegnab;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
+import com.vegnab.vegnab.database.VNContract.Prefs;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,12 +48,6 @@ public class VegSubplotFragment extends ListFragment
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-/*        try {
-        	mEditVisitListener = (EditVisitDialogListener) getActivity();
-        	Log.v(LOG_TAG, "(EditVisitDialogListener) getActivity()");
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Main Activity must implement EditVisitDialogListener interface");
-        } */
 	setHasOptionsMenu(true);
 	}	
 	
@@ -104,15 +101,15 @@ public class VegSubplotFragment extends ListFragment
 		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
-/*
-				mVegSubplotSppAdapter = new SimpleCursorAdapter(getActivity(),
+		
+		// use query to return 'SppLine', concatenated from code and description; more reading room
+		mVegSubplotSppAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_list_item_1, null,
-				new String[] {"MatchTxt"},
+				new String[] {"SppLine"},
 				new int[] {android.R.id.text1}, 0);
 		setListAdapter(mVegSubplotSppAdapter);
 		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
 
-*/
 		return rootView;
 	}
 	
@@ -153,6 +150,7 @@ public class VegSubplotFragment extends ListFragment
 			((TextView) getActivity().findViewById(R.id.subplot_header_name)).setText("Subplot " + mSubplotTypeId);
 		} else {
 			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
+//			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
 		}
 		// at this point, after inflate, the frag's objects are all child objects of the activity
 	}
@@ -194,7 +192,17 @@ public class VegSubplotFragment extends ListFragment
 			break;
 		case Loaders.CURRENT_SUBPLOT_SPP:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-//			select = mStSQL;
+			// get any species entries for this subplot of this visit
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			// fetch the Visit Id from Preferences
+			long visId = sharedPref.getLong(Prefs.CURRENT_VISIT_ID, 0);
+			select = "SELECT VegItems._id, VegItems.OrigCode, VegItems.OrigDescr, "
+					+ "VegItems.OrigCode || ': ' || VegItems.OrigDescr AS SppLine , "
+					+ "VegItems.Height, VegItems.Cover, VegItems.Presence, "
+					+ "IdLevels.IdLevelDescr, IdLevels.IdLevelLetterCode "
+					+ "FROM VegItems LEFT JOIN IdLevels ON VegItems.IdLevelID = IdLevels._id "
+					+ "WHERE (((VegItems.VisitID)=1) AND ((VegItems.SubPlotID)=1)) "
+					+ "ORDER BY VegItems.TimeLastChanged DESC;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;		
@@ -216,6 +224,7 @@ public class VegSubplotFragment extends ListFragment
 				((TextView) getActivity().findViewById(R.id.subplot_header_name))
 					.setText(c.getString(c.getColumnIndexOrThrow("SubplotDescription")));
 			}
+			
 			break;
 		case Loaders.CURRENT_SUBPLOT_SPP:
 			mVegSubplotSppAdapter.swapCursor(c);
@@ -235,6 +244,5 @@ public class VegSubplotFragment extends ListFragment
 			mVegSubplotSppAdapter.swapCursor(null);
 			break;
 		}
-		
 	}
 }

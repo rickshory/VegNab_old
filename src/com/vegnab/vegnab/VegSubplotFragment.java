@@ -32,6 +32,7 @@ public class VegSubplotFragment extends ListFragment
 	final static String ARG_SUBPLOT = "subplot";
 	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
 	int mSubplotTypeId = -1;
+	boolean mPresenceOnly, mHasNested;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {

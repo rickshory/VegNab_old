@@ -785,6 +785,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// validate Azimuth
 		String stringAz = mViewAzimuth.getText().toString().trim();
 		if (stringAz.length() > 0) { // null is valid but empty string is not
+			Log.v(LOG_TAG, "Azimuth is length " + stringAz.length());
 			int Az = 0;
 			try {
 				Az = Integer.parseInt(stringAz);
@@ -821,6 +822,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					}
 				}
 			}
+		} else {
+			Log.v(LOG_TAG, "Azimuth is length zero");
 		}
 		
 		if (!mValues.containsKey("VisitNotes")) { // optional, no validation

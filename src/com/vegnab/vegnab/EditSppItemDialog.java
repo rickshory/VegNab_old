@@ -28,8 +28,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditSppItemDialog extends DialogFragment implements android.view.View.OnClickListener,
@@ -37,11 +40,15 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	private static final String LOG_TAG = EditSppItemDialog.class.getSimpleName();
-	long mSppItemRecId = 0; // zero default means new or not specified yet
-	Uri mUri, mProjectsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
+	long mVegItemRecId = 0; // zero default means new or not specified yet
+	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
-	HashMap<Long, String> mExistingProjCodes = new HashMap<Long, String>();
-	private EditText mProjCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
+	HashMap<Long, String> mExistingVegCodes = new HashMap<Long, String>();
+	private TextView mTxtSpeciesItemLabel;
+	private EditText mEditSpeciesHeight, mEditSpeciesCover;
+	private CheckBox mCkSpeciesIsPresent, mCkDontVerifyPresence;
+	private Spinner mSpinnerSpeciesConfidence;
+	private EditText mVegCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
 	private EditText mActiveDateView;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	private Calendar mCalendar = Calendar.getInstance();
@@ -56,7 +63,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	        mActiveDateView.setText(mDateFormat.format(mCalendar.getTime()));
 	        mValues.clear();
 	        // put required field, will test for validity before Save
-	        mValues.put("ProjCode", mProjCode.getText().toString().trim());
+	        mValues.put("ProjCode", mVegCode.getText().toString().trim());
 	        Log.v(LOG_TAG, "Date set");
 	        if (mActiveDateView == mStartDate) {
 	        	Log.v(LOG_TAG, "Date set for mStartDate, about to save record");
@@ -72,11 +79,11 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	    }
 	};
 	
-	static EditSppItemDialog newInstance(long mSppItemRecId) {
+	static EditSppItemDialog newInstance(long mVegItemRecId) {
 		EditSppItemDialog f = new EditSppItemDialog();
-		// supply mSppItemRecId as an argument
+		// supply mVegItemRecId as an argument
 		Bundle args = new Bundle();
-		args.putLong("mSppItemRecId", mSppItemRecId);
+		args.putLong("mVegItemRecId", mVegItemRecId);
 		f.setArguments(args);
 		return f;
 	}
@@ -85,7 +92,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_edit_project, root);
 
-		mProjCode = (EditText) view.findViewById(R.id.txt_projcode);
+		mVegCode = (EditText) view.findViewById(R.id.txt_projcode);
 		mDescription = (EditText) view.findViewById(R.id.txt_descr);
 		mContext = (EditText) view.findViewById(R.id.txt_context);
 		mCaveats = (EditText) view.findViewById(R.id.txt_caveats);
@@ -96,7 +103,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		mStartDate.setOnClickListener(this);
 		mEndDate.setOnClickListener(this);
 		
-		mProjCode.setOnFocusChangeListener(this);
+		mVegCode.setOnFocusChangeListener(this);
 		mDescription.setOnFocusChangeListener(this);
 		mContext.setOnFocusChangeListener(this);
 		mCaveats.setOnFocusChangeListener(this);
@@ -144,7 +151,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			mSppItemRecId = args.getLong("mSppItemRecId");
+			mVegItemRecId = args.getLong("mVegItemRecId");
 			// request existing project codes ASAP, this doesn't use the UI
 			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			// will insert values into screen when cursor is finished
@@ -158,7 +165,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mValues.clear();
 			switch (v.getId()) {
 			case R.id.txt_projcode:
-				mValues.put("ProjCode", mProjCode.getText().toString().trim());
+				mValues.put("ProjCode", mVegCode.getText().toString().trim());
 				break;
 			case R.id.txt_descr:
 				mValues.put("Description", mDescription.getText().toString().trim());
@@ -179,7 +186,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 //				mValues.put("EndDate", mEndDate.getText().toString().trim());
 //				break;
 			default: // save everything
-				mValues.put("ProjCode", mProjCode.getText().toString().trim());
+				mValues.put("ProjCode", mVegCode.getText().toString().trim());
 				mValues.put("Description", mDescription.getText().toString().trim());
 				mValues.put("Context", mContext.getText().toString().trim());
 				mValues.put("Caveats", mCaveats.getText().toString().trim());
@@ -188,7 +195,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				mValues.put("EndDate", mEndDate.getText().toString().trim());
 				}
 			if (!mValues.containsKey("ProjCode")) { // assure contains required field
-				mValues.put("ProjCode", mProjCode.getText().toString().trim());
+				mValues.put("ProjCode", mVegCode.getText().toString().trim());
 			}
 			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
 			int numUpdated = saveProjRecord();
@@ -200,7 +207,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	public void onCancel (DialogInterface dialog) {
 		// update the project record in the database, if everything valid		
 		mValues.clear();
-		mValues.put("ProjCode", mProjCode.getText().toString().trim());
+		mValues.put("ProjCode", mVegCode.getText().toString().trim());
 		mValues.put("Description", mDescription.getText().toString().trim());
 		mValues.put("Context", mContext.getText().toString().trim());
 		mValues.put("Caveats", mCaveats.getText().toString().trim());
@@ -227,38 +234,38 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					Toast.LENGTH_LONG).show();
 			return 0;
 		}
-		if (mExistingProjCodes.containsValue(projCodeString)) {
+		if (mExistingVegCodes.containsValue(projCodeString)) {
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,
 					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mSppItemRecId = " + mSppItemRecId);
+			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mVegItemRecId = " + mVegItemRecId);
 			return 0;
 		}
 		ContentResolver rs = c.getContentResolver();
-		if (mSppItemRecId == -1) {
-			Log.v(LOG_TAG, "entered saveProjRecord with (mSppItemRecId == -1); canceled");
+		if (mVegItemRecId == -1) {
+			Log.v(LOG_TAG, "entered saveProjRecord with (mVegItemRecId == -1); canceled");
 			return 0;
 		}
-		if (mSppItemRecId == 0) { // new record
-			mUri = rs.insert(mProjectsUri, mValues);
+		if (mVegItemRecId == 0) { // new record
+			mUri = rs.insert(mVegItemsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
 			long newRecId = Long.parseLong(mUri.getLastPathSegment());
 			if (newRecId < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
 				Log.v(LOG_TAG, "new record in saveProjRecord has Id == " + newRecId + "); canceled");
 				return 0;
 			}
-			mSppItemRecId = newRecId;
+			mVegItemRecId = newRecId;
 			getLoaderManager().restartLoader(Loaders.EXISTING_PROJCODES, null, this);
-			mUri = ContentUris.withAppendedId(mProjectsUri, mSppItemRecId);
+			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
 			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mSppItemRecId);
+			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mVegItemRecId);
 			prefEditor.commit();
 			return 1;
 		} else {
-			mUri = ContentUris.withAppendedId(mProjectsUri, mSppItemRecId);
+			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 			return numUpdated;
@@ -275,19 +282,19 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.EXISTING_PROJCODES:
 			// get the existing ProjCodes, other than the current one, to disallow duplicates
 			Uri allProjsUri = Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "projects");
+					ContentProvider_VegNab.CONTENT_URI, "vegitems");
 			String[] projection = {"_id", "ProjCode"};
-			select = "(_id <> " + mSppItemRecId + " AND IsDeleted = 0)";
+			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
 			cl = new CursorLoader(getActivity(), allProjsUri,
 					projection, select, null, null);
 			break;
 		case Loaders.PROJECT_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
-//			mProjectsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
 			Uri oneProjUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "projects"), mSppItemRecId);
+							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as
@@ -304,19 +311,19 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		switch (loader.getId()) {
 		case Loaders.EXISTING_PROJCODES:
-			mExistingProjCodes.clear();
+			mExistingVegCodes.clear();
 			while (c.moveToNext()) {
 				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mExistingProjCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+				mExistingVegCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
 						c.getString(c.getColumnIndexOrThrow("ProjCode")));
 			}
-			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingProjCodes: " + mExistingProjCodes.size());
-			Log.v(LOG_TAG, "onLoadFinished, items in mExistingProjCodes: " + mExistingProjCodes.toString());
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingVegCodes: " + mExistingVegCodes.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());
 			break;
 		case Loaders.PROJECT_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
-				mProjCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
 				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
 				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
 				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));

@@ -186,9 +186,9 @@
     <string name="edit_spp_item_hint_height">Height</string>
     <string name="edit_spp_item_label_cover">Plant cover, percent</string>
     <string name="edit_spp_item_hint_cover">Cover</string>
-    <string name="edit_spp_item_label_present">Present (un-check to verify absent)</string>
-    <string name="edit_spp_item_label_present_do_not_ask">Assume present and do not ask to verify again, for this session</string>
-    <string name="edit_spp_item_label_confidence">Confidence of identity</string>
+    <string name="edit_spp_item_label_present">This species is Present (un-check to verify that it is Absent)</string>
+    <string name="edit_spp_item_label_present_do_not_ask">Assume that species I enter are Present, and do not ask to verify again, for this session</string>
+    <string name="edit_spp_item_label_confidence">Confidence of species identity</string>
     <string name="edit_spp_item_msg_no_height">Need Height</string>
     <string name="edit_spp_item_msg_no_cover">Need Cover</string>
     <string name="edit_spp_item_msg_zero_height">Zero height means you verify this species is absent here</string>

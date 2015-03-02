@@ -36,6 +36,10 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final int PLOTTYPE_ID = 100;
 	private static final int SUBPLOTTYPES = 110;
 	private static final int SUBPLOTTYPE_ID = 120;
+	private static final int VEGITEMS = 130;
+	private static final int VEGITEM_ID = 140;
+	private static final int PLACEHOLDERS = 150;
+	private static final int PLACEHOLDER_ID = 160;
 	
 	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
 	private static final String BASE_PATH = "data";
@@ -61,6 +65,10 @@ public class ContentProvider_VegNab extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/plottypes/#", PLOTTYPE_ID);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/subplottypes", SUBPLOTTYPES);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/subplottypes/#", SUBPLOTTYPE_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/vegitems", VEGITEMS);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/vegitems/#", VEGITEM_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/placeholders", PLACEHOLDERS);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/placeholders/#", PLACEHOLDER_ID);
 	}
 	HashSet<String> mFields_Projects = new HashSet<String>();
 
@@ -154,6 +162,24 @@ public class ContentProvider_VegNab extends ContentProvider {
 				Log.v(LOG_TAG, "SUBPLOTTYPES setTables");
 				break;
 
+			case VEGITEM_ID:
+				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				Log.v(LOG_TAG, "VEGITEM_ID appendWhere");
+				// note, no break, so drops through
+			case VEGITEMS:
+				queryBuilder.setTables("VegItems");
+				Log.v(LOG_TAG, "VEGITEMS setTables");
+				break;
+				
+			case PLACEHOLDER_ID:
+				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+				Log.v(LOG_TAG, "PLACEHOLDER_ID appendWhere");
+				// note, no break, so drops through
+			case PLACEHOLDERS:
+				queryBuilder.setTables("Placeholders");
+				Log.v(LOG_TAG, "SUBPLOTTYPES setTables");
+				break;
+
 			default:
 				throw new IllegalArgumentException("Unknown URI: " + uri);		
 			}
@@ -201,7 +227,14 @@ public class ContentProvider_VegNab extends ContentProvider {
 			id = sqlDB.insert("SubplotTypes", null, values);
 			uriToReturn = Uri.parse(BASE_PATH + "/subplottypes/" + id);
 			break;
-			
+		case VEGITEMS:
+			id = sqlDB.insert("VegItems", null, values);
+			uriToReturn = Uri.parse(BASE_PATH + "/vegitems/" + id);
+			break;
+		case PLACEHOLDERS:
+			id = sqlDB.insert("Placeholders", null, values);
+			uriToReturn = Uri.parse(BASE_PATH + "/placeholders/" + id);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -286,8 +319,32 @@ public class ContentProvider_VegNab extends ContentProvider {
 			} else {
 				rowsDeleted = sqlDB.delete("SubplotTypes", "_id=" + id, selectionArgs);
 			}
-			break;			
+			break;
 			
+		case VEGITEMS:
+			rowsDeleted = sqlDB.delete("VegItems", selection, selectionArgs);
+			break;
+		case VEGITEM_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete("VegItems", "_id=" + id, null);
+			} else {
+				rowsDeleted = sqlDB.delete("VegItems", "_id=" + id, selectionArgs);
+			}
+			break;
+			
+		case PLACEHOLDERS:
+			rowsDeleted = sqlDB.delete("Placeholders", selection, selectionArgs);
+			break;
+		case PLACEHOLDER_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete("Placeholders", "_id=" + id, null);
+			} else {
+				rowsDeleted = sqlDB.delete("Placeholders", "_id=" + id, selectionArgs);
+			}
+			break;
+
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -380,8 +437,31 @@ public class ContentProvider_VegNab extends ContentProvider {
 			} else {
 				rowsUpdated = sqlDB.updateWithOnConflict("SubplotTypes", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
+			break;			
+			
+		case VEGITEMS:
+			rowsUpdated = sqlDB.updateWithOnConflict("VegItems", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+			break;
+		case VEGITEM_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.updateWithOnConflict("VegItems", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
+			} else {
+				rowsUpdated = sqlDB.updateWithOnConflict("VegItems", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+			}
 			break;
 			
+		case PLACEHOLDERS:
+			rowsUpdated = sqlDB.updateWithOnConflict("Placeholders", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+			break;
+		case PLACEHOLDER_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.updateWithOnConflict("Placeholders", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
+			} else {
+				rowsUpdated = sqlDB.updateWithOnConflict("Placeholders", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+			}
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI:" + uri);
 		}

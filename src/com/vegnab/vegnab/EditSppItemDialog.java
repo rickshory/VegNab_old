@@ -37,7 +37,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	private static final String LOG_TAG = EditSppItemDialog.class.getSimpleName();
-	long mProjRecId = 0; // zero default means new or not specified yet
+	long mSppItemRecId = 0; // zero default means new or not specified yet
 	Uri mUri, mProjectsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "projects");
 	ContentValues mValues = new ContentValues();
 	HashMap<Long, String> mExistingProjCodes = new HashMap<Long, String>();
@@ -72,11 +72,11 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	    }
 	};
 	
-	static EditSppItemDialog newInstance(long mProjRecId) {
+	static EditSppItemDialog newInstance(long mSppItemRecId) {
 		EditSppItemDialog f = new EditSppItemDialog();
-		// supply mProjRecId as an argument
+		// supply mSppItemRecId as an argument
 		Bundle args = new Bundle();
-		args.putLong("mProjRecId", mProjRecId);
+		args.putLong("mSppItemRecId", mSppItemRecId);
 		f.setArguments(args);
 		return f;
 	}
@@ -144,7 +144,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			mProjRecId = args.getLong("mProjRecId");
+			mSppItemRecId = args.getLong("mSppItemRecId");
 			// request existing project codes ASAP, this doesn't use the UI
 			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
 			// will insert values into screen when cursor is finished
@@ -231,15 +231,15 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,
 					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mProjRecId = " + mProjRecId);
+			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mSppItemRecId = " + mSppItemRecId);
 			return 0;
 		}
 		ContentResolver rs = c.getContentResolver();
-		if (mProjRecId == -1) {
-			Log.v(LOG_TAG, "entered saveProjRecord with (mProjRecId == -1); canceled");
+		if (mSppItemRecId == -1) {
+			Log.v(LOG_TAG, "entered saveProjRecord with (mSppItemRecId == -1); canceled");
 			return 0;
 		}
-		if (mProjRecId == 0) { // new record
+		if (mSppItemRecId == 0) { // new record
 			mUri = rs.insert(mProjectsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
 			long newRecId = Long.parseLong(mUri.getLastPathSegment());
@@ -247,18 +247,18 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				Log.v(LOG_TAG, "new record in saveProjRecord has Id == " + newRecId + "); canceled");
 				return 0;
 			}
-			mProjRecId = newRecId;
+			mSppItemRecId = newRecId;
 			getLoaderManager().restartLoader(Loaders.EXISTING_PROJCODES, null, this);
-			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
+			mUri = ContentUris.withAppendedId(mProjectsUri, mSppItemRecId);
 			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mProjRecId);
+			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mSppItemRecId);
 			prefEditor.commit();
 			return 1;
 		} else {
-			mUri = ContentUris.withAppendedId(mProjectsUri, mProjRecId);
+			mUri = ContentUris.withAppendedId(mProjectsUri, mSppItemRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveProjRecord; numUpdated: " + numUpdated);
 			return numUpdated;
@@ -277,7 +277,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			Uri allProjsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "projects");
 			String[] projection = {"_id", "ProjCode"};
-			select = "(_id <> " + mProjRecId + " AND IsDeleted = 0)";
+			select = "(_id <> " + mSppItemRecId + " AND IsDeleted = 0)";
 			cl = new CursorLoader(getActivity(), allProjsUri,
 					projection, select, null, null);
 			break;
@@ -287,7 +287,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 //			mProjectsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
 			Uri oneProjUri = ContentUris.withAppendedId(
 							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "projects"), mProjRecId);
+							ContentProvider_VegNab.CONTENT_URI, "projects"), mSppItemRecId);
 			// Now create and return a CursorLoader that will take care of
 			// creating a Cursor for the dataset being displayed
 			// Could build a WHERE clause such as

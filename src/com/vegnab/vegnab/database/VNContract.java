@@ -67,6 +67,7 @@ public final class VNContract {
 	// inner class to define Tags
 	// putting them all together here helps avoid conflicts in various fragments
 	public static abstract class Tags {
+		public static final String SPINNER_FIRST_USE = "FirstTime"; // flag to catch and ignore erroneous first firing
 		public static final String NEW_VISIT = "NewVisit";
 		public static final String VISIT_HEADER = "VisitHeader";
 		public static final String TEST_WEBVIEW = "TestWebview";

@@ -9,6 +9,7 @@ import java.util.Locale;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
+import com.vegnab.vegnab.database.VNContract.Tags;
 
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -37,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditSppItemDialog extends DialogFragment implements android.view.View.OnClickListener,
+		android.widget.AdapterView.OnItemSelectedListener,
 		android.view.View.OnFocusChangeListener, LoaderManager.LoaderCallbacks<Cursor>
 		//, android.view.View.OnKeyListener
 		{
@@ -78,11 +81,27 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		mCkSpeciesIsPresent = (CheckBox) view.findViewById(R.id.ck_spp_present);
 		mCkDontVerifyPresence = (CheckBox) view.findViewById(R.id.ck_spp_present_do_not_ask);
 		mSpinnerSpeciesConfidence = (Spinner) view.findViewById(R.id.spinner_spp_confidence);
+		mSpinnerSpeciesConfidence.setTag(Tags.SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
+		mSpinnerSpeciesConfidence.setEnabled(false); // will enable when data ready
+		mCFSpinnerAdapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_spinner_item, null,
+				new String[] {"IdLevelDescr"},
+				new int[] {android.R.id.text1}, 0);
+		mCFSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinnerSpeciesConfidence.setAdapter(mCFSpinnerAdapter);
+		mSpinnerSpeciesConfidence.setOnItemSelectedListener(this);
 		
 		mEditSpeciesHeight.setOnFocusChangeListener(this);
 		mEditSpeciesCover.setOnFocusChangeListener(this);
 		mCkSpeciesIsPresent.setOnFocusChangeListener(this);
 		mCkDontVerifyPresence.setOnFocusChangeListener(this);
+		
+		// enable long-press
+		registerForContextMenu(mSpinnerSpeciesConfidence); 
+		registerForContextMenu(mEditSpeciesHeight);
+		registerForContextMenu(mEditSpeciesCover);
+		registerForContextMenu(mCkSpeciesIsPresent);
+		registerForContextMenu(mCkDontVerifyPresence);
 		
 		getDialog().setTitle(R.string.edit_spp_item_title_add); // usually adding, will change to 'edit' if not
 		return view;
@@ -392,5 +411,18 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			// nothing to do here since no adapter
 			break;
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Tags;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -88,7 +89,6 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	EditVisitDialogListener mEditVisitListener;	
 
 	private static final String LOG_TAG = VisitHeaderFragment.class.getSimpleName();
-	private static final String TAG_SPINNER_FIRST_USE = "FirstTime";
 	private static final int MENU_HELP = 0;
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
@@ -273,7 +273,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		mViewVisitDate.setOnClickListener(this);
 		mViewVisitDate.setOnFocusChangeListener(this);
 		mNamerSpinner = (Spinner) rootView.findViewById(R.id.sel_spp_namer_spinner);
-		mNamerSpinner.setTag(TAG_SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
+		mNamerSpinner.setTag(Tags.SPINNER_FIRST_USE); // flag to catch and ignore erroneous first firing
 		mNamerSpinner.setEnabled(false); // will enable when data ready		
 		mNamerAdapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_spinner_item, null,
@@ -939,7 +939,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// can't use switch because not constants
 		if (parent.getId() == mNamerSpinner.getId()) {
 			// workaround for spinner firing when first set
-			if(((String)parent.getTag()).equalsIgnoreCase(TAG_SPINNER_FIRST_USE)) {
+			if(((String)parent.getTag()).equalsIgnoreCase(Tags.SPINNER_FIRST_USE)) {
 	            parent.setTag("");
 	            return;
 	        }

@@ -55,6 +55,12 @@ public final class VNContract {
 		// in Veg Subplot
 		public static final int CURRENT_SUBPLOT = 71; // Header info for the current subplot
 		public static final int CURRENT_SUBPLOT_SPP = 72; // Veg species for the current subplot
+		// in Edit VegItem
+		public static final int VEGITEM_TO_EDIT = 81; // The current veg item
+		public static final int CURRENT_SUBPLOT_VEGITEMS = 82; // Veg items for the current subplot, to check duplicates
+		public static final int VEG_ITEM_CONFIDENCE_LEVELS = 83; //
+		public static final int VEG_ITEM_SUBPLOT = 84; // parameters needed to correctly show dialog
+		public static final int VEG_ITEM_VISIT = 85; // parameters needed to process dialog
 		
 	}
 

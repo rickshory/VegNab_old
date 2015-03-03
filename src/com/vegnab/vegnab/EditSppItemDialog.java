@@ -24,6 +24,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		{
 	private static final String LOG_TAG = EditSppItemDialog.class.getSimpleName();
 	long mVegItemRecId = 0; // zero default means new or not specified yet
+	long mCurVisitRecId = 0;
+	int mCurSubplotRecId = -1;
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
 	HashMap<Long, String> mExistingVegCodes = new HashMap<Long, String>();
@@ -48,98 +51,46 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private EditText mEditSpeciesHeight, mEditSpeciesCover;
 	private CheckBox mCkSpeciesIsPresent, mCkDontVerifyPresence;
 	private Spinner mSpinnerSpeciesConfidence;
-	private EditText mVegCode, mDescription, mContext, mCaveats, mContactPerson, mStartDate, mEndDate;
-	private EditText mActiveDateView;
+	SimpleCursorAdapter mCFSpinnerAdapter;
+	private String mStrVegCode, mStrDescription;
+	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-	private Calendar mCalendar = Calendar.getInstance();
-	private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
 
-	    @Override
-	    public void onDateSet(DatePicker view, int year, int monthOfYear,
-	            int dayOfMonth) {
-	        mCalendar.set(Calendar.YEAR, year);
-	        mCalendar.set(Calendar.MONTH, monthOfYear);
-	        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-	        mActiveDateView.setText(mDateFormat.format(mCalendar.getTime()));
-	        mValues.clear();
-	        // put required field, will test for validity before Save
-	        mValues.put("ProjCode", mVegCode.getText().toString().trim());
-	        Log.v(LOG_TAG, "Date set");
-	        if (mActiveDateView == mStartDate) {
-	        	Log.v(LOG_TAG, "Date set for mStartDate, about to save record");
-	        	mValues.put("StartDate", mStartDate.getText().toString().trim());
-	        }
-	        if (mActiveDateView == mEndDate) {
-	        	Log.v(LOG_TAG, "Date set for mEndDate, about to save record");
-	        	mValues.put("EndDate", mEndDate.getText().toString().trim());
-	        }
-	        Log.v(LOG_TAG, "About to save record after date set, mValues: " + mValues.toString());
-	        int numUpdated = saveProjRecord();
-	        Log.v(LOG_TAG, "Date set, saved record, numUpdated=" + numUpdated);
-	    }
-	};
 	
-	static EditSppItemDialog newInstance(long mVegItemRecId) {
+	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId) {
 		EditSppItemDialog f = new EditSppItemDialog();
-		// supply mVegItemRecId as an argument
+		// supply vegItemRecId as an argument
 		Bundle args = new Bundle();
-		args.putLong("mVegItemRecId", mVegItemRecId);
+		args.putLong("vegItemRecId", vegItemRecId);
+		args.putLong("curVisitRecId", curVisitRecId);
+		args.putInt("curSubplotRecId", curSubplotRecId);
 		f.setArguments(args);
 		return f;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_edit_project, root);
+		View view = inflater.inflate(R.layout.fragment_edit_spp_item, root);
 
-		mVegCode = (EditText) view.findViewById(R.id.txt_projcode);
-		mDescription = (EditText) view.findViewById(R.id.txt_descr);
-		mContext = (EditText) view.findViewById(R.id.txt_context);
-		mCaveats = (EditText) view.findViewById(R.id.txt_caveats);
-		mContactPerson = (EditText) view.findViewById(R.id.txt_person);
-		mStartDate = (EditText) view.findViewById(R.id.txt_date_from);
-		mEndDate = (EditText) view.findViewById(R.id.txt_date_to);
+		mTxtSpeciesItemLabel = (TextView) view.findViewById(R.id.lbl_spp_item);
+		mEditSpeciesHeight = (EditText) view.findViewById(R.id.txt_spp_height);
+		mEditSpeciesCover = (EditText) view.findViewById(R.id.txt_spp_cover);
+		mCkSpeciesIsPresent = (CheckBox) view.findViewById(R.id.ck_spp_present);
+		mCkDontVerifyPresence = (CheckBox) view.findViewById(R.id.ck_spp_present_do_not_ask);
+		mSpinnerSpeciesConfidence = (Spinner) view.findViewById(R.id.spinner_spp_confidence);
 		
-		mStartDate.setOnClickListener(this);
-		mEndDate.setOnClickListener(this);
+		mEditSpeciesHeight.setOnFocusChangeListener(this);
+		mEditSpeciesCover.setOnFocusChangeListener(this);
+		mCkSpeciesIsPresent.setOnFocusChangeListener(this);
+		mCkDontVerifyPresence.setOnFocusChangeListener(this);
 		
-		mVegCode.setOnFocusChangeListener(this);
-		mDescription.setOnFocusChangeListener(this);
-		mContext.setOnFocusChangeListener(this);
-		mCaveats.setOnFocusChangeListener(this);
-		mContactPerson.setOnFocusChangeListener(this);
-		mStartDate.setOnFocusChangeListener(this);
-		mEndDate.setOnFocusChangeListener(this);
-		
-		getDialog().setTitle(R.string.edit_proj_title_edit);
+		getDialog().setTitle(R.string.edit_spp_item_title_add); // usually adding, will change to 'edit' if not
 		return view;
 	}
 
 	@Override	
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.txt_date_from:
-			mActiveDateView = mStartDate;
-			fireOffDatePicker();
-			break;
-		case R.id.txt_date_to:
-			mActiveDateView = mEndDate;
-			fireOffDatePicker();
-			break;
-		}
-	}
 		
-	private void fireOffDatePicker() {
-		String s = mActiveDateView.getText().toString();
-        try { // if the EditText view contains a valid date
-        	mCalendar.setTime(mDateFormat.parse(s)); // use it
-		} catch (java.text.ParseException e) { // otherwise
-			mCalendar = Calendar.getInstance(); // use today's date
-		}
-		new DatePickerDialog(getActivity(), myDateListener,
-				mCalendar.get(Calendar.YEAR),
-				mCalendar.get(Calendar.MONTH),
-				mCalendar.get(Calendar.DAY_OF_MONTH)).show();	
 	}
 	
 	@Override
@@ -152,10 +103,16 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		
 		if (args != null) {
 			mVegItemRecId = args.getLong("mVegItemRecId");
-			// request existing project codes ASAP, this doesn't use the UI
-			getLoaderManager().initLoader(Loaders.EXISTING_PROJCODES, null, this);
-			// will insert values into screen when cursor is finished
-			getLoaderManager().initLoader(Loaders.PROJECT_TO_EDIT, null, this);
+			mCurVisitRecId = args.getLong("curVisitRecId");
+			mCurSubplotRecId = args.getInt("curSubplotRecId");
+			
+			// request existing species codes ASAP, this doesn't use the UI
+			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_VEGITEMS, null, this);
+			// get these to have ready, and to adjust screen if needed
+			getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
+			getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
+			getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
+			getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);
 		}
 	}
 
@@ -279,16 +236,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		CursorLoader cl = null;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
-		case Loaders.EXISTING_PROJCODES:
-			// get the existing ProjCodes, other than the current one, to disallow duplicates
-			Uri allProjsUri = Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "vegitems");
-			String[] projection = {"_id", "ProjCode"};
-			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
-			cl = new CursorLoader(getActivity(), allProjsUri,
-					projection, select, null, null);
-			break;
-		case Loaders.PROJECT_TO_EDIT:
+		case Loaders.VEGITEM_TO_EDIT:
 			// First, create the base URI
 			// could test here, based on e.g. filters
 //			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
@@ -303,6 +251,57 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					null, select, null, null);
 			break;
 
+		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
+			// get the existing ProjCodes, other than the current one, to disallow duplicates
+			Uri allProjsUri = Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "vegitems");
+			String[] projection = {"_id", "ProjCode"};
+			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
+			cl = new CursorLoader(getActivity(), allProjsUri,
+					projection, select, null, null);
+			break;
+
+		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
+			// First, create the base URI
+			// could test here, based on e.g. filters
+//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			Uri oneProjUri = ContentUris.withAppendedId(
+							Uri.withAppendedPath(
+							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the dataset being displayed
+			// Could build a WHERE clause such as
+			// String select = "(Default = true)";
+			cl = new CursorLoader(getActivity(), oneProjUri,
+					null, select, null, null);
+			break;
+
+		case Loaders.VEG_ITEM_SUBPLOT:
+			// First, create the base URI
+			// could test here, based on e.g. filters
+//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
+			Uri oneProjUri = ContentUris.withAppendedId(
+							Uri.withAppendedPath(
+							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the dataset being displayed
+			// Could build a WHERE clause such as
+			// String select = "(Default = true)";
+			cl = new CursorLoader(getActivity(), oneProjUri,
+					null, select, null, null);
+			break;
+
+		case Loaders.VEG_ITEM_VISIT:
+			// get the existing ProjCodes, other than the current one, to disallow duplicates
+			Uri allProjsUri = Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "vegitems");
+			String[] projection = {"_id", "ProjCode"};
+			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
+			cl = new CursorLoader(getActivity(), allProjsUri,
+					projection, select, null, null);
+			break;
+
+			
 		}
 		return cl;
 	}
@@ -310,17 +309,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		switch (loader.getId()) {
-		case Loaders.EXISTING_PROJCODES:
-			mExistingVegCodes.clear();
-			while (c.moveToNext()) {
-				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mExistingVegCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
-						c.getString(c.getColumnIndexOrThrow("ProjCode")));
-			}
-			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingVegCodes: " + mExistingVegCodes.size());
-			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());
-			break;
-		case Loaders.PROJECT_TO_EDIT:
+			
+		case Loaders.VEGITEM_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
 				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
@@ -332,14 +322,74 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
 			}
 			break;
+			
+		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
+			mExistingVegCodes.clear();
+			while (c.moveToNext()) {
+				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mExistingVegCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+						c.getString(c.getColumnIndexOrThrow("ProjCode")));
+			}
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingVegCodes: " + mExistingVegCodes.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());
+			break;
+
+		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
+			mExistingVegCodes.clear();
+			while (c.moveToNext()) {
+				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mExistingVegCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
+						c.getString(c.getColumnIndexOrThrow("ProjCode")));
+			}
+			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingVegCodes: " + mExistingVegCodes.size());
+			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());
+			break;
+			
+		case Loaders.VEG_ITEM_SUBPLOT:
+			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
+			if (c.moveToFirst()) {
+				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
+				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
+				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
+				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
+				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+			}
+			break;
+		case Loaders.VEG_ITEM_VISIT:
+			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
+			if (c.moveToFirst()) {
+				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
+				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
+				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
+				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
+				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
+				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+			}
+			break;
+
 		}	
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch (loader.getId()) {
-		case Loaders.PROJECT_TO_EDIT:
-			// maybe nothing to do here since no adapter
+		case Loaders.VEGITEM_TO_EDIT:
+			// nothing to do here since no adapter
+			break;
+		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
+			// nothing to do here since no adapter
+			break;
+		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
+			mCFSpinnerAdapter.swapCursor(null);
+			break;
+		case Loaders.VEG_ITEM_SUBPLOT:
+			// nothing to do here since no adapter
+			break;
+		case Loaders.VEG_ITEM_VISIT:
+			// nothing to do here since no adapter
 			break;
 		}
 	}

@@ -58,7 +58,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private String mStrVegCode, mStrDescription;
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
 	
 	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId) {
 		EditSppItemDialog f = new EditSppItemDialog();
@@ -174,7 +173,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				mValues.put("ProjCode", mVegCode.getText().toString().trim());
 			}
 			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
-			int numUpdated = saveProjRecord();
+			int numUpdated = saveVegItemRecord();
 			}		
 		}
 
@@ -191,10 +190,10 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		mValues.put("StartDate", mStartDate.getText().toString().trim());
 		mValues.put("EndDate", mEndDate.getText().toString().trim());
 		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
-		int numUpdated = saveProjRecord();
+		int numUpdated = saveVegItemRecord();
 	}
 	
-	private int saveProjRecord () {
+	private int saveVegItemRecord () {
 		Context c = getActivity();
 		// test field for validity
 		String projCodeString = mValues.getAsString("ProjCode");
@@ -214,26 +213,26 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			Toast.makeText(this.getActivity(),
 					c.getResources().getString(R.string.edit_proj_msg_dup_proj) + " \"" + projCodeString + "\"" ,
 					Toast.LENGTH_LONG).show();
-			Log.v(LOG_TAG, "in saveProjRecord, canceled because of duplicate ProjCode; mVegItemRecId = " + mVegItemRecId);
+			Log.v(LOG_TAG, "in saveVegItemRecord, canceled because of duplicate ProjCode; mVegItemRecId = " + mVegItemRecId);
 			return 0;
 		}
 		ContentResolver rs = c.getContentResolver();
 		if (mVegItemRecId == -1) {
-			Log.v(LOG_TAG, "entered saveProjRecord with (mVegItemRecId == -1); canceled");
+			Log.v(LOG_TAG, "entered saveVegItemRecord with (mVegItemRecId == -1); canceled");
 			return 0;
 		}
 		if (mVegItemRecId == 0) { // new record
 			mUri = rs.insert(mVegItemsUri, mValues);
-			Log.v(LOG_TAG, "new record in saveProjRecord; returned URI: " + mUri.toString());
+			Log.v(LOG_TAG, "new record in saveVegItemRecord; returned URI: " + mUri.toString());
 			long newRecId = Long.parseLong(mUri.getLastPathSegment());
 			if (newRecId < 1) { // returns -1 on error, e.g. if not valid to save because of missing required field
-				Log.v(LOG_TAG, "new record in saveProjRecord has Id == " + newRecId + "); canceled");
+				Log.v(LOG_TAG, "new record in saveVegItemRecord has Id == " + newRecId + "); canceled");
 				return 0;
 			}
 			mVegItemRecId = newRecId;
 			getLoaderManager().restartLoader(Loaders.EXISTING_PROJCODES, null, this);
 			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
-			Log.v(LOG_TAG, "new record in saveProjRecord; URI re-parsed: " + mUri.toString());
+			Log.v(LOG_TAG, "new record in saveVegItemRecord; URI re-parsed: " + mUri.toString());
 			// set default project; redundant with fn in NewVisitFragment; low priority fix
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -243,7 +242,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		} else {
 			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
 			int numUpdated = rs.update(mUri, mValues, null, null);
-			Log.v(LOG_TAG, "Saved record in saveProjRecord; numUpdated: " + numUpdated);
+			Log.v(LOG_TAG, "Saved record in saveVegItemRecord; numUpdated: " + numUpdated);
 			return numUpdated;
 		}
 	}
@@ -256,71 +255,45 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 		case Loaders.VEGITEM_TO_EDIT:
-			// First, create the base URI
-			// could test here, based on e.g. filters
-//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri oneProjUri = ContentUris.withAppendedId(
-							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
-			// Now create and return a CursorLoader that will take care of
-			// creating a Cursor for the dataset being displayed
-			// Could build a WHERE clause such as
-			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), oneProjUri,
+			Uri oneVegItemUri = ContentUris.withAppendedId(
+				Uri.withAppendedPath(
+				ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
+			cl = new CursorLoader(getActivity(), oneVegItemUri,
 					null, select, null, null);
 			break;
 
 		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
-			// get the existing ProjCodes, other than the current one, to disallow duplicates
-			Uri allProjsUri = Uri.withAppendedPath(
+			// get the existing VegCodes, other than the current one, to disallow duplicates
+			Uri allSbVegItemsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "vegitems");
-			String[] projection = {"_id", "ProjCode"};
-			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
-			cl = new CursorLoader(getActivity(), allProjsUri,
+			String[] projection = {"_id", "OrigCode"};
+			select = "(_id <> " + mVegItemRecId + ")";
+			cl = new CursorLoader(getActivity(), allSbVegItemsUri,
 					projection, select, null, null);
 			break;
 
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
-			// First, create the base URI
-			// could test here, based on e.g. filters
-//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri oneProjUri = ContentUris.withAppendedId(
-							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
-			// Now create and return a CursorLoader that will take care of
-			// creating a Cursor for the dataset being displayed
-			// Could build a WHERE clause such as
-			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), oneProjUri,
+			Uri allCFLevelsUri = Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "idlevels");
+			cl = new CursorLoader(getActivity(), allCFLevelsUri,
 					null, select, null, null);
 			break;
 
 		case Loaders.VEG_ITEM_SUBPLOT:
-			// First, create the base URI
-			// could test here, based on e.g. filters
-//			mVegItemsUri = ContentProvider_VegNab.CONTENT_URI; // get the whole list
-			Uri oneProjUri = ContentUris.withAppendedId(
-							Uri.withAppendedPath(
-							ContentProvider_VegNab.CONTENT_URI, "vegitems"), mVegItemRecId);
-			// Now create and return a CursorLoader that will take care of
-			// creating a Cursor for the dataset being displayed
-			// Could build a WHERE clause such as
-			// String select = "(Default = true)";
-			cl = new CursorLoader(getActivity(), oneProjUri,
+			Uri oneSbPlotUri = ContentUris.withAppendedId(
+					Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "subplots"), mCurSubplotRecId);
+			cl = new CursorLoader(getActivity(), oneSbPlotUri,
 					null, select, null, null);
 			break;
 
 		case Loaders.VEG_ITEM_VISIT:
-			// get the existing ProjCodes, other than the current one, to disallow duplicates
-			Uri allProjsUri = Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "vegitems");
-			String[] projection = {"_id", "ProjCode"};
-			select = "(_id <> " + mVegItemRecId + " AND IsDeleted = 0)";
-			cl = new CursorLoader(getActivity(), allProjsUri,
-					projection, select, null, null);
-			break;
-
-			
+			Uri oneVisitUri = ContentUris.withAppendedId(
+					Uri.withAppendedPath(
+					ContentProvider_VegNab.CONTENT_URI, "visits"), mCurVisitRecId);
+			cl = new CursorLoader(getActivity(), oneVisitUri,
+					null, select, null, null);
+			break;		
 		}
 		return cl;
 	}
@@ -332,22 +305,26 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.VEGITEM_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
-				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
-				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
-				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
-				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
-				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
+				String vegItemLabel = c.getString(c.getColumnIndexOrThrow("OrigCode")) + ": "
+						+ c.getString(c.getColumnIndexOrThrow("OrigDescr"));
+				mTxtSpeciesItemLabel.setText(vegItemLabel);
+				mEditSpeciesHeight.setText(c.getString(c.getColumnIndexOrThrow("Height")));
+				mEditSpeciesCover.setText(c.getString(c.getColumnIndexOrThrow("Cover")));
+				int presInt = c.getInt(c.getColumnIndexOrThrow("Presence"));
+				boolean present = ((presInt == 1) ? true : false);
+				mCkSpeciesIsPresent.setChecked(present);
+				
+				// CheckBox mCkSpeciesIsPresent, mCkDontVerifyPresence;
+				// set up spinner
 			}
 			break;
 			
 		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
 			mExistingVegCodes.clear();
 			while (c.moveToNext()) {
-				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("ProjCode")));
+				Log.v(LOG_TAG, "onLoadFinished, add to HashMap: " + c.getString(c.getColumnIndexOrThrow("OrigCode")));
 				mExistingVegCodes.put(c.getLong(c.getColumnIndexOrThrow("_id")), 
-						c.getString(c.getColumnIndexOrThrow("ProjCode")));
+						c.getString(c.getColumnIndexOrThrow("OrigCode")));
 			}
 			Log.v(LOG_TAG, "onLoadFinished, number of items in mExistingVegCodes: " + mExistingVegCodes.size());
 			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());

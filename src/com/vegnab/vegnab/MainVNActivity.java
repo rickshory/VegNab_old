@@ -94,8 +94,11 @@ public class MainVNActivity extends ActionBarActivity
 			prefEditor.putString(Prefs.UNIQUE_DEVICE_ID, mUniqueDeviceId);
 			prefEditor.commit();
 		}
+		// user will probably turn this one off each session, but turn it on on each restart
+		SharedPreferences.Editor prefEditor = sharedPref.edit();
+		prefEditor.putBoolean(Prefs.VERIFY_VEG_ITEMS_PRESENCE, true);
+		prefEditor.commit();
 		
-		//getDeviceId
 		setContentView(R.layout.activity_vn_main);
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout

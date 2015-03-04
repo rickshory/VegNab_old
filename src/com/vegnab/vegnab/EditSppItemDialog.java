@@ -139,12 +139,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);
 		
 		// adjust UI depending on whether we want Height/Cover information, or only Presence/Absence
-		if (mPresenceOnly) {
+		if (mPresenceOnly) { // hide the Height/Cover views
 			mTxtHeightLabel.setVisibility(View.GONE);
 			mEditSpeciesHeight.setVisibility(View.GONE);
 			mTxtCoverLabel.setVisibility(View.GONE);
 			mEditSpeciesCover.setVisibility(View.GONE);
-		} else {
+		} else { // hide the Presence/Absence views
 			mCkSpeciesIsPresent.setVisibility(View.GONE);
 			mCkDontVerifyPresence.setVisibility(View.GONE);
 		}
@@ -152,59 +152,44 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
+
 		if(!hasFocus) { // something lost focus
 			mValues.clear();
-			switch (v.getId()) {
-			case R.id.txt_projcode:
-				mValues.put("ProjCode", mVegCode.getText().toString().trim());
+			switch (v.getId()) { 
+			case R.id.txt_spp_height:
+				mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
 				break;
-			case R.id.txt_descr:
-				mValues.put("Description", mDescription.getText().toString().trim());
+			case R.id.txt_spp_cover:
+				mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
 				break;
-			case R.id.txt_context:
-				mValues.put("Context", mContext.getText().toString().trim());
-				break;
-			case R.id.txt_caveats:
-				mValues.put("Caveats", mCaveats.getText().toString().trim());
-				break;
-			case R.id.txt_person:
-				mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
-				break;			
-//			case R.id.txt_date_from: // this one is not focusable
-//				mValues.put("StartDate", mStartDate.getText().toString().trim());
-//				break;
-//			case R.id.txt_date_to: // this one is not focusable
-//				mValues.put("EndDate", mEndDate.getText().toString().trim());
-//				break;
-			default: // save everything
-				mValues.put("ProjCode", mVegCode.getText().toString().trim());
-				mValues.put("Description", mDescription.getText().toString().trim());
-				mValues.put("Context", mContext.getText().toString().trim());
-				mValues.put("Caveats", mCaveats.getText().toString().trim());
-				mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
-				mValues.put("StartDate", mStartDate.getText().toString().trim());
-				mValues.put("EndDate", mEndDate.getText().toString().trim());
-				}
-			if (!mValues.containsKey("ProjCode")) { // assure contains required field
-				mValues.put("ProjCode", mVegCode.getText().toString().trim());
-			}
-			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
-			int numUpdated = saveVegItemRecord();
-			}		
-		}
+			case R.id.ck_spp_present:
+				mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
+				break;		
 
+			default: // save everything relevant
+				if (mPresenceOnly) {
+					mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
+					mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
+				} else {
+					mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
+				}
+			}
+		Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
+		int numUpdated = saveVegItemRecord();
+		}		
+	}
+	
 
 	@Override
 	public void onCancel (DialogInterface dialog) {
 		// update the project record in the database, if everything valid		
 		mValues.clear();
-		mValues.put("ProjCode", mVegCode.getText().toString().trim());
-		mValues.put("Description", mDescription.getText().toString().trim());
-		mValues.put("Context", mContext.getText().toString().trim());
-		mValues.put("Caveats", mCaveats.getText().toString().trim());
-		mValues.put("ContactPerson", mContactPerson.getText().toString().trim());
-		mValues.put("StartDate", mStartDate.getText().toString().trim());
-		mValues.put("EndDate", mEndDate.getText().toString().trim());
+		if (mPresenceOnly) {
+			mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
+			mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
+		} else {
+			mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
+		}
 		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
 		int numUpdated = saveVegItemRecord();
 	}
@@ -263,6 +248,194 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		}
 	}
 	
+	/*
+	SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+	SharedPreferences.Editor prefEditor = sharedPref.edit();
+	prefEditor.putBoolean(Prefs.VERIFY_VEG_ITEMS_PRESENCE, false);
+	prefEditor.commit();
+	
+	 */
+	
+	private boolean validateVegItemValues() {
+		// validate all user-accessible items
+		Context c = getActivity();
+		String stringProblem;
+		String errTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
+		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
+		if (mPresenceOnly) {
+			
+		} else {
+			
+		}
+		return true;
+	}
+	/*	private boolean validateRecordValues() {
+		// validate all items on the screen the user can see
+		// assure mValues contains all required fields
+		if (!mValues.containsKey("VisitName")) {
+			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
+		}
+		String stringVisitName = mValues.getAsString("VisitName");
+		if (stringVisitName.length() == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_none");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!(stringVisitName.length() >= 2)) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_short);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_short");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (mExistingVisitNames.containsValue(stringVisitName)) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_dup);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visname_duplicate");
+					mViewVisitName.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!mValues.containsKey("VisitDate")) {
+			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
+		}
+		String stringVisitDate = mValues.getAsString("VisitDate");
+		if (stringVisitDate.length() == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_none");
+					mViewVisitDate.requestFocus();
+				}
+			}
+			return false;
+		}
+		
+		if (mNamerId == 0) {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_namer_none");
+					mViewVisitDate.requestFocus();
+				}
+			}
+			return false;
+		}
+		if (!mValues.containsKey("NamerID")) { // valid if we are to this point
+			mValues.put("NamerID", mNamerId);
+		}
+
+		if (!mValues.containsKey("Scribe")) { // optional, no validation
+			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+		}
+		
+		if (mLocIsGood) {
+			mValues.put("RefLocIsGood", 1);
+		} else {
+			if (mValidationLevel > VALIDATE_SILENT) {
+				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
+				if (mValidationLevel == VALIDATE_QUIET) {
+					Toast.makeText(this.getActivity(),
+							stringProblem,
+							Toast.LENGTH_LONG).show();
+				}
+				if (mValidationLevel == VALIDATE_CRITICAL) {
+					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+					flexErrDlg.show(getFragmentManager(), "frg_err_loc_not_ready");
+				}
+			}
+			return false;
+		}
+
+		// validate Azimuth
+		String stringAz = mViewAzimuth.getText().toString().trim();
+		if (stringAz.length() > 0) { // null is valid but empty string is not
+			Log.v(LOG_TAG, "Azimuth is length " + stringAz.length());
+			int Az = 0;
+			try {
+				Az = Integer.parseInt(stringAz);
+				if ((Az < 0) || (Az > 360)) {
+					if (mValidationLevel > VALIDATE_SILENT) {
+						stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
+						if (mValidationLevel == VALIDATE_QUIET) {
+							Toast.makeText(this.getActivity(),
+									stringProblem,
+									Toast.LENGTH_LONG).show();
+						}
+						if (mValidationLevel == VALIDATE_CRITICAL) {
+							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+							flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_out_of_range");
+							mViewAzimuth.requestFocus();
+						}
+					}
+					return false;
+				} else {
+					mValues.put("Azimuth", Az);
+				}
+			} catch(NumberFormatException e) {
+				if (mValidationLevel > VALIDATE_SILENT) {
+					stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
+					if (mValidationLevel == VALIDATE_QUIET) {
+						Toast.makeText(this.getActivity(),
+								stringProblem,
+								Toast.LENGTH_LONG).show();
+					}
+					if (mValidationLevel == VALIDATE_CRITICAL) {
+						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+						flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_bad_number");
+						mViewAzimuth.requestFocus();
+					}
+				}
+			}
+		} else {
+			Log.v(LOG_TAG, "Azimuth is length zero");
+		}
+		
+		if (!mValues.containsKey("VisitNotes")) { // optional, no validation
+			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+		}
+		return true;
+	}*/
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// This is called when a new Loader needs to be created.

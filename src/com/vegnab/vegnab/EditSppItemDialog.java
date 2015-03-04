@@ -47,10 +47,11 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
+	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
 	HashMap<Long, String> mExistingVegCodes = new HashMap<Long, String>();
-	private TextView mTxtSpeciesItemLabel;
+	private TextView mTxtSpeciesItemLabel, mTxtHeightLabel, mTxtCoverLabel;
 	private EditText mEditSpeciesHeight, mEditSpeciesCover;
 	private CheckBox mCkSpeciesIsPresent, mCkDontVerifyPresence;
 	private Spinner mSpinnerSpeciesConfidence;
@@ -59,13 +60,15 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	
-	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId) {
+	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
+			boolean presenceOnly) {
 		EditSppItemDialog f = new EditSppItemDialog();
 		// supply vegItemRecId as an argument
 		Bundle args = new Bundle();
 		args.putLong("vegItemRecId", vegItemRecId);
 		args.putLong("curVisitRecId", curVisitRecId);
 		args.putInt("curSubplotRecId", curSubplotRecId);
+		args.putBoolean("presenceOnly", presenceOnly);
 		f.setArguments(args);
 		return f;
 	}
@@ -75,7 +78,9 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		View view = inflater.inflate(R.layout.fragment_edit_spp_item, root);
 
 		mTxtSpeciesItemLabel = (TextView) view.findViewById(R.id.lbl_spp_item);
+		mTxtHeightLabel = (TextView) view.findViewById(R.id.lbl_spp_height);
 		mEditSpeciesHeight = (EditText) view.findViewById(R.id.txt_spp_height);
+		mTxtCoverLabel = (TextView) view.findViewById(R.id.lbl_spp_cover);
 		mEditSpeciesCover = (EditText) view.findViewById(R.id.txt_spp_cover);
 		mCkSpeciesIsPresent = (CheckBox) view.findViewById(R.id.ck_spp_present);
 		mCkDontVerifyPresence = (CheckBox) view.findViewById(R.id.ck_spp_present_do_not_ask);
@@ -123,14 +128,25 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mVegItemRecId = args.getLong("mVegItemRecId");
 			mCurVisitRecId = args.getLong("curVisitRecId");
 			mCurSubplotRecId = args.getInt("curSubplotRecId");
-			
-			// request existing species codes ASAP, this doesn't use the UI
-			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_VEGITEMS, null, this);
-			// get these to have ready, and to adjust screen if needed
-			getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
-			getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
-			getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
-			getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);
+			mPresenceOnly = args.getBoolean("presenceOnly");
+		}
+		// request existing species codes ASAP, this doesn't use the UI
+		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_VEGITEMS, null, this);
+		// get these to have ready, and to adjust screen if needed
+		getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
+//		getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
+//		getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
+		getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);
+		
+		// adjust UI depending on whether we want Height/Cover information, or only Presence/Absence
+		if (mPresenceOnly) {
+			mTxtHeightLabel.setVisibility(View.GONE);
+			mEditSpeciesHeight.setVisibility(View.GONE);
+			mTxtCoverLabel.setVisibility(View.GONE);
+			mEditSpeciesCover.setVisibility(View.GONE);
+		} else {
+			mCkSpeciesIsPresent.setVisibility(View.GONE);
+			mCkDontVerifyPresence.setVisibility(View.GONE);
 		}
 	}
 
@@ -267,7 +283,9 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			Uri allSbVegItemsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "vegitems");
 			String[] projection = {"_id", "OrigCode"};
-			select = "(_id <> " + mVegItemRecId + ")";
+			select = "(VisitID = " + mCurVisitRecId 
+					+ " AND SubPlotID = " + mCurSubplotRecId 
+					+ " AND _id <> " + mVegItemRecId + ")";
 			cl = new CursorLoader(getActivity(), allSbVegItemsUri,
 					projection, select, null, null);
 			break;
@@ -279,21 +297,21 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					null, select, null, null);
 			break;
 
-		case Loaders.VEG_ITEM_SUBPLOT:
-			Uri oneSbPlotUri = ContentUris.withAppendedId(
-					Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "subplots"), mCurSubplotRecId);
-			cl = new CursorLoader(getActivity(), oneSbPlotUri,
-					null, select, null, null);
-			break;
+//		case Loaders.VEG_ITEM_SUBPLOT:
+//			Uri oneSbPlotUri = ContentUris.withAppendedId(
+//					Uri.withAppendedPath(
+//					ContentProvider_VegNab.CONTENT_URI, "subplots"), mCurSubplotRecId);
+//			cl = new CursorLoader(getActivity(), oneSbPlotUri,
+//					null, select, null, null);
+//			break;
 
-		case Loaders.VEG_ITEM_VISIT:
-			Uri oneVisitUri = ContentUris.withAppendedId(
-					Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "visits"), mCurVisitRecId);
-			cl = new CursorLoader(getActivity(), oneVisitUri,
-					null, select, null, null);
-			break;		
+//		case Loaders.VEG_ITEM_VISIT:
+//			Uri oneVisitUri = ContentUris.withAppendedId(
+//					Uri.withAppendedPath(
+//					ContentProvider_VegNab.CONTENT_URI, "visits"), mCurVisitRecId);
+//			cl = new CursorLoader(getActivity(), oneVisitUri,
+//					null, select, null, null);
+//			break;		
 		}
 		return cl;
 	}
@@ -341,31 +359,18 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			Log.v(LOG_TAG, "onLoadFinished, items in mExistingVegCodes: " + mExistingVegCodes.toString());
 			break;
 			
-		case Loaders.VEG_ITEM_SUBPLOT:
-			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
-			if (c.moveToFirst()) {
-				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
-				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
-				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
-				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
-				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
-			}
-			break;
-		case Loaders.VEG_ITEM_VISIT:
-			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
-			if (c.moveToFirst()) {
-				mVegCode.setText(c.getString(c.getColumnIndexOrThrow("ProjCode")));
-				mDescription.setText(c.getString(c.getColumnIndexOrThrow("Description")));
-				mContext.setText(c.getString(c.getColumnIndexOrThrow("Context")));
-				mCaveats.setText(c.getString(c.getColumnIndexOrThrow("Caveats")));
-				mContactPerson.setText(c.getString(c.getColumnIndexOrThrow("ContactPerson")));
-				mStartDate.setText(c.getString(c.getColumnIndexOrThrow("StartDate")));
-				mEndDate.setText(c.getString(c.getColumnIndexOrThrow("EndDate")));
-			}
-			break;
-
+//		case Loaders.VEG_ITEM_SUBPLOT:
+//			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
+//			if (c.moveToFirst()) {
+//				// what do we need from the Subplot, other than Presence?
+//			}
+//			break;
+//		case Loaders.VEG_ITEM_VISIT:
+//			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
+//			if (c.moveToFirst()) {
+//				// what do we need from the Visit?
+//			}
+//			break;
 		}	
 	}
 
@@ -381,12 +386,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
 			mCFSpinnerAdapter.swapCursor(null);
 			break;
-		case Loaders.VEG_ITEM_SUBPLOT:
-			// nothing to do here since no adapter
-			break;
-		case Loaders.VEG_ITEM_VISIT:
-			// nothing to do here since no adapter
-			break;
+//		case Loaders.VEG_ITEM_SUBPLOT:
+//			// nothing to do here since no adapter
+//			break;
+//		case Loaders.VEG_ITEM_VISIT:
+//			// nothing to do here since no adapter
+//			break;
 		}
 	}
 

@@ -1,9 +1,7 @@
 package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
@@ -11,7 +9,6 @@ import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 
-import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -32,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -72,6 +68,26 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		f.setArguments(args);
 		return f;
 	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+//        try {
+//        	mEditSppListener = (EditSppDialogListener) getActivity();
+//        	Log.v(LOG_TAG, "(EditSppDialogListener) getActivity()");
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException("Main Activity must implement EditSppDialogListener interface");
+//        }
+//	setHasOptionsMenu(true);
+	}
+	
+	
+//	@Override
+//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//		inflater.inflate(R.menu.visit_header, menu);
+//		super.onCreateOptionsMenu(menu, inflater);
+//	}
+	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {

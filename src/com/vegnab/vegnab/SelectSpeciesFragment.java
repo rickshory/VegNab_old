@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import java.util.HashSet;
+
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import android.app.Activity;
@@ -23,10 +25,17 @@ import android.widget.ListView;
 public class SelectSpeciesFragment extends ListFragment 
 		implements LoaderManager.LoaderCallbacks<Cursor>{
 	private static final String LOG_TAG = SelectSpeciesFragment.class.getSimpleName();
+	final static String ARG_VISIT_ID = "visId";
+	final static String ARG_SUBPLOT_TYPE_ID = "sbpId";
 	final static String ARG_SEARCH_TEXT = "search_text";
 	final static String ARG_SQL_TEXT = "sql_text";
 	final static String ARG_USE_REGIONAL_LIST = "regional_list";
 	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
+	
+	long mCurVisitRecId = 0;
+	int mCurSubplotTypeRecId = 0;
+	HashSet mVegCodesAlreadyOnSubplot = new HashSet();
+	
 	SimpleCursorAdapter mSppResultsAdapter;
 	// declare that the container Activity must implement this interface
 
@@ -42,7 +51,7 @@ public class SelectSpeciesFragment extends ListFragment
 	// mUseRegionalList true = search the entire big regional list of species
 	// mUseFullText false = search only the codes (species plus Placeholders), matching the start of the code
 	// mUseFullText true = search all positions of the concatenated code + description
-	Boolean mUseRegionalList = false, mUseFullText = false;
+	Boolean mUseRegionalList = false, mUseFullText = false; // defaults
 	// add option checkboxes or radio buttons to set the above; or do from menu items
 	EditText mViewSearchChars;
 	TextWatcher sppCodeTextWatcher = new TextWatcher() {
@@ -122,7 +131,23 @@ public class SelectSpeciesFragment extends ListFragment
 
 		return rootView;
 	}
-
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		// during startup, check if arguments are passed to the fragment
+		// this is where to do this because the layout has been applied
+		// to the fragment
+		Bundle args = getArguments();
+		
+		if (args != null) {
+			mCurVisitRecId = args.getLong(ARG_VISIT_ID);
+			mCurSubplotTypeRecId = args.getInt(ARG_SUBPLOT_TYPE_ID);
+		}
+		// get following, to warn about duplicates
+		getLoaderManager().initLoader(Loaders.CODES_ALREADY_ON_SUBPLOT, null, this);
+	}
+	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -147,7 +172,9 @@ public class SelectSpeciesFragment extends ListFragment
     @Override
     public void onListItemClick(ListView l, View v, int pos, long id) {
 //        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
-        mListClickCallback.onSppMatchListClicked((int)id, id); // for testing, send ID for both parmams
+    	// check if selected code is in mVegCodesAlreadyOnSubplot
+    	
+        mListClickCallback.onSppMatchListClicked((int)id, id); // for testing, send ID for both parameters
     }
 
 	@Override
@@ -165,8 +192,16 @@ public class SelectSpeciesFragment extends ListFragment
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;		
+		
+		case Loaders.CODES_ALREADY_ON_SUBPLOT:
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT OrigCode FROM VegItems WHERE VisitID = 1 AND SubPlotID = 1 GROUP BY OrigCode;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;		
 		}
 		return cl;
+		
 	}
 
 	@Override
@@ -176,6 +211,13 @@ public class SelectSpeciesFragment extends ListFragment
 		switch (loader.getId()) {
 		case Loaders.SPP_MATCHES:
 			mSppResultsAdapter.swapCursor(finishedCursor);
+			break;
+			
+		case Loaders.CODES_ALREADY_ON_SUBPLOT:
+			mVegCodesAlreadyOnSubplot.clear();
+			while (finishedCursor.moveToNext()) {
+				mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
+			}
 			break;
 		}
 	}
@@ -187,6 +229,10 @@ public class SelectSpeciesFragment extends ListFragment
 		switch (loader.getId()) {
 		case Loaders.SPP_MATCHES:
 			mSppResultsAdapter.swapCursor(null);
+			break;
+			
+		case Loaders.CODES_ALREADY_ON_SUBPLOT:
+			// not an adapter, nothing to do here
 			break;
 		}
 	}

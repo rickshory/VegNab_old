@@ -359,9 +359,21 @@ public class MainVNActivity extends ActionBarActivity
 	public void showSppSelectScreen() {
 		SelectSpeciesFragment selSppFrag = new SelectSpeciesFragment();
 		Bundle args = new Bundle();
-		// don't presently need to send anything to the fragment
+		// args available to send to the fragment
+		// ARG_VISIT_ID = "visId";
+		// ARG_SUBPLOT_TYPE_ID = "sbpId";
+		// ARG_SEARCH_TEXT = "search_text";
+		// ARG_SQL_TEXT = "sql_text";
+		// ARG_USE_REGIONAL_LIST = "regional_list";
+		// ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
+
 		// screenTag can serve both as this fn's switch and the tag name of the fragment instance
 		// args.putString(SelectSpeciesFragment.ARG_TAG_ID, screenTag);
+		
+		// provide Visit and Subplot IDs, so selector can check for duplicate codes
+		args.putLong(SelectSpeciesFragment.ARG_VISIT_ID, mVisitId);
+		args.putInt(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
+
 		selSppFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		// replace the fragment in the fragment container with this new fragment and

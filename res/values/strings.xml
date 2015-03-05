@@ -191,8 +191,12 @@
     <string name="edit_spp_item_label_confidence">Confidence of species identity</string>
     <string name="edit_spp_item_msg_no_height">Need Height</string>
     <string name="edit_spp_item_msg_no_cover">Need Cover</string>
+    <string name="edit_spp_item_title_pls_note">Please Note</string>
     <string name="edit_spp_item_msg_zero_height">Zero height means you verify this species is absent here</string>
     <string name="edit_spp_item_msg_zero_cover">Zero cover means you verify this species is absent here</string>
+    
+    <string name="edit_spp_item_validate_height_bad">Need a number for Height, in centimeters</string>
+    <string name="edit_spp_item_validate_cover_bad">Need a number for Cover between 1 and 100 percent</string>
     
 
 </resources>

@@ -8,6 +8,7 @@ import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
+import com.vegnab.vegnab.database.VNContract.Validation;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -44,11 +45,13 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
 	private String mStrVegCode = null, mStrDescription = null;
+	private int mHeight, mCover;
 	private boolean isPresent;
 	long mIDConfidence = 1; // default 'no doubt of ID'
 	Cursor mCFCursor;
 	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
 	boolean mAutoVerifyPresence = false;
+	private int mValidationLevel = Validation.SILENT;
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
 	private TextView mTxtSpeciesItemLabel, mTxtHeightLabel, mTxtCoverLabel;
@@ -62,7 +65,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
 			boolean presenceOnly, String sppCode, String sppDescr) {
 		EditSppItemDialog f = new EditSppItemDialog();
-		// supply vegItemRecId as an argument
+		// supply arguments
 		Bundle args = new Bundle();
 		args.putLong("vegItemRecId", vegItemRecId);
 		args.putLong("curVisitRecId", curVisitRecId);
@@ -279,162 +282,21 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		String stringProblem;
 		String errTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
 		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
-		if (mPresenceOnly) { // chech and get Presence
+		int Ht, Cv;
+		if (mPresenceOnly) { // check and get Presence
 			if (mAutoVerifyPresence) {
 				isPresent = true;
-				return true;
 			} else {
 				isPresent = mCkSpeciesIsPresent.isChecked();
 			}
+			return true;
 		} else { // verify numerics Height & Cover
-			
-		}
-		return true;
-	}
-	/*	private boolean validateRecordValues() {
-		// validate all items on the screen the user can see
-		// assure mValues contains all required fields
-
-		String stringVisitName = mValues.getAsString("VisitName");
-		if (stringVisitName.length() == 0) {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_visname_none");
-					mViewVisitName.requestFocus();
-				}
-			}
-			return false;
-		}
-		if (!(stringVisitName.length() >= 2)) {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_short);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_visname_short");
-					mViewVisitName.requestFocus();
-				}
-			}
-			return false;
-		}
-		if (mExistingVisitNames.containsValue(stringVisitName)) {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_dup);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_visname_duplicate");
-					mViewVisitName.requestFocus();
-				}
-			}
-			return false;
-		}
-		if (!mValues.containsKey("VisitDate")) {
-			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-		}
-		String stringVisitDate = mValues.getAsString("VisitDate");
-		if (stringVisitDate.length() == 0) {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_none");
-					mViewVisitDate.requestFocus();
-				}
-			}
-			return false;
-		}
-		
-		if (mNamerId == 0) {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_namer_none");
-					mViewVisitDate.requestFocus();
-				}
-			}
-			return false;
-		}
-		if (!mValues.containsKey("NamerID")) { // valid if we are to this point
-			mValues.put("NamerID", mNamerId);
-		}
-
-		if (!mValues.containsKey("Scribe")) { // optional, no validation
-			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
-		}
-		
-		if (mLocIsGood) {
-			mValues.put("RefLocIsGood", 1);
-		} else {
-			if (mValidationLevel > Validation.SILENT) {
-				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
-				if (mValidationLevel == Validation.QUIET) {
-					Toast.makeText(this.getActivity(),
-							stringProblem,
-							Toast.LENGTH_LONG).show();
-				}
-				if (mValidationLevel == Validation.CRITICAL) {
-					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-					flexErrDlg.show(getFragmentManager(), "frg_err_loc_not_ready");
-				}
-			}
-			return false;
-		}
-
-		// validate Azimuth
-		String stringAz = mViewAzimuth.getText().toString().trim();
-		if (stringAz.length() > 0) { // null is valid but empty string is not
-			Log.v(LOG_TAG, "Azimuth is length " + stringAz.length());
-			int Az = 0;
-			try {
-				Az = Integer.parseInt(stringAz);
-				if ((Az < 0) || (Az > 360)) {
-					if (mValidationLevel > Validation.SILENT) {
-						stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
-						if (mValidationLevel == Validation.QUIET) {
-							Toast.makeText(this.getActivity(),
-									stringProblem,
-									Toast.LENGTH_LONG).show();
-						}
-						if (mValidationLevel == Validation.CRITICAL) {
-							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-							flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_out_of_range");
-							mViewAzimuth.requestFocus();
-						}
-					}
-					return false;
-				} else {
-					mValues.put("Azimuth", Az);
-				}
-			} catch(NumberFormatException e) {
+			// validate Height
+			String stringHt = mEditSpeciesHeight.getText().toString().trim();
+			if (stringHt.length() == 0) {
+				Log.v(LOG_TAG, "Height is length zero");
 				if (mValidationLevel > Validation.SILENT) {
-					stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
+					stringProblem = c.getResources().getString(R.string.edit_spp_item_msg_no_height);
 					if (mValidationLevel == Validation.QUIET) {
 						Toast.makeText(this.getActivity(),
 								stringProblem,
@@ -442,20 +304,128 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					}
 					if (mValidationLevel == Validation.CRITICAL) {
 						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
-						flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_bad_number");
-						mViewAzimuth.requestFocus();
+						flexErrDlg.show(getFragmentManager(), "frg_err_height_out_of_range");
+						mEditSpeciesHeight.requestFocus();
 					}
+				} // end of validation not silent
+				return false; // end of Ht length zero
+			} else {
+				try {
+					Ht = Integer.parseInt(stringHt);
+					if ((Ht < 0) || (Ht > 35000)) { // tallest plants are 300m redwoods
+						Log.v(LOG_TAG, "Height is out of range");
+						if (mValidationLevel > Validation.SILENT) {
+							stringProblem = c.getResources().getString(R.string.edit_spp_item_validate_height_bad);
+							if (mValidationLevel == Validation.QUIET) {
+								Toast.makeText(this.getActivity(),
+										stringProblem,
+										Toast.LENGTH_LONG).show();
+							}
+							if (mValidationLevel == Validation.CRITICAL) {
+								flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+								flexErrDlg.show(getFragmentManager(), "frg_err_height_out_of_range");
+								mEditSpeciesHeight.requestFocus();
+							}
+						} // end of validation not silent
+						return false; // end of Ht out of range
+					}
+					if (Ht == 0) {
+						errTitle = c.getResources().getString(R.string.edit_spp_item_title_pls_note);
+						stringProblem = c.getResources().getString(R.string.edit_spp_item_msg_zero_height);
+						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+						flexErrDlg.show(getFragmentManager(), "frg_verify_height_zero");
+						Cv = 0;
+					}
+				} catch(NumberFormatException e) {
+					Log.v(LOG_TAG, "Height is not a valid number");
+					if (mValidationLevel > Validation.SILENT) {
+						stringProblem = c.getResources().getString(R.string.edit_spp_item_validate_height_bad);
+						if (mValidationLevel == Validation.QUIET) {
+							Toast.makeText(this.getActivity(),
+									stringProblem,
+									Toast.LENGTH_LONG).show();
+						}
+						if (mValidationLevel == Validation.CRITICAL) {
+							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+							flexErrDlg.show(getFragmentManager(), "frg_err_height_out_of_range");
+							mEditSpeciesHeight.requestFocus();
+						}
+					} // end of validation not silent
+					return false; // end of Ht invalid number
 				}
-			}
-		} else {
-			Log.v(LOG_TAG, "Azimuth is length zero");
-		}
-		
-		if (!mValues.containsKey("VisitNotes")) { // optional, no validation
-			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
-		}
-		return true;
-	}*/
+			} // end of validate Height
+			
+			// validate Cover
+			String stringCv = mEditSpeciesCover.getText().toString().trim();
+			if (stringCv.length() == 0) {
+				Log.v(LOG_TAG, "Cover is length zero");
+				if (mValidationLevel > Validation.SILENT) {
+					stringProblem = c.getResources().getString(R.string.edit_spp_item_msg_no_cover);
+					if (mValidationLevel == Validation.QUIET) {
+						Toast.makeText(this.getActivity(),
+								stringProblem,
+								Toast.LENGTH_LONG).show();
+					}
+					if (mValidationLevel == Validation.CRITICAL) {
+						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+						flexErrDlg.show(getFragmentManager(), "frg_err_cover_out_of_range");
+						mEditSpeciesCover.requestFocus();
+					}
+				} // end of validation not silent
+				return false; // end of Cv length zero
+			} else {
+				try {
+					Cv = Integer.parseInt(stringCv);
+					if ((Cv < 0) || (Cv > 100)) { // percent
+						Log.v(LOG_TAG, "Cover is out of range");
+						if (mValidationLevel > Validation.SILENT) {
+							stringProblem = c.getResources().getString(R.string.edit_spp_item_validate_cover_bad);
+							if (mValidationLevel == Validation.QUIET) {
+								Toast.makeText(this.getActivity(),
+										stringProblem,
+										Toast.LENGTH_LONG).show();
+							}
+							if (mValidationLevel == Validation.CRITICAL) {
+								flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+								flexErrDlg.show(getFragmentManager(), "frg_err_cover_out_of_range");
+								mEditSpeciesCover.requestFocus();
+							}
+						} // end of validation not silent
+						return false; // end of Cv out of range
+					}
+					if (Cv == 0) {
+						errTitle = c.getResources().getString(R.string.edit_spp_item_title_pls_note);
+						stringProblem = c.getResources().getString(R.string.edit_spp_item_msg_zero_cover);
+						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+						flexErrDlg.show(getFragmentManager(), "frg_verify_cover_zero");
+						Ht = 0;
+					}
+				} catch(NumberFormatException e) {
+					Log.v(LOG_TAG, "Cover is not a valid number");
+					if (mValidationLevel > Validation.SILENT) {
+						stringProblem = c.getResources().getString(R.string.edit_spp_item_validate_cover_bad);
+						if (mValidationLevel == Validation.QUIET) {
+							Toast.makeText(this.getActivity(),
+									stringProblem,
+									Toast.LENGTH_LONG).show();
+						}
+						if (mValidationLevel == Validation.CRITICAL) {
+							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
+							flexErrDlg.show(getFragmentManager(), "frg_err_cover_out_of_range");
+							mEditSpeciesCover.requestFocus();
+						}
+					} // end of validation not silent
+					return false; // end of Cv invalid number
+				}
+			} // end of verify Cover
+			mHeight = Ht;
+			mCover = Cv;
+			mEditSpeciesHeight.setText("" + Ht);
+			mEditSpeciesCover.setText("" + Cv);
+			return true;
+		} // end of verify numeric Height & Cover
+	} // end of validation
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		// This is called when a new Loader needs to be created.

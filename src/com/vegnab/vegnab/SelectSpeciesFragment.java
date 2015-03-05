@@ -34,7 +34,8 @@ public class SelectSpeciesFragment extends ListFragment
 	
 	long mCurVisitRecId = 0;
 	int mCurSubplotTypeRecId = 0;
-	HashSet mVegCodesAlreadyOnSubplot = new HashSet();
+	HashSet<String> mVegCodesAlreadyOnSubplot = new HashSet<String>();
+	Cursor mSppMatchCursor;
 	
 	SimpleCursorAdapter mSppResultsAdapter;
 	// declare that the container Activity must implement this interface
@@ -173,7 +174,16 @@ public class SelectSpeciesFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int pos, long id) {
 //        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
     	// check if selected code is in mVegCodesAlreadyOnSubplot
-    	
+    	Log.v(LOG_TAG, "getListView().getItemAtPosition: '" + getListView().getItemAtPosition(pos).toString());
+//    	getListView().getItemAtPosition(pos).toString();
+    	mSppMatchCursor.moveToPosition(pos);
+        
+        String SppCode = mSppMatchCursor.getString(
+        		mSppMatchCursor.getColumnIndexOrThrow("Cd"));
+        Log.v(LOG_TAG, "mSppMatchCursor, pos = " + pos + " SppCode: " + SppCode);
+//        mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(
+//        		finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
+// available fields: _id, Cd, Descr, MatchTxt
         mListClickCallback.onSppMatchListClicked((int)id, id); // for testing, send ID for both parameters
     }
 
@@ -195,7 +205,8 @@ public class SelectSpeciesFragment extends ListFragment
 		
 		case Loaders.CODES_ALREADY_ON_SUBPLOT:
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT OrigCode FROM VegItems WHERE VisitID = 1 AND SubPlotID = 1 GROUP BY OrigCode;";
+			select = "SELECT OrigCode FROM VegItems WHERE VisitID = " + mCurVisitRecId 
+					+ " AND SubPlotID = " + mCurSubplotTypeRecId + " GROUP BY OrigCode;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;		
@@ -211,12 +222,14 @@ public class SelectSpeciesFragment extends ListFragment
 		switch (loader.getId()) {
 		case Loaders.SPP_MATCHES:
 			mSppResultsAdapter.swapCursor(finishedCursor);
+			mSppMatchCursor = finishedCursor;
 			break;
 			
 		case Loaders.CODES_ALREADY_ON_SUBPLOT:
 			mVegCodesAlreadyOnSubplot.clear();
 			while (finishedCursor.moveToNext()) {
-				mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
+				mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(
+						finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
 			}
 			break;
 		}

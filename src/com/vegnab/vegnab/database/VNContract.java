@@ -79,12 +79,19 @@ public final class VNContract {
 		
 	}
 	// inner class to define Veg Item record sources
-	// putting them all together here helps avoid conflicts in various fragments
+	// putting them all together here allows consistent usage throughout
 	public static abstract class VegcodeSources {
 		public static final int REGIONAL_LIST = 0; // standard NRCS codes from the entire regional list
 		public static final int PREVIOUSLY_FOUND = 1; // species previously entered, but still only standard NRCS
 		public static final int PLACE_HOLDERS = 2; // user-created codes for species not known at the time
 		public static final int SPECIAL_CODES = 3; // e.g. "no veg" (no vegetation on this subplot)
+	}
+	// inner class to define Validation levels
+	// putting them all together here allows consistent usage throughout
+	public static abstract class Validation {
+		public static final int SILENT = 0; // usually no notice
+		public static final int QUIET = 1; // usually a Toast
+		public static final int CRITICAL = 2; // usually a message dialog
 	}
 	
 	// inner classes to define tables

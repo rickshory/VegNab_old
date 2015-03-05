@@ -43,10 +43,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
-	String mSppCode = null, mSppDescr = null;
+	private String mStrVegCode = null, mStrDescription = null;
+	private boolean isPresent;
 	long mIDConfidence = 1; // default 'no doubt of ID'
 	Cursor mCFCursor;
 	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
+	boolean mAutoVerifyPresence = false;
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
 	private TextView mTxtSpeciesItemLabel, mTxtHeightLabel, mTxtCoverLabel;
@@ -54,7 +56,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private CheckBox mCkSpeciesIsPresent, mCkDontVerifyPresence;
 	private Spinner mSpinnerSpeciesConfidence;
 	SimpleCursorAdapter mCFSpinnerAdapter;
-	private String mStrVegCode, mStrDescription;
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	
@@ -149,10 +150,11 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mCurVisitRecId = args.getLong("curVisitRecId");
 			mCurSubplotRecId = args.getInt("curSubplotRecId");
 			mPresenceOnly = args.getBoolean("presenceOnly");
-			mSppCode = args.getString("sppCode");
-			mSppDescr = args.getString("sppDescr");
+			mStrVegCode = args.getString("sppCode");
+			mStrDescription = args.getString("sppDescr");
 		}
-		
+		mTxtSpeciesItemLabel.setText(mStrVegCode + ": " + mStrDescription);
+		// fire off these database requests
 		getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
 //		getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
 //		getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
@@ -193,6 +195,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				} else {
 					mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
 				}
+				mValues.put("IdLevelID", mIDConfidence);
 			}
 		Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
 		int numUpdated = saveVegItemRecord();
@@ -276,9 +279,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		String stringProblem;
 		String errTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
 		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
-		if (mPresenceOnly) {
-			
-		} else {
+		if (mPresenceOnly) { // chech and get Presence
+			if (mAutoVerifyPresence) {
+				isPresent = true;
+				return true;
+			} else {
+				isPresent = mCkSpeciesIsPresent.isChecked();
+			}
+		} else { // verify numerics Height & Cover
 			
 		}
 		return true;
@@ -286,19 +294,17 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	/*	private boolean validateRecordValues() {
 		// validate all items on the screen the user can see
 		// assure mValues contains all required fields
-		if (!mValues.containsKey("VisitName")) {
-			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
-		}
+
 		String stringVisitName = mValues.getAsString("VisitName");
 		if (stringVisitName.length() == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_none");
 					mViewVisitName.requestFocus();
@@ -307,14 +313,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			return false;
 		}
 		if (!(stringVisitName.length() >= 2)) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_short);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_short");
 					mViewVisitName.requestFocus();
@@ -323,14 +329,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			return false;
 		}
 		if (mExistingVisitNames.containsValue(stringVisitName)) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_dup);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_duplicate");
 					mViewVisitName.requestFocus();
@@ -343,14 +349,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		}
 		String stringVisitDate = mValues.getAsString("VisitDate");
 		if (stringVisitDate.length() == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_none");
 					mViewVisitDate.requestFocus();
@@ -360,14 +366,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		}
 		
 		if (mNamerId == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_namer_none");
 					mViewVisitDate.requestFocus();
@@ -386,14 +392,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		if (mLocIsGood) {
 			mValues.put("RefLocIsGood", 1);
 		} else {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_loc_not_ready");
 				}
@@ -409,14 +415,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			try {
 				Az = Integer.parseInt(stringAz);
 				if ((Az < 0) || (Az > 360)) {
-					if (mValidationLevel > VALIDATE_SILENT) {
+					if (mValidationLevel > Validation.SILENT) {
 						stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
-						if (mValidationLevel == VALIDATE_QUIET) {
+						if (mValidationLevel == Validation.QUIET) {
 							Toast.makeText(this.getActivity(),
 									stringProblem,
 									Toast.LENGTH_LONG).show();
 						}
-						if (mValidationLevel == VALIDATE_CRITICAL) {
+						if (mValidationLevel == Validation.CRITICAL) {
 							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 							flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_out_of_range");
 							mViewAzimuth.requestFocus();
@@ -427,14 +433,14 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					mValues.put("Azimuth", Az);
 				}
 			} catch(NumberFormatException e) {
-				if (mValidationLevel > VALIDATE_SILENT) {
+				if (mValidationLevel > Validation.SILENT) {
 					stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
-					if (mValidationLevel == VALIDATE_QUIET) {
+					if (mValidationLevel == Validation.QUIET) {
 						Toast.makeText(this.getActivity(),
 								stringProblem,
 								Toast.LENGTH_LONG).show();
 					}
-					if (mValidationLevel == VALIDATE_CRITICAL) {
+					if (mValidationLevel == Validation.CRITICAL) {
 						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 						flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_bad_number");
 						mViewAzimuth.requestFocus();
@@ -500,6 +506,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.VEGITEM_TO_EDIT:
 			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
 			if (c.moveToFirst()) {
+				getDialog().setTitle(R.string.edit_spp_item_title_edit);
 				String vegItemLabel = c.getString(c.getColumnIndexOrThrow("OrigCode")) + ": "
 						+ c.getString(c.getColumnIndexOrThrow("OrigDescr"));
 				mTxtSpeciesItemLabel.setText(vegItemLabel);

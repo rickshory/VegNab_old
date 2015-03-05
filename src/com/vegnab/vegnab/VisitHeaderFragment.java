@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Tags;
+import com.vegnab.vegnab.database.VNContract.Validation;
 import com.vegnab.vegnab.database.VegNabDbHelper;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -93,11 +94,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	private static final int MENU_ADD = 1;
     private static final int MENU_EDIT = 2;
     private static final int MENU_DELETE = 3;
-    // how much noise to make when the Visit record is invalid
-    private static final int VALIDATE_SILENT = 0;
-    private static final int VALIDATE_QUIET = 1;
-    private static final int VALIDATE_CRITICAL = 2;
-    private int mValidationLevel = VALIDATE_SILENT;
+    private int mValidationLevel = Validation.SILENT;
     private static final int INTERNAL_GPS = 1;
     private static final int NETWORK = 2;
     private static final int MANUAL_ENTRY = 3;
@@ -438,7 +435,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
 			mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
 			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
-		    mValidationLevel = VALIDATE_CRITICAL; // give user lots of information if anything is wrong
+		    mValidationLevel = Validation.CRITICAL; // give user lots of information if anything is wrong
 			Log.v(LOG_TAG, "Saving record in go button click; mValues: " + mValues.toString());
 			int numUpdated = saveVisitRecord();
 			if (numUpdated == 0) {
@@ -652,14 +649,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 		String stringVisitName = mValues.getAsString("VisitName");
 		if (stringVisitName.length() == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_none");
 					mViewVisitName.requestFocus();
@@ -668,14 +665,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			return false;
 		}
 		if (!(stringVisitName.length() >= 2)) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_short);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_short");
 					mViewVisitName.requestFocus();
@@ -684,14 +681,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			return false;
 		}
 		if (mExistingVisitNames.containsValue(stringVisitName)) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_dup);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visname_duplicate");
 					mViewVisitName.requestFocus();
@@ -704,14 +701,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 		String stringVisitDate = mValues.getAsString("VisitDate");
 		if (stringVisitDate.length() == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_none");
 					mViewVisitDate.requestFocus();
@@ -724,14 +721,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			Date date = mDateFormat.parse(stringVisitDate);
 		} catch (ParseException e) {
 			Log.v(LOG_TAG, "Date error: " + e.toString());
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_bad);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_visdate_bad");
 					mViewVisitDate.requestFocus();
@@ -741,14 +738,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 		*/
 		if (mNamerId == 0) {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_namer_none");
 					mViewVisitDate.requestFocus();
@@ -767,14 +764,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		if (mLocIsGood) {
 			mValues.put("RefLocIsGood", 1);
 		} else {
-			if (mValidationLevel > VALIDATE_SILENT) {
+			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
-				if (mValidationLevel == VALIDATE_QUIET) {
+				if (mValidationLevel == Validation.QUIET) {
 					Toast.makeText(this.getActivity(),
 							stringProblem,
 							Toast.LENGTH_LONG).show();
 				}
-				if (mValidationLevel == VALIDATE_CRITICAL) {
+				if (mValidationLevel == Validation.CRITICAL) {
 					flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 					flexErrDlg.show(getFragmentManager(), "frg_err_loc_not_ready");
 				}
@@ -790,14 +787,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			try {
 				Az = Integer.parseInt(stringAz);
 				if ((Az < 0) || (Az > 360)) {
-					if (mValidationLevel > VALIDATE_SILENT) {
+					if (mValidationLevel > Validation.SILENT) {
 						stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
-						if (mValidationLevel == VALIDATE_QUIET) {
+						if (mValidationLevel == Validation.QUIET) {
 							Toast.makeText(this.getActivity(),
 									stringProblem,
 									Toast.LENGTH_LONG).show();
 						}
-						if (mValidationLevel == VALIDATE_CRITICAL) {
+						if (mValidationLevel == Validation.CRITICAL) {
 							flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 							flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_out_of_range");
 							mViewAzimuth.requestFocus();
@@ -808,14 +805,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 					mValues.put("Azimuth", Az);
 				}
 			} catch(NumberFormatException e) {
-				if (mValidationLevel > VALIDATE_SILENT) {
+				if (mValidationLevel > Validation.SILENT) {
 					stringProblem = c.getResources().getString(R.string.vis_hdr_validate_azimuth_bad);
-					if (mValidationLevel == VALIDATE_QUIET) {
+					if (mValidationLevel == Validation.QUIET) {
 						Toast.makeText(this.getActivity(),
 								stringProblem,
 								Toast.LENGTH_LONG).show();
 					}
-					if (mValidationLevel == VALIDATE_CRITICAL) {
+					if (mValidationLevel == Validation.CRITICAL) {
 						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 						flexErrDlg.show(getFragmentManager(), "frg_err_azimuth_bad_number");
 						mViewAzimuth.requestFocus();
@@ -986,7 +983,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				break;
 			}
 			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString());
-			mValidationLevel = VALIDATE_QUIET; // save if possible, but notify minimally
+			mValidationLevel = Validation.QUIET; // save if possible, but notify minimally
 			int numUpdated = saveVisitRecord();
 		}
 	}			

@@ -450,8 +450,9 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void onSppMatchListClicked(int sourceId, long recId) {
-		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId);
+	public void onSppMatchListClicked(int sourceId, long recId, String sppCode, String sppDescr) {
+		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId 
+				+ ", sppCode: '" + sppCode +"', sppDescr: '" + sppDescr + "'");
 		
 	}	
 	

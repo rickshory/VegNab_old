@@ -42,7 +42,7 @@ public class SelectSpeciesFragment extends ListFragment
 
 	public interface OnSppResultClickListener {
 		// methods that must be implemented in the container Activity
-		public void onSppMatchListClicked(int sourceId, long recId);
+		public void onSppMatchListClicked(int sourceId, long recId, String sppCode, String sppDescr);
 	}
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
@@ -174,17 +174,18 @@ public class SelectSpeciesFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int pos, long id) {
 //        Toast.makeText(this.getActivity(), "Clicked position " + pos + ", id " + id, Toast.LENGTH_SHORT).show();
     	// check if selected code is in mVegCodesAlreadyOnSubplot
-    	Log.v(LOG_TAG, "getListView().getItemAtPosition: '" + getListView().getItemAtPosition(pos).toString());
-//    	getListView().getItemAtPosition(pos).toString();
+//    	getListView().getItemAtPosition(pos).toString(); // not useful, gets cursor wrapper
     	mSppMatchCursor.moveToPosition(pos);
         
-        String SppCode = mSppMatchCursor.getString(
+        String sppCode = mSppMatchCursor.getString(
         		mSppMatchCursor.getColumnIndexOrThrow("Cd"));
-        Log.v(LOG_TAG, "mSppMatchCursor, pos = " + pos + " SppCode: " + SppCode);
+        String sppDescr = mSppMatchCursor.getString(
+        		mSppMatchCursor.getColumnIndexOrThrow("Descr"));
+        Log.v(LOG_TAG, "mSppMatchCursor, pos = " + pos + " SppCode: " + sppCode);
 //        mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(
 //        		finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
 // available fields: _id, Cd, Descr, MatchTxt
-        mListClickCallback.onSppMatchListClicked((int)id, id); // for testing, send ID for both parameters
+        mListClickCallback.onSppMatchListClicked(0, id, sppCode, sppDescr); // for testing, send ID for both parameters
     }
 
 	@Override

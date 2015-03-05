@@ -43,7 +43,9 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
-	int mIDConfidence = 1; // default 'no doubt of ID'
+	String mSppCode = null, mSppDescr = null;
+	long mIDConfidence = 1; // default 'no doubt of ID'
+	Cursor mCFCursor;
 	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");
 	ContentValues mValues = new ContentValues();
@@ -57,7 +59,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	
 	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
-			boolean presenceOnly) {
+			boolean presenceOnly, String sppCode, String sppDescr) {
 		EditSppItemDialog f = new EditSppItemDialog();
 		// supply vegItemRecId as an argument
 		Bundle args = new Bundle();
@@ -65,6 +67,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		args.putLong("curVisitRecId", curVisitRecId);
 		args.putInt("curSubplotRecId", curSubplotRecId);
 		args.putBoolean("presenceOnly", presenceOnly);
+		args.putString("sppCode", sppCode);
+		args.putString("sppDescr", sppDescr);
 		f.setArguments(args);
 		return f;
 	}
@@ -145,10 +149,10 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mCurVisitRecId = args.getLong("curVisitRecId");
 			mCurSubplotRecId = args.getInt("curSubplotRecId");
 			mPresenceOnly = args.getBoolean("presenceOnly");
+			mSppCode = args.getString("sppCode");
+			mSppDescr = args.getString("sppDescr");
 		}
-		// request existing species codes ASAP, this doesn't use the UI
-		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_VEGITEMS, null, this);
-		// get these to have ready, and to adjust screen if needed
+		
 		getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
 //		getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
 //		getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
@@ -461,18 +465,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 					null, select, null, null);
 			break;
 
-		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
-			// get the existing VegCodes, other than the current one, to disallow duplicates
-			Uri allSbVegItemsUri = Uri.withAppendedPath(
-					ContentProvider_VegNab.CONTENT_URI, "vegitems");
-			String[] projection = {"_id", "OrigCode"};
-			select = "(VisitID = " + mCurVisitRecId 
-					+ " AND SubPlotID = " + mCurSubplotRecId 
-					+ " AND _id <> " + mVegItemRecId + ")";
-			cl = new CursorLoader(getActivity(), allSbVegItemsUri,
-					projection, select, null, null);
-			break;
-
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
 			Uri allCFLevelsUri = Uri.withAppendedPath(
 					ContentProvider_VegNab.CONTENT_URI, "idlevels");
@@ -503,7 +495,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-		int rowCt = c.getCount();
 		switch (loader.getId()) {
 			
 		case Loaders.VEGITEM_TO_EDIT:
@@ -526,9 +517,10 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
 			// Swap the new cursor in
 			// The framework will take care of closing the old cursor once we return
-			mCFSpinnerAdapter.swapCursor(c);
-			if (rowCt > 0) {
-				// setNamerSpinnerSelectionFromDefaultNamer(); // internally sets mNamerId
+			mCFCursor = c;
+			mCFSpinnerAdapter.swapCursor(mCFCursor);
+			if (mCFCursor.getCount() > 0) {
+				// setCFSpinnerSelection();
 				mSpinnerSpeciesConfidence.setEnabled(true);
 			} else {
 				mSpinnerSpeciesConfidence.setEnabled(false);
@@ -554,9 +546,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch (loader.getId()) {
 		case Loaders.VEGITEM_TO_EDIT:
-			// nothing to do here since no adapter
-			break;
-		case Loaders.CURRENT_SUBPLOT_VEGITEMS:
 			// nothing to do here since no adapter
 			break;
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
@@ -590,27 +579,13 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		
 		// sort out the spinners
 		// can't use switch because not constants
-		if (parent.getId() == mNamerSpinner.getId()) {
+		if (parent.getId() == mSpinnerSpeciesConfidence.getId()) {
 			// workaround for spinner firing when first set
 			if(((String)parent.getTag()).equalsIgnoreCase(Tags.SPINNER_FIRST_USE)) {
 	            parent.setTag("");
 	            return;
 	        }
-			// mIDConfidence
-			mNamerId = id;
-			if (mNamerId == 0) { // picked '(add new)'
-				Log.v(LOG_TAG, "Starting 'add new' for Namer from onItemSelect");
-//				AddSpeciesNamerDialog  addSppNamerDlg = AddSpeciesNamerDialog.newInstance();
-//				FragmentManager fm = getActivity().getSupportFragmentManager();
-//				addSppNamerDlg.show(fm, "sppNamerDialog_SpinnerSelect");
-				EditNamerDialog newNmrDlg = EditNamerDialog.newInstance(0);
-				newNmrDlg.show(getFragmentManager(), "frg_new_namer_fromSpinner");
-
-			} else { // (mNamerId != 0) 
-				// save in app Preferences as the default Namer
-				saveDefaultNamerId(mNamerId);
-			}
-			setNamerSpinnerSelectionFromDefaultNamer(); // in either case, reset selection
+			mIDConfidence = id;
 			return;
 		}
 		// write code for any other spinner(s) here
@@ -621,33 +596,17 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		// TODO Auto-generated method stub
 	}
 	
-/*
-	public void setNamerSpinnerSelectionFromDefaultNamer() {
-		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-		// if none yet, use _id = 0, generated in query as '(add new)'
-		mNamerId = sharedPref.getLong(Prefs.DEFAULT_NAMER_ID, 0);
-		setNamerSpinnerSelection();
-		if (mNamerId == 0) {
-			// user sees '(add new)', blank TextView receives click;
-			mLblNewNamerSpinnerCover.bringToFront();
-		} else {
-			// user can operate the spinner
-			mNamerSpinner.bringToFront();
-		}
-	}
-	
-	public void setNamerSpinnerSelection() {
-		// set the current Namer to show in its spinner
-		// mIDConfidence
-		for (int i=0; i<mRowCt; i++) {
-			Log.v(LOG_TAG, "Setting mNamerSpinner; testing index " + i);
-			if (mNamerSpinner.getItemIdAtPosition(i) == mNamerId) {
-				Log.v(LOG_TAG, "Setting mNamerSpinner; found matching index " + i);
-				mNamerSpinner.setSelection(i);
+	public void setCFSpinnerSelection() {
+		// set the id confidence spinner
+		int ct = mCFCursor.getCount();
+		for (int i=0; i<ct; i++) {
+			Log.v(LOG_TAG, "Setting mSpinnerSpeciesConfidence; testing index " + i);
+			if (mSpinnerSpeciesConfidence.getItemIdAtPosition(i) == mIDConfidence) {
+				Log.v(LOG_TAG, "Setting mSpinnerSpeciesConfidence; found matching index " + i);
+				mSpinnerSpeciesConfidence.setSelection(i);
 				break;
 			}
 		}
 	}
 
-*/	
 }

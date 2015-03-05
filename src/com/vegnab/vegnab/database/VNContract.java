@@ -79,6 +79,14 @@ public final class VNContract {
 		public static final String VEG_SUBPLOT = "VegSubplot";
 		
 	}
+	// inner class to define Veg Item record sources
+	// putting them all together here helps avoid conflicts in various fragments
+	public static abstract class VegcodeSources {
+		public static final int REGIONAL_LIST = 0; // standard NRCS codes from the entire regional list
+		public static final int PREVIOUSLY_FOUND = 1; // species previously entered, but still only standard NRCS
+		public static final int PLACE_HOLDERS = 2; // user-created codes for species not known at the time
+		public static final int SPECIAL_CODES = 3; // e.g. "no veg" (no vegetation on this subplot)
+	}
 	
 	// inner classes to define tables
 	public static abstract class Project implements BaseColumns {

@@ -4,6 +4,8 @@ import java.util.HashSet;
 
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
+import com.vegnab.vegnab.database.VNContract.VegcodeSources;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
@@ -176,7 +178,6 @@ public class SelectSpeciesFragment extends ListFragment
     	// check if selected code is in mVegCodesAlreadyOnSubplot
 //    	getListView().getItemAtPosition(pos).toString(); // not useful, gets cursor wrapper
     	mSppMatchCursor.moveToPosition(pos);
-        
         String sppCode = mSppMatchCursor.getString(
         		mSppMatchCursor.getColumnIndexOrThrow("Cd"));
         String sppDescr = mSppMatchCursor.getString(
@@ -185,7 +186,8 @@ public class SelectSpeciesFragment extends ListFragment
 //        mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(
 //        		finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
 // available fields: _id, Cd, Descr, MatchTxt
-        mListClickCallback.onSppMatchListClicked(0, id, sppCode, sppDescr); // for testing, send ID for both parameters
+        mListClickCallback.onSppMatchListClicked(
+        		VegcodeSources.REGIONAL_LIST, id, sppCode, sppDescr); // for testing, send ID for both parameters
     }
 
 	@Override

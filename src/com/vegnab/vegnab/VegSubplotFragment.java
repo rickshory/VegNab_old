@@ -173,6 +173,11 @@ public class VegSubplotFragment extends ListFragment
 			break;
 		}
 	}
+	
+	public void refreshSppList() {
+		// when the referred Loader callback returns, will update the Namers spinner
+		getLoaderManager().restartLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
+	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {

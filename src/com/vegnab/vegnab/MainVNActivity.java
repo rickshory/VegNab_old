@@ -55,7 +55,8 @@ public class MainVNActivity extends ActionBarActivity
 		VegSubplotFragment.OnButtonListener,
 		EditNamerDialog.EditNamerDialogListener,
 		ConfirmDelNamerDialog.EditNamerDialogListener,
-		SelectSpeciesFragment.OnSppResultClickListener {
+		SelectSpeciesFragment.OnSppResultClickListener,
+		EditSppItemDialog.EditSppItemDialogListener {
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
@@ -380,7 +381,7 @@ public class MainVNActivity extends ActionBarActivity
 		// replace the fragment in the fragment container with this new fragment and
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, selSppFrag, "frg_sel_spp");
+		transaction.replace(R.id.fragment_container, selSppFrag, Tags.SELECT_SPECIES);
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
@@ -449,7 +450,20 @@ public class MainVNActivity extends ActionBarActivity
 		mVisitId = visitId;
 		goToVisitHeaderScreen(visitId);
 	}
-
+	
+	@Override
+	public void onEditVegItemComplete(DialogFragment dialog) {
+		Log.v(LOG_TAG, "onEditSppComplete(DialogFragment dialog)");
+		VegSubplotFragment vegSubpFragment = (VegSubplotFragment) 
+				getSupportFragmentManager().findFragmentByTag(Tags.VEG_SUBPLOT);
+		if (vegSubpFragment == null) {
+			Log.v(LOG_TAG, "vegSubpFragment == null");
+		} else {
+			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+			vegSubpFragment.refreshSppList();
+		}
+	}
+	
 	@Override
 	public void onSppMatchListClicked(int sourceId, long recId, String sppCode, String sppDescr) {
 		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId 
@@ -457,7 +471,7 @@ public class MainVNActivity extends ActionBarActivity
 		// if from Regional List, save in Found List, change Source and substitute that new record's ID
 		// for testing, try to save via dialog
 	}	
-
+/*
 	@Override
 	public void onSelSppDone() {
 		FragmentManager fm = getSupportFragmentManager();
@@ -465,7 +479,7 @@ public class MainVNActivity extends ActionBarActivity
 		if (vegSubpFragment == null) {
 			Log.v(LOG_TAG, "vegSubpFragment == null");
 		} else {
-			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+			
 			FragmentTransaction transaction = fm.beginTransaction();
 			// replace the fragment in the fragment container with the stored Veg Subplot fragment
 			transaction.replace(R.id.fragment_container, vegSubpFragment);
@@ -473,7 +487,7 @@ public class MainVNActivity extends ActionBarActivity
 			transaction.commit();
 		}
 	}	
-	
+	*/
 /*	
 		@Override
 	public void onEditSppComplete(VisitHeaderFragment visitHeaderFragment) {

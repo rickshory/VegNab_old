@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.vegnab.vegnab.EditNamerDialog.EditNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 import com.vegnab.vegnab.database.VNContract.Prefs;
@@ -42,6 +43,11 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		//, android.view.View.OnKeyListener
 		{
 	private static final String LOG_TAG = EditSppItemDialog.class.getSimpleName();
+	public interface EditSppItemDialogListener {
+		public void onEditVegItemComplete(DialogFragment dialog);
+	}
+	EditSppItemDialogListener mEditVegItemListener;
+
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
@@ -85,6 +91,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        try {
+        	mEditVegItemListener = (EditSppItemDialogListener) getActivity();
+        	Log.v(LOG_TAG, "(EditSppItemDialogListener) getActivity()");
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Main Activity must implement EditSppItemDialogListener interface");
+        }
 //        try {
 //        	mEditSppListener = (EditSppDialogListener) getActivity();
 //        	Log.v(LOG_TAG, "(EditSppDialogListener) getActivity()");
@@ -209,6 +221,15 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		if (validateVegItemValues()) {
 			int numUpdated = saveVegItemRecord();
 			Log.v(LOG_TAG, "Saved record in onCancel; numUpdated: " + numUpdated);
+			if (numUpdated > 0) {
+				Log.v(LOG_TAG, "about to call 'mEditVegItemListener.onEditVegItemComplete'");
+				if (EditSppItemDialog.this == null) {
+					Log.v(LOG_TAG, "'EditSppItemDialog.this' is null");
+				} else {
+					mEditVegItemListener.onEditVegItemComplete(EditSppItemDialog.this);
+				Log.v(LOG_TAG, "called 'mEditVegItemListener.onEditVegItemComplete'");
+				}
+			}
 		}
 	}
 	

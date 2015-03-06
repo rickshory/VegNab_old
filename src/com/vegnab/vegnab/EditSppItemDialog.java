@@ -97,12 +97,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
         } catch (ClassCastException e) {
             throw new ClassCastException("Main Activity must implement EditSppItemDialogListener interface");
         }
-//        try {
-//        	mEditSppListener = (EditSppDialogListener) getActivity();
-//        	Log.v(LOG_TAG, "(EditSppDialogListener) getActivity()");
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException("Main Activity must implement EditSppDialogListener interface");
-//        }
 //	setHasOptionsMenu(true);
 	}
 	
@@ -222,13 +216,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			int numUpdated = saveVegItemRecord();
 			Log.v(LOG_TAG, "Saved record in onCancel; numUpdated: " + numUpdated);
 			if (numUpdated > 0) {
-				Log.v(LOG_TAG, "about to call 'mEditVegItemListener.onEditVegItemComplete'");
-				if (EditSppItemDialog.this == null) {
-					Log.v(LOG_TAG, "'EditSppItemDialog.this' is null");
-				} else {
-					mEditVegItemListener.onEditVegItemComplete(EditSppItemDialog.this);
-				Log.v(LOG_TAG, "called 'mEditVegItemListener.onEditVegItemComplete'");
-				}
+				mEditVegItemListener.onEditVegItemComplete(EditSppItemDialog.this);
 			}
 		}
 	}

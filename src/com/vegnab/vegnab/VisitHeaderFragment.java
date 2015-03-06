@@ -411,6 +411,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onClick(View v) {
+		int numUpdated = 0;
 		switch (v.getId()) {
 		case R.id.txt_visit_date:
 			fireOffDatePicker();
@@ -427,22 +428,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 			break;
 		case R.id.visit_header_go_button:
-			// create or update the Visit record in the database, if everything is valid		
-			mValues.clear();
-			// fill in the parameters from visible TextView fields, will test validity later
-			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
-			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
-			mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
-			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
-		    mValidationLevel = Validation.CRITICAL; // give user lots of information if anything is wrong
-			Log.v(LOG_TAG, "Saving record in go button click; mValues: " + mValues.toString());
-			int numUpdated = saveVisitRecord();
+			// create or update the Visit record in the database, if everything is valid
+			mValidationLevel = Validation.CRITICAL; // save if possible, and announce anything invalid
+			numUpdated = saveVisitRecord();
+			if (numUpdated == 0) {
+				Log.v(LOG_TAG, "Failed to save record in onClick; mValues: " + mValues.toString());
+			} else {
+				Log.v(LOG_TAG, "Saved record in onClick; mValues: " + mValues.toString());
+			}
 			if (numUpdated == 0) {
 				break;
 			}
-			// while testing, do not go to next screen
-//			Log.v(LOG_TAG, "Would have gone to next screen here, if not Testing mode");
 			mButtonCallback.onVisitHeaderGoButtonClicked();
 			break;
 		}
@@ -637,17 +633,14 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		}
 	}
 	
-	private boolean validateRecordValues() {
+	private boolean validateVisitHeader() {
 		// validate all items on the screen the user can see
 		Context c = getActivity();
 		String stringProblem;
 		String errTitle = c.getResources().getString(R.string.vis_hdr_validate_generic_title);
 		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
-		// assure mValues contains all required fields
-		if (!mValues.containsKey("VisitName")) {
-			mValues.put("VisitName", mViewVisitName.getText().toString().trim());
-		}
-		String stringVisitName = mValues.getAsString("VisitName");
+		mValues.clear(); // build up mValues while validating; if returns true all members are good
+		String stringVisitName = mViewVisitName.getText().toString().trim();
 		if (stringVisitName.length() == 0) {
 			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_name_none);
@@ -696,10 +689,10 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			}
 			return false;
 		}
-		if (!mValues.containsKey("VisitDate")) {
-			mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-		}
-		String stringVisitDate = mValues.getAsString("VisitDate");
+		// VisitName is OK, store it
+		mValues.put("VisitName", stringVisitName);
+		
+		String stringVisitDate = mViewVisitDate.getText().toString().trim();
 		if (stringVisitDate.length() == 0) {
 			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_date_none);
@@ -737,6 +730,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			return false;
 		}
 		*/
+		mValues.put("VisitDate", stringVisitDate); // VisitDate is OK, store it
+		
 		if (mNamerId == 0) {
 			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_namer_none);
@@ -753,17 +748,17 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			}
 			return false;
 		}
-		if (!mValues.containsKey("NamerID")) { // valid if we are to this point
-			mValues.put("NamerID", mNamerId);
-		}
-
-		if (!mValues.containsKey("Scribe")) { // optional, no validation
-			mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
+		mValues.put("NamerID", mNamerId); // NamerID is OK, store it
+		
+		// Scribe is optional, put as-is or Null if missing
+		String stringScribe = mViewVisitScribe.getText().toString().trim();
+		if (stringScribe.length() == 0) {
+			mValues.putNull("Scribe");
+		} else {
+			mValues.put("Scribe", stringScribe);
 		}
 		
-		if (mLocIsGood) {
-			mValues.put("RefLocIsGood", 1);
-		} else {
+		if (!mLocIsGood) {
 			if (mValidationLevel > Validation.SILENT) {
 				stringProblem = c.getResources().getString(R.string.vis_hdr_validate_loc_not_ready);
 				if (mValidationLevel == Validation.QUIET) {
@@ -778,10 +773,15 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			}
 			return false;
 		}
+		// location is good, flag it
+		mValues.put("RefLocIsGood", 1);
+
 
 		// validate Azimuth
 		String stringAz = mViewAzimuth.getText().toString().trim();
-		if (stringAz.length() > 0) { // null is valid but empty string is not
+		if (stringAz.length() == 0) {
+			mValues.putNull("Azimuth"); // null is valid
+		} else {
 			Log.v(LOG_TAG, "Azimuth is length " + stringAz.length());
 			int Az = 0;
 			try {
@@ -818,25 +818,30 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 						mViewAzimuth.requestFocus();
 					}
 				}
+				return false;
 			}
-		} else {
-			Log.v(LOG_TAG, "Azimuth is length zero");
 		}
 		
-		if (!mValues.containsKey("VisitNotes")) { // optional, no validation
-			mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+		// Notes is optional, put as-is or Null if missing
+		String stringNotes = mViewVisitNotes.getText().toString().trim();
+		if (stringNotes.length() == 0) {
+			mValues.putNull("VisitNotes");
+		} else {
+			mValues.put("VisitNotes", stringNotes);
 		}
+
 		return true;
 	}
 
 	
 	private int saveVisitRecord() {
-		if (!validateRecordValues()) {
-			return 0;
+		int numUpdated = 0;
+		if (!validateVisitHeader()) {
+			Log.v(LOG_TAG, "Failed validation in saveVisitRecord; mValues: " + mValues.toString());
+			return numUpdated;
 		}
 		ContentResolver rs = getActivity().getContentResolver();
 		SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-		int numUpdated;
 		if (mVisitId == 0) { // new record
 			// fill in fields the user never sees
 			mValues.put("ProjID", sharedPref.getLong(Prefs.DEFAULT_PROJECT_ID, 0));
@@ -961,7 +966,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
+		setNamerSpinnerSelectionFromDefaultNamer();
 	}
 
 	@Override
@@ -970,52 +975,20 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			mValues.clear();
 			switch (v.getId()) {
 			case R.id.txt_visit_name:
-				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
-				break;
 			case R.id.txt_visit_scribe:
-				mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
-				break;
 			case R.id.txt_visit_azimuth:
-				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
-				break;
 			case R.id.txt_visit_notes:
-				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());
+				mValidationLevel = Validation.QUIET; // save if possible, but notify minimally
+				int numUpdated = saveVisitRecord();
+				if (numUpdated == 0) {
+					Log.v(LOG_TAG, "Failed to save record in onFocusChange; mValues: " + mValues.toString());
+				} else {
+					Log.v(LOG_TAG, "Saved record in onFocusChange; mValues: " + mValues.toString());
+				}
 				break;
 			}
-			Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString());
-			mValidationLevel = Validation.QUIET; // save if possible, but notify minimally
-			int numUpdated = saveVisitRecord();
 		}
 	}			
-/*	public void onFocusChange(View v, boolean hasFocus) {
-		switch (v.getId()) {
-		// this part probably never occurs
-		case R.id.sel_spp_namer_spinner:
-			if (hasFocus) {
-				Log.v(LOG_TAG, "onFocusChange of Namer spinner");
-			}
-			break;
-		}
-			case R.id.txt_visit_date:
-				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-				break;
-			case R.id.txt_visit_location:
-				if (mLocId != 0) {
-					mValues.put("RefLocID", mLocId);
-				}
-				break;
-			default: // save everything
-				mValues.put("VisitName", mViewVisitName.getText().toString().trim());
-				mValues.put("VisitDate", mViewVisitDate.getText().toString().trim());
-				mValues.put("Scribe", mViewVisitScribe.getText().toString().trim());
-				if (mLocId != 0) {
-					mValues.put("RefLocID", mLocId);
-				}
-				mValues.put("Azimuth", mViewAzimuth.getText().toString().trim());
-				mValues.put("VisitNotes", mViewVisitNotes.getText().toString().trim());		
-		}
-*/
-
 
 	// create context menus
 	@Override

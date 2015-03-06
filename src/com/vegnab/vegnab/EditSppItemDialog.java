@@ -49,7 +49,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mSourceRecId;
 	private String mStrVegCode = null, mStrDescription = null;
 	private int mHeight, mCover;
-	private boolean isPresent;
+	private boolean isPresent = true; // assume present; explicit false by user means verified absent
 	long mIDConfidence = 1; // default 'no doubt of ID'
 	Cursor mCFCursor;
 	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
@@ -73,9 +73,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		args.putLong("vegItemRecId", vegItemRecId);
 		args.putLong("curVisitRecId", curVisitRecId);
 		args.putInt("curSubplotRecId", curSubplotRecId);
-		// following 2 fields are not in the DB yet
-	//	args.putInt("recSource", recSource);
-	//	args.putLong("sourceRecId", sourceRecId);
+		args.putInt("recSource", recSource);
+		args.putLong("sourceRecId", sourceRecId);
 		args.putBoolean("presenceOnly", presenceOnly);
 		args.putString("sppCode", sppCode);
 		args.putString("sppDescr", sppDescr);
@@ -177,6 +176,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mEditSpeciesHeight.setVisibility(View.GONE);
 			mTxtCoverLabel.setVisibility(View.GONE);
 			mEditSpeciesCover.setVisibility(View.GONE);
+			mCkSpeciesIsPresent.setChecked(isPresent); // set checkmark
 		} else { // hide the Presence/Absence views
 			mCkSpeciesIsPresent.setVisibility(View.GONE);
 			mCkDontVerifyPresence.setVisibility(View.GONE);
@@ -234,7 +234,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mValues.put("VisitID", mCurVisitRecId);
 			mValues.put("SubPlotID", mCurSubplotRecId);
 			mValues.put("SourceID", mRecSource);
-			mValues.put("SourceID", mSourceRecId);
+			mValues.put("SourceRecID", mSourceRecId);
 			mValues.put("OrigCode", mStrVegCode);
 			mValues.put("OrigDescr", mStrDescription);
 			mValues.put("TimeCreated", mTimeFormat.format(new Date()));

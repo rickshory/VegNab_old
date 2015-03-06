@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -45,6 +47,7 @@ public class SelectSpeciesFragment extends ListFragment
 	public interface OnSppResultClickListener {
 		// methods that must be implemented in the container Activity
 		public void onSppMatchListClicked(int sourceId, long recId, String sppCode, String sppDescr);
+		public void onSelSppDone();
 	}
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
@@ -193,8 +196,7 @@ public class SelectSpeciesFragment extends ListFragment
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
         		VegcodeSources.REGIONAL_LIST, id, true, sppCode, sppDescr);
         newVegItemDlg.show(getFragmentManager(), "frg_new_veg_item");
-
-
+        mListClickCallback.onSelSppDone();
 //        mListClickCallback.onSppMatchListClicked(
 //        		VegcodeSources.REGIONAL_LIST, id, sppCode, sppDescr); // for testing, send ID for both parameters
     }

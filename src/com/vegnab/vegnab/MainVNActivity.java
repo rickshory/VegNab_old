@@ -20,6 +20,7 @@ import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -455,9 +456,34 @@ public class MainVNActivity extends ActionBarActivity
 				+ ", sppCode: '" + sppCode +"', sppDescr: '" + sppDescr + "'");
 		// if from Regional List, save in Found List, change Source and substitute that new record's ID
 		// for testing, try to save via dialog
-		
-		
 	}	
+
+	@Override
+	public void onSelSppDone() {
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment vegSubpFragment = fm.findFragmentByTag(Tags.VEG_SUBPLOT);
+		if (vegSubpFragment == null) {
+			Log.v(LOG_TAG, "vegSubpFragment == null");
+		} else {
+			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+			FragmentTransaction transaction = fm.beginTransaction();
+			// replace the fragment in the fragment container with the stored Veg Subplot fragment
+			transaction.replace(R.id.fragment_container, vegSubpFragment);
+			// spp search starts fresh each time, so do not put the present fragment on the backstack
+			transaction.commit();
+		}
+	}	
+	
+/*	
+		@Override
+	public void onEditSppComplete(VisitHeaderFragment visitHeaderFragment) {
+		Log.v(LOG_TAG, "onEditVisitComplete(VisitHeaderFragment visitHeaderFragment)");
+		NewVisitFragment newVisFragment = (NewVisitFragment) 
+				getSupportFragmentManager().findFragmentByTag(Tags.NEW_VISIT);
+		newVisFragment.refreshVisitsList();
+	}
+
+*/	
 	
 	private static final String DATABASE_NAME = "VegNab.db";
 

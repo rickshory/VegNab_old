@@ -462,6 +462,10 @@ public class MainVNActivity extends ActionBarActivity
 			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
 			vegSubpFragment.refreshSppList();
 		}
+		Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+		if (currentFragment.getTag() == Tags.SELECT_SPECIES) {
+			super.onBackPressed();
+		}
 	}
 	
 	@Override

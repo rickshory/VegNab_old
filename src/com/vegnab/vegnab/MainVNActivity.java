@@ -453,6 +453,9 @@ public class MainVNActivity extends ActionBarActivity
 	public void onSppMatchListClicked(int sourceId, long recId, String sppCode, String sppDescr) {
 		Log.v(LOG_TAG, "OnSppResultClickListener, sourceId=" + sourceId + ", recId=" + recId 
 				+ ", sppCode: '" + sppCode +"', sppDescr: '" + sppDescr + "'");
+		// if from Regional List, save in Found List, change Source and substitute that new record's ID
+		// for testing, try to save via dialog
+		
 		
 	}	
 	

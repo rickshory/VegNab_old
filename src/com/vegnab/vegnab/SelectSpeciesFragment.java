@@ -178,16 +178,25 @@ public class SelectSpeciesFragment extends ListFragment
     	// check if selected code is in mVegCodesAlreadyOnSubplot
 //    	getListView().getItemAtPosition(pos).toString(); // not useful, gets cursor wrapper
     	mSppMatchCursor.moveToPosition(pos);
+// available fields: _id, Cd, Descr, MatchTxt
         String sppCode = mSppMatchCursor.getString(
         		mSppMatchCursor.getColumnIndexOrThrow("Cd"));
         String sppDescr = mSppMatchCursor.getString(
         		mSppMatchCursor.getColumnIndexOrThrow("Descr"));
         Log.v(LOG_TAG, "mSppMatchCursor, pos = " + pos + " SppCode: " + sppCode);
-//        mVegCodesAlreadyOnSubplot.add(finishedCursor.getString(
-//        		finishedCursor.getColumnIndexOrThrow("OrigCode")).toString());
-// available fields: _id, Cd, Descr, MatchTxt
-        mListClickCallback.onSppMatchListClicked(
-        		VegcodeSources.REGIONAL_LIST, id, sppCode, sppDescr); // for testing, send ID for both parameters
+        if (mVegCodesAlreadyOnSubplot.contains(sppCode)) {
+        	// warn user and allow to cancel
+        }
+        //static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
+		//int recSource, long sourceRecId, boolean presenceOnly, String sppCode, String sppDescr) {
+        Log.v(LOG_TAG, "about to dispatch 'EditSppItemDialog' dialog to create new record");
+        EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
+        		VegcodeSources.REGIONAL_LIST, id, true, sppCode, sppDescr);
+        newVegItemDlg.show(getFragmentManager(), "frg_new_veg_item");
+
+
+//        mListClickCallback.onSppMatchListClicked(
+//        		VegcodeSources.REGIONAL_LIST, id, sppCode, sppDescr); // for testing, send ID for both parameters
     }
 
 	@Override

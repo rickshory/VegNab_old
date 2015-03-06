@@ -1,6 +1,7 @@
 package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -44,6 +45,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
 	int mCurSubplotRecId = -1;
+	int mRecSource;
+	long mSourceRecId;
 	private String mStrVegCode = null, mStrDescription = null;
 	private int mHeight, mCover;
 	private boolean isPresent;
@@ -60,16 +63,19 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private Spinner mSpinnerSpeciesConfidence;
 	SimpleCursorAdapter mCFSpinnerAdapter;
 	private Boolean mBoolRecHasChanged = false;
-	SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
 	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
-			boolean presenceOnly, String sppCode, String sppDescr) {
+			int recSource, long sourceRecId, boolean presenceOnly, String sppCode, String sppDescr) {
 		EditSppItemDialog f = new EditSppItemDialog();
 		// supply arguments
 		Bundle args = new Bundle();
 		args.putLong("vegItemRecId", vegItemRecId);
 		args.putLong("curVisitRecId", curVisitRecId);
 		args.putInt("curSubplotRecId", curSubplotRecId);
+		// following 2 fields are not in the DB yet
+	//	args.putInt("recSource", recSource);
+	//	args.putLong("sourceRecId", sourceRecId);
 		args.putBoolean("presenceOnly", presenceOnly);
 		args.putString("sppCode", sppCode);
 		args.putString("sppDescr", sppDescr);
@@ -152,6 +158,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mVegItemRecId = args.getLong("mVegItemRecId");
 			mCurVisitRecId = args.getLong("curVisitRecId");
 			mCurSubplotRecId = args.getInt("curSubplotRecId");
+			mRecSource = args.getInt("recSource");
+			mSourceRecId = args.getLong("sourceRecId");
 			mPresenceOnly = args.getBoolean("presenceOnly");
 			mStrVegCode = args.getString("sppCode");
 			mStrDescription = args.getString("sppDescr");
@@ -182,60 +190,39 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mValues.clear();
 			switch (v.getId()) { 
 			case R.id.txt_spp_height:
-				mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
-				break;
 			case R.id.txt_spp_cover:
-				mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
-				break;
 			case R.id.ck_spp_present:
-				mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
-				break;		
-
-			default: // save everything relevant
-				if (mPresenceOnly) {
-					mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
-					mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
-				} else {
-					mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
+				mValidationLevel = Validation.QUIET;
+				if (validateVegItemValues()) {
+					int numUpdated = saveVegItemRecord();
+					Log.v(LOG_TAG, "Saved record in onFocusChange; numUpdated: " + numUpdated);
 				}
-				mValues.put("IdLevelID", mIDConfidence);
 			}
-		Log.v(LOG_TAG, "Saving record in onFocusChange; mValues: " + mValues.toString().trim());
-		int numUpdated = saveVegItemRecord();
 		}		
 	}
 	
 
 	@Override
 	public void onCancel (DialogInterface dialog) {
-		// update the project record in the database, if everything valid		
+		// update the project record in the database, if everything valid	
+		mValidationLevel = Validation.CRITICAL;
+		if (validateVegItemValues()) {
+			int numUpdated = saveVegItemRecord();
+			Log.v(LOG_TAG, "Saved record in onCancel; numUpdated: " + numUpdated);
+		}
+	}
+	
+	private int saveVegItemRecord() {
+		Context c = getActivity();
 		mValues.clear();
 		if (mPresenceOnly) {
-			mValues.put("Height", mEditSpeciesHeight.getText().toString().trim());
-			mValues.put("Cover", mEditSpeciesCover.getText().toString().trim());
+			mValues.put("Height", mHeight);
+			mValues.put("Cover", mCover);
 		} else {
 			mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
 		}
-		Log.v(LOG_TAG, "Saving record in onCancel; mValues: " + mValues.toString());
-		int numUpdated = saveVegItemRecord();
-	}
-	
-	private int saveVegItemRecord () {
-		Context c = getActivity();
-		// test field for validity
-		String projCodeString = mValues.getAsString("ProjCode");
-		if (projCodeString.length() == 0) {
-			Toast.makeText(this.getActivity(),
-					c.getResources().getString(R.string.edit_proj_msg_no_proj),
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
-		if (!(projCodeString.length() >= 2)) {
-			Toast.makeText(this.getActivity(),
-					c.getResources().getString(R.string.err_need_2_chars),
-					Toast.LENGTH_LONG).show();
-			return 0;
-		}
+		mValues.put("IdLevelID", mIDConfidence);
+
 
 		ContentResolver rs = c.getContentResolver();
 		if (mVegItemRecId == -1) {
@@ -243,6 +230,17 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			return 0;
 		}
 		if (mVegItemRecId == 0) { // new record
+			// provide the other fields the new record needs
+			mValues.put("VisitID", mCurVisitRecId);
+			mValues.put("SubPlotID", mCurSubplotRecId);
+			mValues.put("SourceID", mRecSource);
+			mValues.put("SourceID", mSourceRecId);
+			mValues.put("OrigCode", mStrVegCode);
+			mValues.put("OrigDescr", mStrDescription);
+			mValues.put("TimeCreated", mTimeFormat.format(new Date()));
+			mValues.put("TimeLastChanged", mTimeFormat.format(new Date()));
+
+			
 			mUri = rs.insert(mVegItemsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveVegItemRecord; returned URI: " + mUri.toString());
 			long newRecId = Long.parseLong(mUri.getLastPathSegment());
@@ -251,17 +249,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				return 0;
 			}
 			mVegItemRecId = newRecId;
-			getLoaderManager().restartLoader(Loaders.EXISTING_PROJCODES, null, this);
 			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
 			Log.v(LOG_TAG, "new record in saveVegItemRecord; URI re-parsed: " + mUri.toString());
-			// set default project; redundant with fn in NewVisitFragment; low priority fix
-			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-			SharedPreferences.Editor prefEditor = sharedPref.edit();
-			prefEditor.putLong(Prefs.DEFAULT_PROJECT_ID, mVegItemRecId);
-			prefEditor.commit();
 			return 1;
 		} else {
 			mUri = ContentUris.withAppendedId(mVegItemsUri, mVegItemRecId);
+			mValues.put("TimeLastChanged", mTimeFormat.format(new Date()));
 			int numUpdated = rs.update(mUri, mValues, null, null);
 			Log.v(LOG_TAG, "Saved record in saveVegItemRecord; numUpdated: " + numUpdated);
 			return numUpdated;

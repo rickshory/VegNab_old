@@ -32,8 +32,10 @@ public class VegSubplotFragment extends ListFragment
 		implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = VegSubplotFragment.class.getSimpleName();
+	final static String ARG_VISIT_ID = "visitID";
 	final static String ARG_SUBPLOT = "subplot";
 	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
+	long mVisitId = 0;
 	int mSubplotTypeId = -1;
 	boolean mPresenceOnly, mHasNested;
 	OnButtonListener mButtonCallback; // declare the interface
@@ -92,6 +94,7 @@ public class VegSubplotFragment extends ListFragment
 		// restore the previous subplot remembered by onSaveInstanceState()
 		// This is mostly needed in fixed-pane layouts
 		if (savedInstanceState != null) {
+			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID);
 			mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID);
 		}
 		// inflate the layout for this fragment
@@ -108,8 +111,6 @@ public class VegSubplotFragment extends ListFragment
 				new String[] {"SppLine"},
 				new int[] {android.R.id.text1}, 0);
 		setListAdapter(mVegSubplotSppAdapter);
-		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
-
 		return rootView;
 	}
 	
@@ -121,14 +122,19 @@ public class VegSubplotFragment extends ListFragment
 		// to the fragment
 		Bundle args = getArguments();
 		if (args != null) {
-			// set up subplot based on arguments passed in
-			updateSubplotViews(args.getInt(ARG_SUBPLOT_TYPE_ID));
-		} else if (mSubplotTypeId != -1) {
-			// set up subplot based on saved instance state defined in onCreateView
-			updateSubplotViews(mSubplotTypeId);
-		} else {
-			updateSubplotViews(-1); // figure out what to do for default state 
+			mVisitId = args.getLong(ARG_VISIT_ID);
+			mSubplotTypeId = args.getInt(ARG_SUBPLOT_TYPE_ID);
+
+//			// set up subplot based on arguments passed in
+//			updateSubplotViews(args.getInt(ARG_SUBPLOT_TYPE_ID));
+//		} else if (mSubplotTypeId != -1) {
+//			// set up subplot based on saved instance state defined in onCreateView
+//			updateSubplotViews(mSubplotTypeId);
+//		} else {
+//			updateSubplotViews(-1); // figure out what to do for default state 
 		}
+		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
+		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
 	}
 
 	@Override
@@ -141,7 +147,8 @@ public class VegSubplotFragment extends ListFragment
 			throw new ClassCastException (activity.toString() + " must implement OnButtonListener");
 		}
 	}
-	
+
+	/*
 	public void updateSubplotViews(int subplotNum) {
 
 		mSubplotTypeId = subplotNum;
@@ -154,11 +161,13 @@ public class VegSubplotFragment extends ListFragment
 		}
 		// at this point, after inflate, the frag's objects are all child objects of the activity
 	}
+	*/
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the fragment
+		outState.putLong(ARG_VISIT_ID, mVisitId);
 		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 	}
 
@@ -206,9 +215,15 @@ public class VegSubplotFragment extends ListFragment
 					+ "VegItems.Height, VegItems.Cover, VegItems.Presence, "
 					+ "IdLevels.IdLevelDescr, IdLevels.IdLevelLetterCode "
 					+ "FROM VegItems LEFT JOIN IdLevels ON VegItems.IdLevelID = IdLevels._id "
-					+ "WHERE (((VegItems.VisitID)=1) AND ((VegItems.SubPlotID)=1)) "
+//	+ "WHERE (((VegItems.VisitID)=?) AND ((VegItems.SubPlotID)=?)) "
+					+ "WHERE (((VegItems.VisitID)=" + mVisitId + ") AND ((VegItems.SubPlotID)=" + mSubplotTypeId + ")) "
 					+ "ORDER BY VegItems.TimeLastChanged DESC;";
+			String[] sppSelectionArgs = { "" + mVisitId, "" + mSubplotTypeId };
+			Log.v(LOG_TAG, "onCreateLoader CURRENT_SUBPLOT_SPP, mVisitId=" + mVisitId 
+					+ ", mSubplotTypeId=" + mSubplotTypeId);
+			Log.v(LOG_TAG, "onCreateLoader CURRENT_SUBPLOT_SPP, sppSelectionArgs: " + sppSelectionArgs.toString());
 			cl = new CursorLoader(getActivity(), baseUri,
+//					null, select, sppSelectionArgs, null);
 					null, select, null, null);
 			break;		
 		}
@@ -224,7 +239,7 @@ public class VegSubplotFragment extends ListFragment
 			// fill in any header info
 			// SubplotDescription, PresenceOnly, HasNested
 			int rowCt = c.getCount();
-			Log.v(LOG_TAG, "current subplot type, number of rows returned: " + rowCt);
+			Log.v(LOG_TAG, "onLoadFinished CURRENT_SUBPLOT, number of rows returned: " + rowCt);
 			if (c.moveToNext()) {
 				((TextView) getActivity().findViewById(R.id.subplot_header_name))
 					.setText(c.getString(c.getColumnIndexOrThrow("SubplotDescription")));
@@ -232,6 +247,7 @@ public class VegSubplotFragment extends ListFragment
 			
 			break;
 		case Loaders.CURRENT_SUBPLOT_SPP:
+			Log.v(LOG_TAG, "onLoadFinished CURRENT_SUBPLOT_SPP, number of rows returned: " + c.getCount());
 			mVegSubplotSppAdapter.swapCursor(c);
 			break;
 		}

@@ -323,6 +323,7 @@ public class MainVNActivity extends ActionBarActivity
 		FragmentManager fm = getSupportFragmentManager();
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
 		Bundle args = new Bundle();
+		args.putLong(VegSubplotFragment.ARG_VISIT_ID, mVisitId);
 		args.putInt(VegSubplotFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 		vegSbpFrag.setArguments(args);
 		FragmentTransaction transaction = fm.beginTransaction();

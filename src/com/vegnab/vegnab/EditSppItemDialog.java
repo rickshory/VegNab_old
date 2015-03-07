@@ -172,8 +172,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		mTxtSpeciesItemLabel.setText(mStrVegCode + ": " + mStrDescription);
 		// fire off these database requests
 		getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
-//		getLoaderManager().initLoader(Loaders.VEG_ITEM_SUBPLOT, null, this);
-//		getLoaderManager().initLoader(Loaders.VEG_ITEM_VISIT, null, this);
 		getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);
 		
 		// adjust UI depending on whether we want Height/Cover information, or only Presence/Absence
@@ -451,22 +449,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			cl = new CursorLoader(getActivity(), allCFLevelsUri,
 					null, select, null, null);
 			break;
-
-//		case Loaders.VEG_ITEM_SUBPLOT:
-//			Uri oneSbPlotUri = ContentUris.withAppendedId(
-//					Uri.withAppendedPath(
-//					ContentProvider_VegNab.CONTENT_URI, "subplots"), mCurSubplotRecId);
-//			cl = new CursorLoader(getActivity(), oneSbPlotUri,
-//					null, select, null, null);
-//			break;
-
-//		case Loaders.VEG_ITEM_VISIT:
-//			Uri oneVisitUri = ContentUris.withAppendedId(
-//					Uri.withAppendedPath(
-//					ContentProvider_VegNab.CONTENT_URI, "visits"), mCurVisitRecId);
-//			cl = new CursorLoader(getActivity(), oneVisitUri,
-//					null, select, null, null);
-//			break;		
 		}
 		return cl;
 	}
@@ -505,20 +487,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 				mSpinnerSpeciesConfidence.setEnabled(false);
 			}
 			break;
-			
-//		case Loaders.VEG_ITEM_SUBPLOT:
-//			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
-//			if (c.moveToFirst()) {
-//				// what do we need from the Subplot, other than Presence?
-//			}
-//			break;
-//		case Loaders.VEG_ITEM_VISIT:
-//			Log.v(LOG_TAG, "onLoadFinished, records: " + c.getCount());
-//			if (c.moveToFirst()) {
-//				// what do we need from the Visit?
-//			}
-//			break;
-		}	
+		}
 	}
 
 	@Override
@@ -530,12 +499,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		case Loaders.VEG_ITEM_CONFIDENCE_LEVELS:
 			mCFSpinnerAdapter.swapCursor(null);
 			break;
-//		case Loaders.VEG_ITEM_SUBPLOT:
-//			// nothing to do here since no adapter
-//			break;
-//		case Loaders.VEG_ITEM_VISIT:
-//			// nothing to do here since no adapter
-//			break;
 		}
 	}
 

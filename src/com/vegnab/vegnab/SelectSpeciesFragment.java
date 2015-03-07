@@ -31,6 +31,7 @@ public class SelectSpeciesFragment extends ListFragment
 	private static final String LOG_TAG = SelectSpeciesFragment.class.getSimpleName();
 	final static String ARG_VISIT_ID = "visId";
 	final static String ARG_SUBPLOT_TYPE_ID = "sbpId";
+	final static String ARG_PRESENCE_ONLY_SUBPLOT = "presenceOnly";
 	final static String ARG_SEARCH_TEXT = "search_text";
 	final static String ARG_SQL_TEXT = "sql_text";
 	final static String ARG_USE_REGIONAL_LIST = "regional_list";
@@ -38,6 +39,7 @@ public class SelectSpeciesFragment extends ListFragment
 	
 	long mCurVisitRecId = 0;
 	int mCurSubplotTypeRecId = 0;
+	boolean mPresenceOnly = true; 
 	HashSet<String> mVegCodesAlreadyOnSubplot = new HashSet<String>();
 	Cursor mSppMatchCursor;
 	
@@ -149,6 +151,15 @@ public class SelectSpeciesFragment extends ListFragment
 		if (args != null) {
 			mCurVisitRecId = args.getLong(ARG_VISIT_ID);
 			mCurSubplotTypeRecId = args.getInt(ARG_SUBPLOT_TYPE_ID);
+			mPresenceOnly = args.getBoolean(ARG_PRESENCE_ONLY_SUBPLOT);
+			/*	final static String ARG_VISIT_ID = "visId";
+	final static String ARG_SUBPLOT_TYPE_ID = "sbpId";
+	final static String ARG_PRESENCE_ONLY_SUBPLOT = "presenceOnly";
+	final static String ARG_SEARCH_TEXT = "search_text";
+	final static String ARG_SQL_TEXT = "sql_text";
+	final static String ARG_USE_REGIONAL_LIST = "regional_list";
+	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
+*/
 		}
 		// get following, to warn about duplicates
 		getLoaderManager().initLoader(Loaders.CODES_ALREADY_ON_SUBPLOT, null, this);
@@ -194,7 +205,7 @@ public class SelectSpeciesFragment extends ListFragment
 		//int recSource, long sourceRecId, boolean presenceOnly, String sppCode, String sppDescr) {
         Log.v(LOG_TAG, "about to dispatch 'EditSppItemDialog' dialog to create new record");
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
-        		VegcodeSources.REGIONAL_LIST, id, true, sppCode, sppDescr);
+        		VegcodeSources.REGIONAL_LIST, id, mPresenceOnly, sppCode, sppDescr);
         newVegItemDlg.show(getFragmentManager(), "frg_new_veg_item");
 //        mListClickCallback.onSelSppDone();
 //        mListClickCallback.onSppMatchListClicked(

@@ -230,8 +230,9 @@ public class MainVNActivity extends ActionBarActivity
 	}
 	
 	@Override
-	public void onNewItemButtonClicked() {
-		showSppSelectScreen();
+	public void onNewItemButtonClicked(boolean presenceOnly) {
+		// presenceOnly is not used by Species Select, but passed along to Edit Species
+		showSppSelectScreen(presenceOnly);
 	}
 
 	public void onNextSubplotButtonClicked(int subpNum) {
@@ -359,7 +360,7 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.commit();
 	}
 	
-	public void showSppSelectScreen() {
+	public void showSppSelectScreen(boolean presenceOnlySubplot) {
 		SelectSpeciesFragment selSppFrag = new SelectSpeciesFragment();
 		Bundle args = new Bundle();
 		// args available to send to the fragment
@@ -376,6 +377,8 @@ public class MainVNActivity extends ActionBarActivity
 		// provide Visit and Subplot IDs, so selector can check for duplicate codes
 		args.putLong(SelectSpeciesFragment.ARG_VISIT_ID, mVisitId);
 		args.putInt(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
+		// following not used by Spp Select, but passed along to Edit Spp
+		args.putBoolean(SelectSpeciesFragment.ARG_PRESENCE_ONLY_SUBPLOT, presenceOnlySubplot); 
 
 		selSppFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

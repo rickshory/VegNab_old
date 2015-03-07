@@ -207,24 +207,18 @@ public class VegSubplotFragment extends ListFragment
 		case Loaders.CURRENT_SUBPLOT_SPP:
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			// get any species entries for this subplot of this visit
-			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-			// fetch the Visit Id from Preferences
-			long visId = sharedPref.getLong(Prefs.CURRENT_VISIT_ID, 0);
 			select = "SELECT VegItems._id, VegItems.OrigCode, VegItems.OrigDescr, "
 					+ "VegItems.OrigCode || ': ' || VegItems.OrigDescr AS SppLine , "
 					+ "VegItems.Height, VegItems.Cover, VegItems.Presence, "
 					+ "IdLevels.IdLevelDescr, IdLevels.IdLevelLetterCode "
 					+ "FROM VegItems LEFT JOIN IdLevels ON VegItems.IdLevelID = IdLevels._id "
-//	+ "WHERE (((VegItems.VisitID)=?) AND ((VegItems.SubPlotID)=?)) "
-					+ "WHERE (((VegItems.VisitID)=" + mVisitId + ") AND ((VegItems.SubPlotID)=" + mSubplotTypeId + ")) "
+					+ "WHERE (((VegItems.VisitID)=?) AND ((VegItems.SubPlotID)=?)) "
 					+ "ORDER BY VegItems.TimeLastChanged DESC;";
-			String[] sppSelectionArgs = { "" + mVisitId, "" + mSubplotTypeId };
 			Log.v(LOG_TAG, "onCreateLoader CURRENT_SUBPLOT_SPP, mVisitId=" + mVisitId 
 					+ ", mSubplotTypeId=" + mSubplotTypeId);
-			Log.v(LOG_TAG, "onCreateLoader CURRENT_SUBPLOT_SPP, sppSelectionArgs: " + sppSelectionArgs.toString());
+			String[] sppSelectionArgs = { "" + mVisitId, "" + mSubplotTypeId };
 			cl = new CursorLoader(getActivity(), baseUri,
-//					null, select, sppSelectionArgs, null);
-					null, select, null, null);
+					null, select, sppSelectionArgs, null);
 			break;		
 		}
 		return cl;

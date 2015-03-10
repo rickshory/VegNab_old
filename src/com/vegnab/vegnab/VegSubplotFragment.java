@@ -107,9 +107,9 @@ public class VegSubplotFragment extends ListFragment
 		
 		// use query to return 'SppLine', concatenated from code and description; more reading room
 		mVegSubplotSppAdapter = new SimpleCursorAdapter(getActivity(),
-				android.R.layout.simple_list_item_1, null,
+				R.layout.list_item_veg_presence, null,
 				new String[] {"SppLine"},
-				new int[] {android.R.id.text1}, 0);
+				new int[] {R.id.spp_text}, 0);
 		setListAdapter(mVegSubplotSppAdapter);
 		return rootView;
 	}

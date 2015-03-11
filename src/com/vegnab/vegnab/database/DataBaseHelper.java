@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -141,11 +144,13 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		// each row has the data fields, separated by Tab characters
 		
 		String listName = "", line;
-		String[] lineParts;
+		List<String> fieldValues;
 		long ct = 0;
 		// clear existing codes from the table
         SQLiteDatabase db = this.getWritableDatabase();
-//        db.execSQL("DELETE FROM RegionalSpeciesList;");
+        // for testing, always clear the list
+        // for production, make this a user option
+        db.execSQL("DELETE FROM RegionalSpeciesList;");
 //        String sSql = "INSERT OR REPLACE INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
         String sSql = "INSERT OR IGNORE INTO RegionalSpeciesList ( Code, Genus, Species, SubsppVar, Vernacular ) VALUES ( ?, ?, ?, ?, ? )";
         
@@ -159,26 +164,38 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 			
 			while ((line = br.readLine()) != null) {
+//				Log.v(LOG_TAG, line.toString());
 				if (ct == 0) { // the internal description of the list
 					listName = line.toString();
 				} else if  (ct == 1) { // field name headings, presently don't do anything with
 				} else { // text for code, genus, species, etc. separated by tabs
 					// readLine gets the lines one at a time, strips the delimiters
-					lineParts = line.split("\t");
-					Log.v(LOG_TAG, "number of lineParts: " + lineParts.length);
-					stmt.bindString(1, lineParts[0]);
-					Log.v(LOG_TAG, "lineParts[0]: " + lineParts[0].toString());
-					stmt.bindString(2, lineParts[1]);
-					Log.v(LOG_TAG, "lineParts[1]: " + lineParts[1].toString());
-					stmt.bindString(3, lineParts[2]);
-					Log.v(LOG_TAG, "lineParts[2]: " + lineParts[2].toString());
-					stmt.bindString(4, lineParts[3]);
-					Log.v(LOG_TAG, "lineParts[3]: " + lineParts[3].toString());
-					stmt.bindString(5, lineParts[4]);
-					Log.v(LOG_TAG, "lineParts[4]: " + lineParts[4].toString());
+					fieldValues = new ArrayList<String>(Arrays.asList(line.split("\t")));
+					// List<String> list = new ArrayList<String>(Arrays.asList(string.split(" , ")));
+					Log.v(LOG_TAG, "number of fieldValues: " + fieldValues.size());
+					while (fieldValues.size() < 5) {
+						fieldValues.add("");
+						Log.v(LOG_TAG, "Empty string added, number of fieldValues now: " + fieldValues.size());
+					}
+					Log.v(LOG_TAG, "fieldValues.get(0): " + fieldValues.get(0).toString());
+					stmt.bindString(1, fieldValues.get(0));
+					Log.v(LOG_TAG, "fieldValues.get(1): " + fieldValues.get(1).toString());
+					stmt.bindString(2, fieldValues.get(1));
+					Log.v(LOG_TAG, "fieldValues.get(2): " + fieldValues.get(2).toString());
+					stmt.bindString(3, fieldValues.get(2));
+					Log.v(LOG_TAG, "fieldValues.get(3): " + fieldValues.get(3).toString());
+					if (fieldValues.get(3) == null) {
+						Log.v(LOG_TAG, "fieldValues.get(3) is null");
+					}
+					if (fieldValues.get(3).length() == 0) {
+						Log.v(LOG_TAG, "fieldValues.get(3) length is zero");
+					}
+					stmt.bindString(4, fieldValues.get(3));
+					Log.v(LOG_TAG, "fieldValues.get(4): " + fieldValues.get(4).toString());
+					stmt.bindString(5, fieldValues.get(4));
+
 					stmt.execute();
 					stmt.clearBindings();
-//					Log.v(LOG_TAG, line.toString());
 				}
 				ct++;
 //				if ((ct % 100) == 0) {

@@ -53,7 +53,7 @@ public class SelectSpeciesFragment extends ListFragment
 	}
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
-	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || Vernacular AS MatchTxt " 
 			+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
 	// mUseRegionalList false = search only species previously found, plus Placeholders
 	// mUseRegionalList true = search the entire big regional list of species
@@ -70,11 +70,15 @@ public class SelectSpeciesFragment extends ListFragment
 			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "', length: " + s.length());
 			mStSearch = s.toString();
 			if (s.length() == 0) {
-				mStSQL = "SELECT _id, Code || ': ' || SppDescr AS MatchTxt " 
+				mStSQL = "SELECT _id, Code || ': ' || Vernacular AS MatchTxt " 
 						+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
 			} else {
-				mStSQL = "SELECT _id, Code AS Cd, SppDescr AS Descr, Code || ': ' || SppDescr AS MatchTxt " 
-					+ "FROM RegionalSpeciesList " 
+				mStSQL = "SELECT _id, Code, Genus, Species, SubsppVar, Vernacular, " 
+					+ "Code || ': ' || Genus || " 
+					+ "(CASE WHEN LENGTH(Species)>0 THEN (' ' || Species) ELSE '' END) || " 
+					+ "(CASE WHEN LENGTH(SubsppVar)>0 THEN (' ' || SubsppVar) ELSE '' END) || " 
+					+ "(CASE WHEN LENGTH(Vernacular)>0 THEN (', ' || Vernacular) ELSE '' END) " 
+					+ "AS MatchTxt FROM RegionalSpeciesList " 
 					+ "WHERE Code LIKE '" + mStSearch + "%' " 
 					+ "ORDER BY Code;";
 			}

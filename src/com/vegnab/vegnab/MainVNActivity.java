@@ -528,12 +528,17 @@ public class MainVNActivity extends ActionBarActivity
 	public final boolean exportDB() {
 		File from = getApplicationContext().getDatabasePath(DATABASE_NAME);
 		File to = this.getBackupDatabaseFile();
+		ConfigurableMsgDialog flexErrDlg = new ConfigurableMsgDialog();
 		try {
 			copyFile(from, to);
 			Log.v(LOG_TAG, "DB backed up to: " + to.getPath());
+			flexErrDlg = ConfigurableMsgDialog.newInstance("DB backed up to: ", to.getPath().toString());
+			flexErrDlg.show(getSupportFragmentManager(), "frg_db_copy_ok");
 			return true;
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "Error backuping up database: " + e.getMessage(), e);
+			flexErrDlg = ConfigurableMsgDialog.newInstance("Error backuping up database: ", e.getMessage().toString());
+			flexErrDlg.show(getSupportFragmentManager(), "frg_db_copy_ok");
 		}
 		return false;
 	}

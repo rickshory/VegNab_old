@@ -26,5 +26,13 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 		}
 		TextView vegText = (TextView) v.findViewById(R.id.veg_descr_text);
 		vegText.setText(c.getString(c.getColumnIndexOrThrow("SppLine")));
+
+		TextView vegHt = (TextView) v.findViewById(R.id.veg_height_text);
+		vegHt.setText(c.getString(c.getColumnIndexOrThrow("Height")));
+
+		TextView vegCov = (TextView) v.findViewById(R.id.veg_cover_text);
+		vegCov.setText(c.getString(c.getColumnIndexOrThrow("Cover")));
+		
+		// 
 	}
 }

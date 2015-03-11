@@ -335,6 +335,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 						flexErrDlg = ConfigurableMsgDialog.newInstance(errTitle, stringProblem);
 						flexErrDlg.show(getFragmentManager(), "frg_verify_height_zero");
 						Cv = 0;
+						Log.v(LOG_TAG, "Height is zero, Cover set to zero");
 					}
 				} catch(NumberFormatException e) {
 					Log.v(LOG_TAG, "Height is not a valid number");

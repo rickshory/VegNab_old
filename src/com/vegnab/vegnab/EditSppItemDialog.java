@@ -223,10 +223,10 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		Context c = getActivity();
 		mValues.clear();
 		if (mPresenceOnly) {
+			mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
+		} else {
 			mValues.put("Height", mHeight);
 			mValues.put("Cover", mCover);
-		} else {
-			mValues.put("Presence", (mCkSpeciesIsPresent.isChecked() ? 1 : 0));
 		}
 		mValues.put("IdLevelID", mIDConfidence);
 

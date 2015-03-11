@@ -14,6 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
         android:background="?attr/listChoiceBackgroundIndicator"
@@ -24,11 +25,23 @@
         android:id="@+id/veg_height_text"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:gravity="top"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:background="?attr/listChoiceBackgroundIndicator"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
          />
     <TextView
         android:id="@+id/veg_cover_text"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:gravity="bottom"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:background="?attr/listChoiceBackgroundIndicator"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
          />
     <TextView
         android:id="@+id/veg_presence_text"

@@ -172,26 +172,26 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 					// readLine gets the lines one at a time, strips the delimiters
 					fieldValues = new ArrayList<String>(Arrays.asList(line.split("\t")));
 					// List<String> list = new ArrayList<String>(Arrays.asList(string.split(" , ")));
-					Log.v(LOG_TAG, "number of fieldValues: " + fieldValues.size());
+//					Log.v(LOG_TAG, "number of fieldValues: " + fieldValues.size());
 					while (fieldValues.size() < 5) {
 						fieldValues.add("");
-						Log.v(LOG_TAG, "Empty string added, number of fieldValues now: " + fieldValues.size());
+//						Log.v(LOG_TAG, "Empty string added, number of fieldValues now: " + fieldValues.size());
 					}
-					Log.v(LOG_TAG, "fieldValues.get(0): " + fieldValues.get(0).toString());
+//					Log.v(LOG_TAG, "fieldValues.get(0): " + fieldValues.get(0).toString());
 					stmt.bindString(1, fieldValues.get(0));
-					Log.v(LOG_TAG, "fieldValues.get(1): " + fieldValues.get(1).toString());
+//					Log.v(LOG_TAG, "fieldValues.get(1): " + fieldValues.get(1).toString());
 					stmt.bindString(2, fieldValues.get(1));
-					Log.v(LOG_TAG, "fieldValues.get(2): " + fieldValues.get(2).toString());
+//					Log.v(LOG_TAG, "fieldValues.get(2): " + fieldValues.get(2).toString());
 					stmt.bindString(3, fieldValues.get(2));
-					Log.v(LOG_TAG, "fieldValues.get(3): " + fieldValues.get(3).toString());
-					if (fieldValues.get(3) == null) {
-						Log.v(LOG_TAG, "fieldValues.get(3) is null");
-					}
-					if (fieldValues.get(3).length() == 0) {
-						Log.v(LOG_TAG, "fieldValues.get(3) length is zero");
-					}
+//					Log.v(LOG_TAG, "fieldValues.get(3): " + fieldValues.get(3).toString());
+//					if (fieldValues.get(3) == null) {
+//						Log.v(LOG_TAG, "fieldValues.get(3) is null");
+//					}
+//					if (fieldValues.get(3).length() == 0) {
+//						Log.v(LOG_TAG, "fieldValues.get(3) length is zero");
+//					}
 					stmt.bindString(4, fieldValues.get(3));
-					Log.v(LOG_TAG, "fieldValues.get(4): " + fieldValues.get(4).toString());
+//					Log.v(LOG_TAG, "fieldValues.get(4): " + fieldValues.get(4).toString());
 					stmt.bindString(5, fieldValues.get(4));
 
 					stmt.execute();

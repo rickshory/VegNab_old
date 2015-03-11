@@ -131,19 +131,24 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public String fillSpeciesTable(ParcelFileDescriptor fileDescr) {
 		// expects the file to be text
-		// first line is geographical area of the species list, such as a state like "Oregon"
+		// First line is geographical area of the species list, such as a state like "Oregon"
 		// appropriate for forming a message like, "species list for Oregon"
 		// this first line is what is returned
-		// after the first line,
-		// each row has short 'code' and long 'description' separated by Tab character
-		//
+		// Second line is a list of the fields, separated by Tab characters:
+		// Code	Genus	Species	SubsppVar	Vernacular
+		// these exactly match the field names in the database table
+		// After the first 2 lines,
+		// each row has the data fields, separated by Tab characters
+		
 		String listName = "", line;
 		String[] lineParts;
 		long ct = 0;
 		// clear existing codes from the table
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM RegionalSpeciesList;");
-        String sSql = "INSERT OR REPLACE INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
+//        db.execSQL("DELETE FROM RegionalSpeciesList;");
+//        String sSql = "INSERT OR REPLACE INTO RegionalSpeciesList ( Code, SppDescr ) VALUES ( ?, ? )";
+        String sSql = "INSERT OR IGNORE INTO RegionalSpeciesList ( Code, Genus, Species, SubsppVar, Vernacular ) VALUES ( ?, ?, ?, ?, ? )";
+        
 //        db.beginTransaction();
         db.beginTransactionNonExclusive();
         SQLiteStatement stmt = db.compileStatement(sSql);
@@ -156,11 +161,21 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 			while ((line = br.readLine()) != null) {
 				if (ct == 0) { // the internal description of the list
 					listName = line.toString();
-				} else { // a species code and description separated by a tab
+				} else if  (ct == 1) { // field name headings, presently don't do anything with
+				} else { // text for code, genus, species, etc. separated by tabs
 					// readLine gets the lines one at a time, strips the delimiters
 					lineParts = line.split("\t");
+					Log.v(LOG_TAG, "number of lineParts: " + lineParts.length);
 					stmt.bindString(1, lineParts[0]);
+					Log.v(LOG_TAG, "lineParts[0]: " + lineParts[0].toString());
 					stmt.bindString(2, lineParts[1]);
+					Log.v(LOG_TAG, "lineParts[1]: " + lineParts[1].toString());
+					stmt.bindString(3, lineParts[2]);
+					Log.v(LOG_TAG, "lineParts[2]: " + lineParts[2].toString());
+					stmt.bindString(4, lineParts[3]);
+					Log.v(LOG_TAG, "lineParts[3]: " + lineParts[3].toString());
+					stmt.bindString(5, lineParts[4]);
+					Log.v(LOG_TAG, "lineParts[4]: " + lineParts[4].toString());
 					stmt.execute();
 					stmt.clearBindings();
 //					Log.v(LOG_TAG, line.toString());

@@ -95,7 +95,7 @@ public class TestDownloadFragment extends Fragment
 			//Restrict the types of networks over which this download may proceed.
 			request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
 			//Set whether this download may proceed over a roaming connection.
-			request.setAllowedOverRoaming(false);
+			request.setAllowedOverRoaming(true);
 			//Set the title of this download, to be displayed in notifications (if enabled).
 			request.setTitle("Species Download");
 			//Set a description of this download, to be displayed in notifications (if enabled)
@@ -106,7 +106,7 @@ public class TestDownloadFragment extends Fragment
 			//Enqueue a new download and same the referenceId
 			downloadReference = downloadManager.enqueue(request);
 			
-			mTxtVwShowSpp.setText("Getting data from Server, Please WAIT...");
+			mTxtVwShowSpp.setText("Getting species list from Server, Please wait...");
 				
 			mBtnCheckStatus.setEnabled(true);
 			mBtnCancelDownload.setEnabled(true);

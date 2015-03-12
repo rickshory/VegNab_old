@@ -34,7 +34,7 @@ public class SelectSpeciesFragment extends ListFragment
 	final static String ARG_PRESENCE_ONLY_SUBPLOT = "presenceOnly";
 	final static String ARG_SEARCH_TEXT = "search_text";
 	final static String ARG_SQL_TEXT = "sql_text";
-	final static String ARG_USE_REGIONAL_LIST = "regional_list";
+	final static String ARG_SEARCH_FULL_LIST = "regional_list";
 	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
 	
 	long mCurVisitRecId = 0;
@@ -53,13 +53,14 @@ public class SelectSpeciesFragment extends ListFragment
 	}
 	OnSppResultClickListener mListClickCallback;
 	long mRowCt;
-	String mStSearch = "", mStSQL = "SELECT _id, Code || ': ' || Vernacular AS MatchTxt " 
-			+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
-	// mUseRegionalList false = search only species previously found, plus Placeholders
-	// mUseRegionalList true = search the entire big regional list of species
+	String mStSearch = "", mStSQL = "SELECT _id, Code, Genus, Species, SubsppVar, Vernacular, " 
+			+ "Code || ': ' || Genus AS MatchTxt FROM RegionalSpeciesList " 
+			+ "WHERE Code LIKE '';";  // dummy query that gets no records
+	// mSearchFullList false = search only species previously found, plus Placeholders
+	// mSearchFullList true = search the entire big regional list of species
 	// mUseFullText false = search only the codes (species plus Placeholders), matching the start of the code
 	// mUseFullText true = search all positions of the concatenated code + description
-	Boolean mUseRegionalList = false, mUseFullText = false; // defaults
+	Boolean mSearchFullList = false, mUseFullText = false; // defaults
 	// add option checkboxes or radio buttons to set the above; or do from menu items
 	EditText mViewSearchChars;
 	TextWatcher sppCodeTextWatcher = new TextWatcher() {
@@ -70,17 +71,18 @@ public class SelectSpeciesFragment extends ListFragment
 			Log.v(LOG_TAG, "afterTextChanged, s: '" + s.toString() + "', length: " + s.length());
 			mStSearch = s.toString();
 			if (s.length() == 0) {
-				mStSQL = "SELECT _id, Code || ': ' || Vernacular AS MatchTxt " 
-						+ "FROM SpeciesFound WHERE Code LIKE '' ;"; // dummy query that gets no records
-			} else {
 				mStSQL = "SELECT _id, Code, Genus, Species, SubsppVar, Vernacular, " 
-					+ "Code || ': ' || Genus || " 
-					+ "(CASE WHEN LENGTH(Species)>0 THEN (' ' || Species) ELSE '' END) || " 
-					+ "(CASE WHEN LENGTH(SubsppVar)>0 THEN (' ' || SubsppVar) ELSE '' END) || " 
-					+ "(CASE WHEN LENGTH(Vernacular)>0 THEN (', ' || Vernacular) ELSE '' END) " 
-					+ "AS MatchTxt FROM RegionalSpeciesList " 
-					+ "WHERE Code LIKE '" + mStSearch + "%' " 
-					+ "ORDER BY Code;";
+						+ "Code || ': ' || Genus AS MatchTxt FROM RegionalSpeciesList " 
+						+ "WHERE Code LIKE '';";  // dummy query that gets no records
+			} else {
+				mStSQL = "SELECT _id, Code, Genus, Species, SubsppVar, Vernacular, "
+						+ "Code || ': ' || Genus || "
+						+ "(CASE WHEN LENGTH(Species)>0 THEN (' ' || Species) ELSE '' END) || "
+						+ "(CASE WHEN LENGTH(SubsppVar)>0 THEN (' ' || SubsppVar) ELSE '' END) || "
+						+ "(CASE WHEN LENGTH(Vernacular)>0 THEN (', ' || Vernacular) ELSE '' END) "
+						+ "AS MatchTxt FROM RegionalSpeciesList "
+						+ "WHERE Code LIKE '" + mStSearch + "%' "
+						+ "ORDER BY Code;";
 			}
 			getLoaderManager().restartLoader(Loaders.SPP_MATCHES, null, SelectSpeciesFragment.this);
 		}
@@ -124,7 +126,7 @@ public class SelectSpeciesFragment extends ListFragment
 			// restore search text and any search options
 			mStSearch = savedInstanceState.getString(ARG_SEARCH_TEXT);
 			mStSQL = savedInstanceState.getString(ARG_SQL_TEXT);
-			mUseRegionalList = savedInstanceState.getBoolean(ARG_USE_REGIONAL_LIST);
+			mSearchFullList = savedInstanceState.getBoolean(ARG_SEARCH_FULL_LIST);
 			mUseFullText = savedInstanceState.getBoolean(ARG_USE_FULLTEXT_SEARCH);
 		} /*SELECT _id, Code || ': ' || SppDescr AS MatchTxt FROM SpeciesFound WHERE Code LIKE '' ;*/
 		// inflate the layout for this fragment
@@ -161,7 +163,7 @@ public class SelectSpeciesFragment extends ListFragment
 	final static String ARG_PRESENCE_ONLY_SUBPLOT = "presenceOnly";
 	final static String ARG_SEARCH_TEXT = "search_text";
 	final static String ARG_SQL_TEXT = "sql_text";
-	final static String ARG_USE_REGIONAL_LIST = "regional_list";
+	final static String ARG_SEARCH_FULL_LIST = "regional_list";
 	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
 */
 		}
@@ -186,7 +188,7 @@ public class SelectSpeciesFragment extends ListFragment
 		// save the current search text and any options
 		outState.putString(ARG_SEARCH_TEXT, mStSearch);
 		outState.putString(ARG_SQL_TEXT, mStSQL);
-		outState.putBoolean(ARG_USE_REGIONAL_LIST, mUseRegionalList);
+		outState.putBoolean(ARG_SEARCH_FULL_LIST, mSearchFullList);
 		outState.putBoolean(ARG_USE_FULLTEXT_SEARCH, mUseFullText);
 	}
 	
@@ -196,11 +198,11 @@ public class SelectSpeciesFragment extends ListFragment
     	// check if selected code is in mVegCodesAlreadyOnSubplot
 //    	getListView().getItemAtPosition(pos).toString(); // not useful, gets cursor wrapper
     	mSppMatchCursor.moveToPosition(pos);
-// available fields: _id, Cd, Descr, MatchTxt
+// available fields: _id, Code, Genus, Species, SubsppVar, Vernacular, MatchTxt
         String sppCode = mSppMatchCursor.getString(
-        		mSppMatchCursor.getColumnIndexOrThrow("Cd"));
+        		mSppMatchCursor.getColumnIndexOrThrow("Code"));
         String sppDescr = mSppMatchCursor.getString(
-        		mSppMatchCursor.getColumnIndexOrThrow("Descr"));
+        		mSppMatchCursor.getColumnIndexOrThrow("MatchTxt"));
         Log.v(LOG_TAG, "mSppMatchCursor, pos = " + pos + " SppCode: " + sppCode);
         if (mVegCodesAlreadyOnSubplot.contains(sppCode)) {
         	// warn user and allow to cancel

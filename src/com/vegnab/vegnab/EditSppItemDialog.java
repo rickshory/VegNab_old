@@ -169,7 +169,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mStrVegCode = args.getString("sppCode");
 			mStrDescription = args.getString("sppDescr");
 		}
-		mTxtSpeciesItemLabel.setText(mStrVegCode + ": " + mStrDescription);
+		mTxtSpeciesItemLabel.setText(mStrDescription);
 		// fire off these database requests
 		getLoaderManager().initLoader(Loaders.VEG_ITEM_CONFIDENCE_LEVELS, null, this);
 		getLoaderManager().initLoader(Loaders.VEGITEM_TO_EDIT, null, this);

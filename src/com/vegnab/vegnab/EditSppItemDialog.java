@@ -53,7 +53,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	int mCurSubplotRecId = -1;
 	int mRecSource;
 	long mSourceRecId;
-	private String mStrVegCode = null, mStrDescription = null;
+	private String mStrVegCode = null, mStrDescription = null, 
+			mStrGenus = null, mStrSpecies = null, mStrSubsppVar = null, mStrVernacular = null;
 	private int mHeight, mCover;
 	private boolean isPresent = true; // assume present; explicit false by user means verified absent
 	long mIDConfidence = 1; // default 'no doubt of ID'
@@ -72,7 +73,8 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
 	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
-			int recSource, long sourceRecId, boolean presenceOnly, String sppCode, String sppDescr) {
+			int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr, 
+			String vegGenus, String vegSpecies, String vegSubsppVar, String vegVernacular) {
 		EditSppItemDialog f = new EditSppItemDialog();
 		// supply arguments
 		Bundle args = new Bundle();
@@ -82,8 +84,13 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		args.putInt("recSource", recSource);
 		args.putLong("sourceRecId", sourceRecId);
 		args.putBoolean("presenceOnly", presenceOnly);
-		args.putString("sppCode", sppCode);
-		args.putString("sppDescr", sppDescr);
+		args.putString("vegCode", vegCode);
+		args.putString("vegDescr", vegDescr);
+		args.putString("vegGenus", vegGenus);
+		args.putString("vegSpecies", vegSpecies);
+		args.putString("vegSubsppVar", vegSubsppVar);
+		args.putString("vegVernacular", vegVernacular);
+		
 		f.setArguments(args);
 		return f;
 	}
@@ -166,8 +173,13 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mRecSource = args.getInt("recSource");
 			mSourceRecId = args.getLong("sourceRecId");
 			mPresenceOnly = args.getBoolean("presenceOnly");
-			mStrVegCode = args.getString("sppCode");
-			mStrDescription = args.getString("sppDescr");
+			mStrVegCode = args.getString("vegCode");
+			mStrDescription = args.getString("vegDescr");
+			mStrGenus = args.getString("vegGenus");
+			mStrSpecies = args.getString("vegSpecies");
+			mStrSubsppVar = args.getString("vegSubsppVar");
+			mStrVernacular = args.getString("vegVernacular");
+			
 		}
 		mTxtSpeciesItemLabel.setText(mStrDescription);
 		// fire off these database requests

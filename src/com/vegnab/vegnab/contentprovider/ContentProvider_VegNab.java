@@ -42,8 +42,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 	private static final int PLACEHOLDER_ID = 160;
 	private static final int IDLEVELS = 170;
 	private static final int IDLEVEL_ID = 180;
-	private static final int SPECIESFOUND = 190;
-	private static final int SPECIESFOUND_ID = 200;
+//	private static final int SPECIESFOUND = 190;
+//	private static final int SPECIESFOUND_ID = 200;
 	
 	private static final String AUTHORITY = "com.vegnab.provider"; // must match in app Manifest
 	private static final String BASE_PATH = "data";
@@ -75,8 +75,8 @@ public class ContentProvider_VegNab extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/placeholders/#", PLACEHOLDER_ID);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/idlevels", IDLEVELS);
 		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/idlevels/#", IDLEVEL_ID);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/speciesfound", SPECIESFOUND);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/speciesfound/#", SPECIESFOUND_ID);
+//		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/speciesfound", SPECIESFOUND);
+//		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/speciesfound/#", SPECIESFOUND_ID);
 	}
 
 	HashSet<String> mFields_Projects = new HashSet<String>();
@@ -196,14 +196,14 @@ public class ContentProvider_VegNab extends ContentProvider {
 				queryBuilder.setTables("IdLevels");
 				Log.v(LOG_TAG, "IDLEVELS setTables");
 				break;
-			case SPECIESFOUND_ID:
-				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
-				Log.v(LOG_TAG, "SPECIESFOUND_ID appendWhere");
-				// note, no break, so drops through
-			case SPECIESFOUND:
-				queryBuilder.setTables("SpeciesFound");
-				Log.v(LOG_TAG, "SPECIESFOUND setTables");
-				break;
+//			case SPECIESFOUND_ID:
+//				queryBuilder.appendWhere("_id=" + uri.getLastPathSegment());
+//				Log.v(LOG_TAG, "SPECIESFOUND_ID appendWhere");
+//				// note, no break, so drops through
+//			case SPECIESFOUND:
+//				queryBuilder.setTables("SpeciesFound");
+//				Log.v(LOG_TAG, "SPECIESFOUND setTables");
+//				break;
 			default:
 				throw new IllegalArgumentException("Unknown URI: " + uri);		
 			}
@@ -262,9 +262,9 @@ public class ContentProvider_VegNab extends ContentProvider {
 		case IDLEVELS:
 			id = sqlDB.insert("IdLevels", null, values);
 			uriToReturn = Uri.parse(BASE_PATH + "/idlevels/" + id);
-		case SPECIESFOUND:
-			id = sqlDB.insert("SpeciesFound", null, values);
-			uriToReturn = Uri.parse(BASE_PATH + "/speciesfound/" + id);
+//		case SPECIESFOUND:
+//			id = sqlDB.insert("SpeciesFound", null, values);
+//			uriToReturn = Uri.parse(BASE_PATH + "/speciesfound/" + id);
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -385,17 +385,17 @@ public class ContentProvider_VegNab extends ContentProvider {
 				rowsDeleted = sqlDB.delete("IdLevels", "_id=" + id, selectionArgs);
 			}
 			break;
-		case SPECIESFOUND:
-			rowsDeleted = sqlDB.delete("SpeciesFound", selection, selectionArgs);
-			break;
-		case SPECIESFOUND_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = sqlDB.delete("SpeciesFound", "_id=" + id, null);
-			} else {
-				rowsDeleted = sqlDB.delete("SpeciesFound", "_id=" + id, selectionArgs);
-			}
-			break;
+//		case SPECIESFOUND:
+//			rowsDeleted = sqlDB.delete("SpeciesFound", selection, selectionArgs);
+//			break;
+//		case SPECIESFOUND_ID:
+//			id = uri.getLastPathSegment();
+//			if (TextUtils.isEmpty(selection)) {
+//				rowsDeleted = sqlDB.delete("SpeciesFound", "_id=" + id, null);
+//			} else {
+//				rowsDeleted = sqlDB.delete("SpeciesFound", "_id=" + id, selectionArgs);
+//			}
+//			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -524,17 +524,17 @@ public class ContentProvider_VegNab extends ContentProvider {
 				rowsUpdated = sqlDB.updateWithOnConflict("IdLevels", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
 			}
 			break;
-		case SPECIESFOUND:
-			rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
-			break;
-		case SPECIESFOUND_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
-			} else {
-				rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
-			}
-			break;
+//		case SPECIESFOUND:
+//			rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, selection, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+//			break;
+//		case SPECIESFOUND_ID:
+//			id = uri.getLastPathSegment();
+//			if (TextUtils.isEmpty(selection)) {
+//				rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, "_id=" + id, null, SQLiteDatabase.CONFLICT_IGNORE);
+//			} else {
+//				rowsUpdated = sqlDB.updateWithOnConflict("SpeciesFound", values, "_id=" + id, selectionArgs, SQLiteDatabase.CONFLICT_IGNORE);
+//			}
+//			break;
 			
 		default:
 			throw new IllegalArgumentException("Unknown URI:" + uri);

@@ -14,7 +14,6 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 	public VegItemAdapter(Context ctx, int layout, Cursor c, int flags) {
 		super(ctx, layout, c, flags);
 		mInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
 	}
 
 	@Override
@@ -28,10 +27,10 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 		vegText.setText(c.getString(c.getColumnIndexOrThrow("SppLine")));
 
 		TextView vegHt = (TextView) v.findViewById(R.id.veg_height_text);
-		vegHt.setText(c.getString(c.getColumnIndexOrThrow("Height")));
+		vegHt.setText(c.getString(c.getColumnIndexOrThrow("Height")) + "cm");
 
 		TextView vegCov = (TextView) v.findViewById(R.id.veg_cover_text);
-		vegCov.setText(c.getString(c.getColumnIndexOrThrow("Cover")));
+		vegCov.setText(c.getString(c.getColumnIndexOrThrow("Cover")) + "%");
 		
 		// 
 	}

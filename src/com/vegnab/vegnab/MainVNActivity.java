@@ -26,6 +26,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
 import android.annotation.TargetApi;
@@ -73,6 +74,8 @@ public class MainVNActivity extends ActionBarActivity
 	final static String ARG_SUBPLOTS_LIST = "subplotsList";
 	final static String ARG_PLOT_SPECS = "plotSpecs";
 	final static String ARG_VISIT_ID = "visitId";
+	
+	ViewPager viewPager = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -643,4 +646,6 @@ public class MainVNActivity extends ActionBarActivity
 			break;
 		}
 	}
+	
+	
 }

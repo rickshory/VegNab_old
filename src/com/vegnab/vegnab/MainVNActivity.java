@@ -22,6 +22,7 @@ import com.vegnab.vegnab.database.VNContract.Tags;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -105,6 +106,7 @@ public class MainVNActivity extends ActionBarActivity
 		prefEditor.commit();
 		
 		setContentView(R.layout.activity_vn_main);
+		viewPager = (ViewPager) findViewById(R.id.data_entry_pager);
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout
 		 * e.g. if (findViewById(R.id.fragment_container) != null)
@@ -646,6 +648,25 @@ public class MainVNActivity extends ActionBarActivity
 			break;
 		}
 	}
-	
+}
+
+class dataPagerAdapter extends FragmentPagerAdapter {
+
+	public dataPagerAdapter(FragmentManager fm) {
+		super(fm);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Fragment getItem(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

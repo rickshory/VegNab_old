@@ -107,6 +107,9 @@ public class MainVNActivity extends ActionBarActivity
 		
 		setContentView(R.layout.activity_vn_main);
 		viewPager = (ViewPager) findViewById(R.id.data_entry_pager);
+		FragmentManager fm = getSupportFragmentManager();
+		viewPager.setAdapter(new dataPagerAdapter(fm));
+		
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout
 		 * e.g. if (findViewById(R.id.fragment_container) != null)
@@ -668,5 +671,7 @@ class dataPagerAdapter extends FragmentPagerAdapter {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	
 	
 }

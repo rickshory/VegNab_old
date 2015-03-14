@@ -106,9 +106,9 @@ public class MainVNActivity extends ActionBarActivity
 		prefEditor.commit();
 		
 		setContentView(R.layout.activity_vn_main);
-		viewPager = (ViewPager) findViewById(R.id.data_entry_pager);
-		FragmentManager fm = getSupportFragmentManager();
-		viewPager.setAdapter(new dataPagerAdapter(fm));
+//		viewPager = (ViewPager) findViewById(R.id.data_entry_pager);
+//		FragmentManager fm = getSupportFragmentManager();
+//		viewPager.setAdapter(new dataPagerAdapter(fm));
 		
 		/* put conditions to test below
 		 * such as whether the container even exists in this layout

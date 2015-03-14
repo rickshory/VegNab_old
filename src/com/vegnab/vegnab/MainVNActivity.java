@@ -672,6 +672,9 @@ class dataPagerAdapter extends FragmentPagerAdapter {
 		return 0;
 	}
 	
-	
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return "subplot " + (position + 1);
+	}
 	
 }

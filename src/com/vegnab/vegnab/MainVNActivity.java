@@ -23,6 +23,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -653,7 +654,7 @@ public class MainVNActivity extends ActionBarActivity
 	}
 }
 
-class dataPagerAdapter extends FragmentPagerAdapter {
+class dataPagerAdapter extends FragmentStatePagerAdapter {
 
 	public dataPagerAdapter(FragmentManager fm) {
 		super(fm);

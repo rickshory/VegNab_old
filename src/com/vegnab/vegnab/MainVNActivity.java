@@ -329,6 +329,19 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void goToSubplotScreen() {
+		// testing:
+		// swap DataEntryContainerFragment in place of existing fragment
+		FragmentManager fm = getSupportFragmentManager();
+		DataEntryContainerFragment dataEntryFrag = new DataEntryContainerFragment();
+		FragmentTransaction transaction = fm.beginTransaction();
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, dataEntryFrag, "data_screens"); // make Tags.DATA_SCREENS_CONTAINER
+		transaction.addToBackStack(null);
+		transaction.commit();
+		
+		
+/*
 		// swap Subplot fragment in place of existing fragment
 		FragmentManager fm = getSupportFragmentManager();
 		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
@@ -352,6 +365,7 @@ public class MainVNActivity extends ActionBarActivity
 		} catch (Exception e) {
 			Log.v(LOG_TAG, "stack pop exception: " + e.getMessage());
 		}
+		*/
 	}
 	
 	public void showWebViewScreen(String screenTag) {

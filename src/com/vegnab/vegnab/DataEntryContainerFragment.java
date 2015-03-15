@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,10 +53,11 @@ public class DataEntryContainerFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
+		Log.v(LOG_TAG, "entered 'onCreateView'");
 		View view = inflater.inflate(R.layout.fragment_data_entry_container, root);
 // assign UI elements		
 		dataScreenPager = (ViewPager) view.findViewById(R.id.data_entry_pager);
-		FragmentManager fm = getChildFragmentManager();
+		FragmentManager fm = getActivity().getSupportFragmentManager();
 		dataScreenPager.setAdapter(new dataPagerAdapter(fm));
 		
 //		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
@@ -70,6 +72,7 @@ public class DataEntryContainerFragment extends Fragment {
 //		} else { // existing record being edited
 //			getDialog().setTitle(R.string.edit_namer_title_edit);
 //		}
+		Log.v(LOG_TAG, "about to return from 'onCreateView'");
 		return view;
 	}
 
@@ -104,6 +107,7 @@ public class DataEntryContainerFragment extends Fragment {
 }
 
 class dataPagerAdapter extends FragmentStatePagerAdapter {
+	private static final String LOG_TAG = dataPagerAdapter.class.getSimpleName();
 
 	public dataPagerAdapter(FragmentManager fm) {
 		super(fm);
@@ -112,6 +116,7 @@ class dataPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public Fragment getItem(int dataScreenIndex) {
+		Log.v(LOG_TAG, "called dataPagerAdapter 'getItem'");
 		Fragment dataEntryFrag = TestPagerFragment.newInstance(0, 0, "test");
 /* may need some switching later		
 		switch (dataScreenIndex) {
@@ -133,6 +138,7 @@ class dataPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public int getCount() {
+		Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
 		return 3; // for testing
 	}
 	

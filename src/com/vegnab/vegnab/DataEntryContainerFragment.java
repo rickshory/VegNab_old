@@ -58,6 +58,11 @@ public class DataEntryContainerFragment extends Fragment {
 // assign UI elements		
 		dataScreenPager = (ViewPager) view.findViewById(R.id.data_entry_pager);
 		FragmentManager fm = getActivity().getSupportFragmentManager();
+		if (fm == null) {
+			Log.v(LOG_TAG, "FragmentManager is null");
+		} else {
+			Log.v(LOG_TAG, "FragmentManager: " + fm.toString());
+		}
 		dataScreenPager.setAdapter(new dataPagerAdapter(fm));
 		
 //		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);

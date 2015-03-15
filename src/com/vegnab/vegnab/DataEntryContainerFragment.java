@@ -103,48 +103,47 @@ public class DataEntryContainerFragment extends Fragment {
 //		} else { // existing record being edited
 //			mTxtNamerMsg.setText(mTitle);
 //		}
-	}	
-}
-
-class dataPagerAdapter extends FragmentStatePagerAdapter {
-	private static final String LOG_TAG = dataPagerAdapter.class.getSimpleName();
-
-	public dataPagerAdapter(FragmentManager fm) {
-		super(fm);
-		// TODO Auto-generated constructor stub
 	}
+	
+	class dataPagerAdapter extends FragmentStatePagerAdapter {
+//		private static final String LOG_TAG = dataPagerAdapter.class.getSimpleName();
 
-	@Override
-	public Fragment getItem(int dataScreenIndex) {
-		Log.v(LOG_TAG, "called dataPagerAdapter 'getItem'");
-		Fragment dataEntryFrag = TestPagerFragment.newInstance(0, 0, "test");
-/* may need some switching later		
-		switch (dataScreenIndex) {
-		case 0:
-			dataEntryFrag = new TestPagerFragment();
-			break;		
-		
-		case 1:
-			dataEntryFrag = new TestPagerFragment();
-			break;
-			
-		case 2:
-			dataEntryFrag = new TestPagerFragment();
-			break;		
+		public dataPagerAdapter(FragmentManager fm) {
+			super(fm);
+			// TODO Auto-generated constructor stub
 		}
-		*/
-		return dataEntryFrag;
-	}
 
-	@Override
-	public int getCount() {
-		Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
-		return 3; // for testing
+		@Override
+		public Fragment getItem(int dataScreenIndex) {
+			Log.v(LOG_TAG, "called dataPagerAdapter 'getItem'");
+			Fragment dataEntryFrag = TestPagerFragment.newInstance(0, 0, "test");
+	/* may need some switching later		
+			switch (dataScreenIndex) {
+			case 0:
+				dataEntryFrag = new TestPagerFragment();
+				break;		
+			
+			case 1:
+				dataEntryFrag = new TestPagerFragment();
+				break;
+				
+			case 2:
+				dataEntryFrag = new TestPagerFragment();
+				break;		
+			}
+			*/
+			return dataEntryFrag;
+		}
+
+		@Override
+		public int getCount() {
+			Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
+			return 3; // for testing
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return "subplot " + (position + 1);
+		}
 	}
-	
-	@Override
-	public CharSequence getPageTitle(int position) {
-		return "subplot " + (position + 1);
-	}
-	
 }

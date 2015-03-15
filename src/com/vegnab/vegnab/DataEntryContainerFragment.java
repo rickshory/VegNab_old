@@ -57,6 +57,12 @@ public class DataEntryContainerFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_data_entry_container, root);
 // assign UI elements		
 		dataScreenPager = (ViewPager) view.findViewById(R.id.data_entry_pager);
+		if (dataScreenPager == null) {
+			Log.v(LOG_TAG, "dataScreenPager is null");
+		} else {
+			Log.v(LOG_TAG, "dataScreenPager: " + dataScreenPager.toString());
+		}
+		
 		FragmentManager fm = getActivity().getSupportFragmentManager();
 		if (fm == null) {
 			Log.v(LOG_TAG, "FragmentManager is null");

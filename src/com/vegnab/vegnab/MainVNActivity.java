@@ -653,7 +653,7 @@ public class MainVNActivity extends ActionBarActivity
 		}
 	}
 }
-
+/*
 class dataPagerAdapter extends FragmentStatePagerAdapter {
 
 	public dataPagerAdapter(FragmentManager fm) {
@@ -678,4 +678,4 @@ class dataPagerAdapter extends FragmentStatePagerAdapter {
 		return "subplot " + (position + 1);
 	}
 	
-}
+} */

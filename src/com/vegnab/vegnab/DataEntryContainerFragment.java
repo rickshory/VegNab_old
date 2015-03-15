@@ -1,12 +1,20 @@
 package com.vegnab.vegnab;
 
+import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
+import com.vegnab.vegnab.database.VNContract.Loaders;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class TestPagerFragment extends Fragment {
+public class DataEntryContainerFragment extends Fragment {
+	private static final String LOG_TAG = DataEntryContainerFragment.class.getSimpleName();
 
 	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
@@ -14,10 +22,13 @@ public class TestPagerFragment extends Fragment {
 //	HashMap<Long, String> mExistingNamers = new HashMap<Long, String>();
 //	private EditText mEditNamerName;
 //	private TextView mTxtNamerMsg;
-	String mTitle;	
+	String mTitle;
 	
-	static TestPagerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
-		TestPagerFragment f = new TestPagerFragment();
+	ViewPager dataScreenPager = null;
+	
+	
+	static DataEntryContainerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
+		DataEntryContainerFragment f = new DataEntryContainerFragment();
 		// supply arguments
 		Bundle args = new Bundle();
 		args.putLong("visitId", visitId);
@@ -41,8 +52,12 @@ public class TestPagerFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_test_pager, root);
-// assign any UI elements		
+		View view = inflater.inflate(R.layout.fragment_data_entry_container, root);
+// assign UI elements		
+		dataScreenPager = (ViewPager) view.findViewById(R.id.data_entry_pager);
+		FragmentManager fm = getChildFragmentManager();
+		dataScreenPager.setAdapter(new dataPagerAdapter(fm));
+		
 //		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
 //		mEditNamerName = (EditText) view.findViewById(R.id.txt_edit_namer);
 //		// attempt to automatically show soft keyboard
@@ -86,4 +101,44 @@ public class TestPagerFragment extends Fragment {
 //			mTxtNamerMsg.setText(mTitle);
 //		}
 	}	
+}
+
+class dataPagerAdapter extends FragmentStatePagerAdapter {
+
+	public dataPagerAdapter(FragmentManager fm) {
+		super(fm);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public Fragment getItem(int dataScreenIndex) {
+		Fragment dataEntryFrag = TestPagerFragment.newInstance(0, 0, "test");
+/* may need some switching later		
+		switch (dataScreenIndex) {
+		case 0:
+			dataEntryFrag = new TestPagerFragment();
+			break;		
+		
+		case 1:
+			dataEntryFrag = new TestPagerFragment();
+			break;
+			
+		case 2:
+			dataEntryFrag = new TestPagerFragment();
+			break;		
+		}
+		*/
+		return dataEntryFrag;
+	}
+
+	@Override
+	public int getCount() {
+		return 3; // for testing
+	}
+	
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return "subplot " + (position + 1);
+	}
+	
 }

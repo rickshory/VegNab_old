@@ -51,6 +51,40 @@ public class DataEntryContainerFragment extends Fragment {
 //        }
 	}
 	
+/*
+ @Override
+public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+    mView = inflater.inflate(R.layout.team_card_master, container, false);
+    mViewPager = (ViewPager)mView.findViewById(R.id.team_card_master_view_pager);
+
+    final Button button = (Button)mView.findViewById(R.id.load_viewpager_button);
+    button.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mViewPager.setAdapter(mAdapter);
+            button.setVisibility(View.GONE);
+        }
+    });
+
+    mAdapter = new ViewPagerAdapter(getFragmentManager());
+    new setAdapterTask().execute();
+
+    return mView;
+}
+
+private class setAdapterTask extends AsyncTask<Void,Void,Void>{
+      protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+                   mViewPager.setAdapter(mAdapter);
+        }
+}
+*/
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "entered 'onCreateView'");

@@ -83,9 +83,9 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle sa
 		
 		FragmentManager fm = getChildFragmentManager();
 		mAdapter = new dataPagerAdapter(fm);
-		Log.v(LOG_TAG, "about to do 'mDataScreenPager.setAdapter(mAdapter)'");
-		mDataScreenPager.setAdapter(mAdapter);
-		Log.v(LOG_TAG, "did 'mDataScreenPager.setAdapter(mAdapter)'");
+		Log.v(LOG_TAG, "about to do 'setAdapterTask().execute()'");
+		new setAdapterTask().execute();
+		Log.v(LOG_TAG, "did 'setAdapterTask().execute()'");
 //		mTxtNamerMsg = (TextView) mRootview.findViewById(R.id.lbl_namer);
 //		mEditNamerName = (EditText) mRootview.findViewById(R.id.txt_edit_namer);
 //		// attempt to automatically show soft keyboard

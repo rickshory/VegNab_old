@@ -55,31 +55,13 @@ public class DataEntryContainerFragment extends Fragment {
 //        }
 	}
 	
-/*
- @Override
-public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    mRootview = inflater.inflate(R.layout.team_card_master, container, false);
-    mViewPager = (ViewPager)mRootview.findViewById(R.id.team_card_master_view_pager);
-    final Button button = (Button)mRootview.findViewById(R.id.show_pager_button);
-    button.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mViewPager.setAdapter(mAdapter);
-            button.setVisibility(View.GONE);
-        }
-    });
-    mAdapter = new ViewPagerAdapter(getFragmentManager());
-    new setAdapterTask().execute();
-    return mRootview;
-}
-
-*/	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "entered 'onCreateView'");
 		mRootview = inflater.inflate(R.layout.fragment_data_entry_container, container, false);
 // assign UI elements		
 		mDataScreenPager = (ViewPager) mRootview.findViewById(R.id.data_entry_pager);
+		mDataScreenPager.setOffscreenPageLimit(1);
 		
 		FragmentManager fm = getChildFragmentManager();
 		mAdapter = new dataPagerAdapter(fm);
@@ -154,7 +136,7 @@ class dataPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public Fragment getItem(int dataScreenIndex) {
-		Log.v(LOG_TAG, "called dataPagerAdapter 'getItem'");
+		Log.v(LOG_TAG, "called dataPagerAdapter 'getItem' with value " + dataScreenIndex);
 		Fragment dataEntryFrag = TestPagerFragment.newInstance(0, 0, "test");
 /* may need some switching later		
 		switch (dataScreenIndex) {

@@ -3,6 +3,7 @@ package com.vegnab.vegnab;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,8 +25,11 @@ public class DataEntryContainerFragment extends Fragment {
 //	private EditText mEditNamerName;
 //	private TextView mTxtNamerMsg;
 	String mTitle;
-	
-	ViewPager dataScreenPager = null;
+	int mLayoutRes;
+	View mRootview;
+	ViewPager mDataScreenPager = null;
+	FragmentStatePagerAdapter mAdapter = null;
+    
 	
 	
 	static DataEntryContainerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
@@ -54,11 +58,9 @@ public class DataEntryContainerFragment extends Fragment {
 /*
  @Override
 public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-    mView = inflater.inflate(R.layout.team_card_master, container, false);
-    mViewPager = (ViewPager)mView.findViewById(R.id.team_card_master_view_pager);
-
-    final Button button = (Button)mView.findViewById(R.id.load_viewpager_button);
+    mRootview = inflater.inflate(R.layout.team_card_master, container, false);
+    mViewPager = (ViewPager)mRootview.findViewById(R.id.team_card_master_view_pager);
+    final Button button = (Button)mRootview.findViewById(R.id.show_pager_button);
     button.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -66,50 +68,29 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle sa
             button.setVisibility(View.GONE);
         }
     });
-
     mAdapter = new ViewPagerAdapter(getFragmentManager());
     new setAdapterTask().execute();
-
-    return mView;
+    return mRootview;
 }
 
-private class setAdapterTask extends AsyncTask<Void,Void,Void>{
-      protected Void doInBackground(Void... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-                   mViewPager.setAdapter(mAdapter);
-        }
-}
-*/
-	
+*/	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "entered 'onCreateView'");
-		View view = inflater.inflate(R.layout.fragment_data_entry_container, root);
+		mRootview = inflater.inflate(R.layout.fragment_data_entry_container, container, false);
 // assign UI elements		
-		dataScreenPager = (ViewPager) view.findViewById(R.id.data_entry_pager);
-		if (dataScreenPager == null) {
-			Log.v(LOG_TAG, "dataScreenPager is null");
-		} else {
-			Log.v(LOG_TAG, "dataScreenPager: " + dataScreenPager.toString());
-		}
+		mDataScreenPager = (ViewPager) mRootview.findViewById(R.id.data_entry_pager);
 		
 		FragmentManager fm = getChildFragmentManager();
-		if (fm == null) {
-			Log.v(LOG_TAG, "FragmentManager is null");
-		} else {
-			Log.v(LOG_TAG, "FragmentManager: " + fm.toString());
-		}
-		dataScreenPager.setAdapter(new dataPagerAdapter(fm));
-		
-//		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
-//		mEditNamerName = (EditText) view.findViewById(R.id.txt_edit_namer);
+		mAdapter = new dataPagerAdapter(fm);
+		Log.v(LOG_TAG, "about to do 'mDataScreenPager.setAdapter(mAdapter)'");
+		mDataScreenPager.setAdapter(mAdapter);
+		Log.v(LOG_TAG, "did 'mDataScreenPager.setAdapter(mAdapter)'");
+//		mTxtNamerMsg = (TextView) mRootview.findViewById(R.id.lbl_namer);
+//		mEditNamerName = (EditText) mRootview.findViewById(R.id.txt_edit_namer);
 //		// attempt to automatically show soft keyboard
 //		mEditNamerName.requestFocus();
-//		getDialog().getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//		getDialog().getWindow().setSoftInputMode(android.mRootview.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 //		mEditNamerName.setOnFocusChangeListener(this);
 
 //		if (mNamerRecId == 0) { // new record
@@ -118,7 +99,18 @@ private class setAdapterTask extends AsyncTask<Void,Void,Void>{
 //			getDialog().setTitle(R.string.edit_namer_title_edit);
 //		}
 		Log.v(LOG_TAG, "about to return from 'onCreateView'");
-		return view;
+		return mRootview;
+	}
+	
+	private class setAdapterTask extends AsyncTask<Void,Void,Void>{
+	      protected Void doInBackground(Void... params) {
+	            return null;
+	        }
+
+	        @Override
+	        protected void onPostExecute(Void result) {
+	        	mDataScreenPager.setAdapter(mAdapter);
+	        }
 	}
 
 //	@Override	

@@ -140,6 +140,7 @@ public class DataEntryContainerFragment extends Fragment {
 	
 		@Override
         public Fragment getItem(int position) {
+			Log.v(LOG_TAG, "called dataPagerAdapter 'getItem' " + position);
             Bundle args = new Bundle();
             args.putInt(TestPagerFragment.POSITION_KEY, position);
             return TestPagerFragment.newInstance(args);

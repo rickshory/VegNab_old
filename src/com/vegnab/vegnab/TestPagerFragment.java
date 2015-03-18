@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TestPagerFragment extends Fragment implements OnClickListener {
+	private static final String LOG_TAG = TestPagerFragment.class.getSimpleName();
 	
 	public static final String POSITION_KEY = "FragmentPositionKey";
 	private int position;

@@ -32,11 +32,11 @@ public class VegSubplotFragment extends ListFragment
 		implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = VegSubplotFragment.class.getSimpleName();
-	final static String ARG_VISIT_ID = "visitID";
-	final static String ARG_SUBPLOT = "subplot";
-	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
-	long mVisitId = 0;
-	int mSubplotTypeId = -1;
+	public static final String ARG_SUBPLOT = "subplot"; // position in the subplot order
+	public static final String ARG_VISIT_ID = "visitID"; // used to query veg items
+	public static final String ARG_SUBPLOT_TYPE_ID = "subplotTypeId"; // used to query veg items
+	private long mVisitId = 0;
+	private int mSubplotTypeId = -1, mSubplot = 0;
 	boolean mPresenceOnly, mHasNested;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface

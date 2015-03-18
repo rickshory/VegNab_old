@@ -5,10 +5,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class TestPagerFragment extends Fragment {
+public class TestPagerFragment extends Fragment implements OnClickListener {
+	
+	public static final String POSITION_KEY = "FragmentPositionKey";
+	private int position;
 
-	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
+//	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
 //	ContentValues mValues = new ContentValues();
 //	HashMap<Long, String> mExistingNamers = new HashMap<Long, String>();
@@ -16,20 +22,21 @@ public class TestPagerFragment extends Fragment {
 //	private TextView mTxtNamerMsg;
 	String mTitle;	
 	
-	static TestPagerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
+//	static TestPagerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
+	static TestPagerFragment newInstance(Bundle args) {
 		TestPagerFragment f = new TestPagerFragment();
 		// supply arguments
-		Bundle args = new Bundle();
-		args.putLong("visitId", visitId);
-		args.putLong("subplotTypeId", subplotTypeId);
-		args.putString("stTitle", stTitle);
+//		Bundle args = new Bundle();
+//		args.putLong("visitId", visitId);
+//		args.putLong("subplotTypeId", subplotTypeId);
+//		args.putString("stTitle", stTitle);
 		f.setArguments(args);
 		return f;
 	}
 	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+//	@Override
+//	public void onCreate(Bundle savedInstanceState) {
+//		super.onCreate(savedInstanceState);
 // set up any interfaces
 //		try {
 //        	mEditNamerListener = (EditNamerDialogListener) getActivity();
@@ -37,11 +44,16 @@ public class TestPagerFragment extends Fragment {
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException("Main Activity must implement EditNamerDialogListener interface");
 //        }
-	}
+//	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_test_pager, root);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		position = getArguments().getInt(POSITION_KEY);
+		View root = inflater.inflate(R.layout.fragment_test_pager, container, false);
+		TextView textview = (TextView) root.findViewById(R.id.txt_test_pager);
+		textview.setText(Integer.toString(position));
+		textview.setOnClickListener(this);
+		//
 // assign any UI elements		
 //		mTxtNamerMsg = (TextView) view.findViewById(R.id.lbl_namer);
 //		mEditNamerName = (EditText) view.findViewById(R.id.txt_edit_namer);
@@ -55,14 +67,15 @@ public class TestPagerFragment extends Fragment {
 //		} else { // existing record being edited
 //			getDialog().setTitle(R.string.edit_namer_title_edit);
 //		}
-		return view;
+		return root;
 	}
 
 //	@Override	
 //	public void onClick(View v) {
 //		// don't need onClick here
 //	}
-	
+
+/*	
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -85,5 +98,11 @@ public class TestPagerFragment extends Fragment {
 //		} else { // existing record being edited
 //			mTxtNamerMsg.setText(mTitle);
 //		}
-	}	
+	}
+*/	
+
+	@Override
+    public void onClick(View v) {
+        Toast.makeText(v.getContext(), "Clicked Position: " + position, Toast.LENGTH_LONG).show();
+    }
 }

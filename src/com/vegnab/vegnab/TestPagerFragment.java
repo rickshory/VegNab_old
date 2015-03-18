@@ -1,7 +1,9 @@
 package com.vegnab.vegnab;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,7 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 	private static final String LOG_TAG = TestPagerFragment.class.getSimpleName();
 	
 	public static final String POSITION_KEY = "FragmentPositionKey";
-	private int position;
+	private int position = -1;
 
 //	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
@@ -35,9 +37,14 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 		return f;
 	}
 	
-//	@Override
-//	public void onCreate(Bundle savedInstanceState) {
-//		super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState == null) {
+			Log.v(LOG_TAG, "onCreate FIRST TIME, position = " + position);
+		} else {
+			Log.v(LOG_TAG, "onCreate SUBSEQUENT TIME, position = " + position);
+		}
 // set up any interfaces
 //		try {
 //        	mEditNamerListener = (EditNamerDialogListener) getActivity();
@@ -45,7 +52,7 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException("Main Activity must implement EditNamerDialogListener interface");
 //        }
-//	}
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,18 +75,15 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 //		} else { // existing record being edited
 //			getDialog().setTitle(R.string.edit_namer_title_edit);
 //		}
+		Log.v(LOG_TAG, "onCreateView, position = " + position);
 		return root;
 	}
 
-//	@Override	
-//	public void onClick(View v) {
-//		// don't need onClick here
-//	}
-
-/*	
 	@Override
 	public void onStart() {
 		super.onStart();
+		Log.v(LOG_TAG, "onStart, position = " + position);
+/*	
 		// during startup, check if arguments are passed to the fragment
 		// this is where to do this because the layout has been applied
 		// to the fragment
@@ -99,11 +103,66 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 //		} else { // existing record being edited
 //			mTxtNamerMsg.setText(mTitle);
 //		}
-	}
 */	
+	}
 
 	@Override
     public void onClick(View v) {
         Toast.makeText(v.getContext(), "Clicked Position: " + position, Toast.LENGTH_LONG).show();
     }
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.v(LOG_TAG, "onSaveInstanceState, position = " + position);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.v(LOG_TAG, "onStop, position = " + position);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v(LOG_TAG, "onDestroy, position = " + position);
+	}
+	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		Log.v(LOG_TAG, "onDestroyView, position = " + position);
+	}	
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		Log.v(LOG_TAG, "onAttach, position = " + position);
+	}	
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		Log.v(LOG_TAG, "onDetach, position = " + position);
+	}	
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.v(LOG_TAG, "onPause, position = " + position);
+	}	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.v(LOG_TAG, "onResume, position = " + position);
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Log.v(LOG_TAG, "onActivityCreated, position = " + position);
+	}
+	
 }

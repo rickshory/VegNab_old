@@ -332,7 +332,9 @@ public class MainVNActivity extends ActionBarActivity
 		// testing:
 		// swap DataEntryContainerFragment in place of existing fragment
 		FragmentManager fm = getSupportFragmentManager();
-		DataEntryContainerFragment dataEntryFrag = new DataEntryContainerFragment();
+		Bundle args = new Bundle();
+		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
+		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
 		FragmentTransaction transaction = fm.beginTransaction();
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced

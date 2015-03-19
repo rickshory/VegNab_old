@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 public class DataEntryContainerFragment extends Fragment {
 	private static final String LOG_TAG = DataEntryContainerFragment.class.getSimpleName();
 	public static final String TAG = DataEntryContainerFragment.class.getName();
+	public static final String VISIT_ID = "VisitId";
+	long mVisitId = 0; // new or not specified yet
 
 //	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
@@ -31,14 +33,14 @@ public class DataEntryContainerFragment extends Fragment {
 //	FragmentStatePagerAdapter mAdapter = null;	
 	
 //	public static DataEntryContainerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
-	public static DataEntryContainerFragment newInstance() {
+	public static DataEntryContainerFragment newInstance(Bundle args) {
 		DataEntryContainerFragment f = new DataEntryContainerFragment();
 		// supply arguments
 //		Bundle args = new Bundle();
 //		args.putLong("visitId", visitId);
 //		args.putLong("subplotTypeId", subplotTypeId);
 //		args.putString("stTitle", stTitle);
-//		f.setArguments(args);
+		f.setArguments(args);
 		return f;
 	}
 	
@@ -57,6 +59,9 @@ public class DataEntryContainerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.v(LOG_TAG, "entered 'onCreateView'");
+		Log.v(LOG_TAG, "in 'onCreateView' before getArguments, mVisitId = " + mVisitId);
+		mVisitId = getArguments().getLong(VISIT_ID);
+		Log.v(LOG_TAG, "in 'onCreateView' after getArguments, mVisitId = " + mVisitId);
 		//View root = inflater.inflate(R.layout.fragment_parent_viewpager, container, false);
 		View root = inflater.inflate(R.layout.fragment_data_entry_container, container, false);
 // assign UI elements
@@ -178,7 +183,5 @@ public class DataEntryContainerFragment extends Fragment {
 			return "subplot " + (position + 1);
 		}
 	}
-	
-	
 }
 

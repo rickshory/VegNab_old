@@ -18,7 +18,7 @@ public class DataEntryContainerFragment extends Fragment {
 	private static final String LOG_TAG = DataEntryContainerFragment.class.getSimpleName();
 	public static final String TAG = DataEntryContainerFragment.class.getName();
 	public static final String VISIT_ID = "VisitId";
-	long mVisitId = 0; // new or not specified yet
+	static long mVisitId = 0; // new or not specified yet
 
 //	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
@@ -29,7 +29,7 @@ public class DataEntryContainerFragment extends Fragment {
 //	String mTitle;
 //	int mLayoutRes;
 //	View mRootview;
-//	ViewPager mDataScreenPager = null;
+	ViewPager mDataScreenPager = null;
 //	FragmentStatePagerAdapter mAdapter = null;	
 	
 //	public static DataEntryContainerFragment newInstance(long visitId, long subplotTypeId, String stTitle) {
@@ -65,9 +65,9 @@ public class DataEntryContainerFragment extends Fragment {
 		//View root = inflater.inflate(R.layout.fragment_parent_viewpager, container, false);
 		View root = inflater.inflate(R.layout.fragment_data_entry_container, container, false);
 // assign UI elements
-		ViewPager viewPager = (ViewPager) root.findViewById(R.id.data_entry_pager);
-        // Must use the child FragmentManager
-        viewPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
+		mDataScreenPager = (ViewPager) root.findViewById(R.id.data_entry_pager);
+        // must use ChildFragmentManager
+		mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
         
 //		mDataScreenPager = (ViewPager) mRootview.findViewById(R.id.data_entry_pager);
 //		mDataScreenPager.setOffscreenPageLimit(1);
@@ -146,6 +146,7 @@ public class DataEntryContainerFragment extends Fragment {
 		@Override
         public Fragment getItem(int position) {
 			Log.v(LOG_TAG, "called dataPagerAdapter 'getItem' " + position);
+			Log.v(LOG_TAG, "visit id = " + mVisitId);
             Bundle args = new Bundle();
             args.putInt(TestPagerFragment.POSITION_KEY, position);
             return TestPagerFragment.newInstance(args);

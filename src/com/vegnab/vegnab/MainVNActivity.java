@@ -249,9 +249,25 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked() {
-		Log.e(LOG_TAG, "About to call LoaderManager.initLoader CURRENT_SUBPLOTS");
-		getSupportLoaderManager().initLoader(Loaders.CURRENT_SUBPLOTS, null, this);
-		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
+		// swap DataEntryContainerFragment in place of existing fragment
+		Log.e(LOG_TAG, "About to go to DataEntryContainer");
+		FragmentManager fm = getSupportFragmentManager();
+		Bundle args = new Bundle();
+		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
+		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
+		FragmentTransaction transaction = fm.beginTransaction();
+		// put the present fragment on the backstack so the user can navigate back to it
+		// the tag is for the fragment now being added, not the one replaced
+		transaction.replace(R.id.fragment_container, dataEntryFrag, "data_screens"); // make Tags.DATA_SCREENS_CONTAINER
+		transaction.addToBackStack(null);
+		transaction.commit();
+		Log.e(LOG_TAG, "Call to DataEntryContainer complete");
+
+// no longer get subplots here, instead in DataEntryContainer	
+		
+//		Log.e(LOG_TAG, "About to call LoaderManager.initLoader CURRENT_SUBPLOTS");
+//		getSupportLoaderManager().initLoader(Loaders.CURRENT_SUBPLOTS, null, this);
+//		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
 //		goToSubplotScreen();
 
 //		Toast.makeText(getApplicationContext(), 

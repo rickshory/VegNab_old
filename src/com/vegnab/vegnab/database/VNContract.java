@@ -49,19 +49,23 @@ public final class VNContract {
 		public static final int EXISTING_NAMERS = 32; // Namers other than the current, to check duplicates
 		// in Delete Namer
 		public static final int VALID_DEL_NAMERS = 41; // Namers that are valid to delete
-		// in Species Select
-		public static final int SPP_MATCHES = 51; // Species that match the search string
-		public static final int CODES_ALREADY_ON_SUBPLOT = 52; // To warn about duplicates
-		// in Main Activity
-		public static final int CURRENT_SUBPLOTS = 61; // Subplots for the current visit
+		// in Date Entry Container
+		public static final int CURRENT_SUBPLOTS = 51; // Subplots for the current visit
 		// in Veg Subplot
-		public static final int CURRENT_SUBPLOT = 71; // Header info for the current subplot
-		public static final int CURRENT_SUBPLOT_SPP = 72; // Veg species for the current subplot
+		public static final int CURRENT_SUBPLOT = 61; // Header info for the current subplot
+		public static final int CURRENT_SUBPLOT_SPP = 71; // Veg species for the current subplot
+		public static final int BASE_SUBPLOT = 100; // Header info for the current subplot; base number, instances will increment
+		public static final int BASE_SUBPLOT_SPP = 200; // Veg species for the current subplot; base number, instances will increment
+		// in Species Select
+		public static final int SPP_MATCHES = 71; // Species that match the search string
+		public static final int CODES_ALREADY_ON_SUBPLOT = 72; // To warn about duplicates
+		// in Main Activity
 		// in Edit VegItem
 		public static final int VEGITEM_TO_EDIT = 81; // The current veg item
 		public static final int VEG_ITEM_CONFIDENCE_LEVELS = 82; //
 		public static final int VEG_ITEM_SUBPLOT = 83; // parameters needed to correctly show dialog
 		public static final int VEG_ITEM_VISIT = 84; // parameters needed to process dialog
+		
 		
 	}
 

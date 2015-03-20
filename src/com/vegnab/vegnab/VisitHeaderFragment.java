@@ -439,7 +439,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			if (numUpdated == 0) {
 				break;
 			}
+			Log.v(LOG_TAG, "in onClick, about to do 'mButtonCallback.onVisitHeaderGoButtonClicked()'");
 			mButtonCallback.onVisitHeaderGoButtonClicked();
+			Log.v(LOG_TAG, "in onClick, completed 'mButtonCallback.onVisitHeaderGoButtonClicked()'");
 			break;
 		}
 	}

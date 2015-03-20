@@ -1,24 +1,42 @@
 package com.vegnab.vegnab;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
+import com.vegnab.vegnab.database.VNContract.Prefs;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class DataEntryContainerFragment extends Fragment {
+public class DataEntryContainerFragment extends Fragment
+	implements LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = DataEntryContainerFragment.class.getSimpleName();
 	public static final String TAG = DataEntryContainerFragment.class.getName();
 	public static final String VISIT_ID = "VisitId";
 	static long mVisitId = 0; // new or not specified yet
+	private JSONObject mSubplotSpec = new JSONObject();
+	private JSONArray mPlotSpecs = new JSONArray();
+
 
 //	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
@@ -182,6 +200,88 @@ public class DataEntryContainerFragment extends Fragment {
 		@Override
 		public CharSequence getPageTitle(int position) {
 			return "subplot " + (position + 1);
+		}
+	}
+
+	
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// This is called when a new Loader needs to be created.
+		// switch out based on id
+		CursorLoader cl = null;
+		Uri baseUri;
+		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
+		switch (id) {
+		case Loaders.CURRENT_SUBPLOTS:
+			// current plot type is the default plot type stored in Preferences
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
+			baseUri = ContentProvider_VegNab.SQL_URI;
+			select = "SELECT _id FROM SubplotTypes "
+					+ "WHERE PlotTypeID = " + plotTypeId + " "
+					+ "ORDER BY OrderDone, _id;";
+			cl = new CursorLoader(getActivity(), baseUri,
+					null, select, null, null);
+			break;		
+		}
+		return cl;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
+		// there will be various loaders, switch them out here
+//		mRowCt = finishedCursor.getCount();
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOTS:
+			// store the list of subplots and then go to the first one
+			mPlotSpecs = new JSONArray(); // clear the array
+			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
+			while (finishedCursor.moveToNext()) {
+				mSubplotSpec = new JSONObject();
+				// for now, only put the Subplot ID number
+				try {
+					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
+				} catch (JSONException e) {
+					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
+				}
+				// can put in the auxiliary data specs, here or in post-processing
+				mPlotSpecs.put(mSubplotSpec);
+			}
+//			mPlotSpecsNewlySetUp = true;
+//			// use a callback to continue program flow outside this fn, where direct calls to 
+//			// 'dispatchDataEntryScreen' are not legal
+//			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");
+//			Message msgPlotSpecsDone = Message.obtain();
+//			Log.v(LOG_TAG, "In 'onLoadFinished', about to create callback");
+//			Callback cbkSbsDone = new Callback() {
+
+//				@Override
+//				public boolean handleMessage(Message msg) {
+//					// execute this during callback
+//					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'dispatchDataEntryScreen'");
+//					dispatchDataEntryScreen();
+//					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'dispatchDataEntryScreen'");
+//					return false;
+//				}
+//			};
+//			Log.v(LOG_TAG, "In 'onLoadFinished', about to create handler");
+//			Handler hnd = new Handler(cbkSbsDone);
+//			Log.v(LOG_TAG, "In 'onLoadFinished', about to send message");
+//			hnd.sendMessage(msgPlotSpecsDone);
+//			Log.v(LOG_TAG, "In 'onLoadFinished', message sent");
+			break;
+		}
+	}
+	
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		// This is called when the last Cursor provided to onLoadFinished()
+		// is about to be closed. Need to make sure it is no longer is use.
+		switch (loader.getId()) {
+		case Loaders.CURRENT_SUBPLOTS:
+			// no adapter, nothing to do
+			break;
 		}
 	}
 }

@@ -84,8 +84,13 @@ public class DataEntryContainerFragment extends Fragment
 		View root = inflater.inflate(R.layout.fragment_data_entry_container, container, false);
 // assign UI elements
 		mDataScreenPager = (ViewPager) root.findViewById(R.id.data_entry_pager);
-        // must use ChildFragmentManager
-		mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
+		Log.e(LOG_TAG, "About to call LoaderManager.initLoader CURRENT_SUBPLOTS");
+		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOTS, null, this);
+		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
+
+		// wait on the following till loader done
+//        // must use ChildFragmentManager
+//		mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
         
 //		mDataScreenPager = (ViewPager) mRootview.findViewById(R.id.data_entry_pager);
 //		mDataScreenPager.setOffscreenPageLimit(1);
@@ -248,6 +253,9 @@ public class DataEntryContainerFragment extends Fragment
 				// can put in the auxiliary data specs, here or in post-processing
 				mPlotSpecs.put(mSubplotSpec);
 			}
+	        // must use ChildFragmentManager
+			mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
+
 //			mPlotSpecsNewlySetUp = true;
 //			// use a callback to continue program flow outside this fn, where direct calls to 
 //			// 'dispatchDataEntryScreen' are not legal
@@ -280,7 +288,9 @@ public class DataEntryContainerFragment extends Fragment
 		// is about to be closed. Need to make sure it is no longer is use.
 		switch (loader.getId()) {
 		case Loaders.CURRENT_SUBPLOTS:
-			// no adapter, nothing to do
+			// do we need to do any cleanup here?
+			// following line crashes app:
+//			mDataScreenPager.setAdapter(null);
 			break;
 		}
 	}

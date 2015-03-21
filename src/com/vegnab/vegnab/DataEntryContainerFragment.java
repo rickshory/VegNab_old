@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import java.util.HashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +26,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +37,9 @@ public class DataEntryContainerFragment extends Fragment
 	public static final String TAG = DataEntryContainerFragment.class.getName();
 	public static final String VISIT_ID = "VisitId";
 	static long mVisitId = 0; // new or not specified yet
+//	static HashMap<String, String> mSubplotSpecs = new HashMap<String, String>();
+//	static SparseArray<(HashMap<String>,<String>)> mPlotSpecs);
+	static SparseArray<String> mSubplotNames = new SparseArray<String>();
 	private JSONObject mSubplotSpec = new JSONObject();
 	private JSONArray mPlotSpecs = new JSONArray();
 
@@ -199,12 +205,14 @@ public class DataEntryContainerFragment extends Fragment
 		@Override
 		public int getCount() {
 			Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
-			return 4; // for testing
+//			return 4; // for testing
+			return mSubplotNames.size();
 		}
 		
 		@Override
 		public CharSequence getPageTitle(int position) {
-			return "subplot " + (position + 1);
+//			return "subplot " + (position + 1);
+			return mSubplotNames.valueAt(position);
 		}
 	}
 
@@ -243,18 +251,21 @@ public class DataEntryContainerFragment extends Fragment
 		case Loaders.CURRENT_SUBPLOTS:
 			// store the list of subplots
 			mPlotSpecs = new JSONArray(); // clear the array
+			mSubplotNames.clear();
 			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
 			while (finishedCursor.moveToNext()) {
+				mSubplotNames.append(finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")), 
+						finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
 				mSubplotSpec = new JSONObject();
 				// for now, only put the Subplot ID number
 				try {
 					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
-					mSubplotSpec.put("plotTypeCode", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("ParentPlotCode")));
-					mSubplotSpec.put("sbpDescription", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
+					mSubplotSpec.put("plotTypeCode", finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("ParentPlotCode")));
+					mSubplotSpec.put("sbpDescription", finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
 					mSubplotSpec.put("presenceOnly", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("PresenceOnly")));
 					mSubplotSpec.put("hasNested", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("HasNested")));
 					mSubplotSpec.put("nstInId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("NestedInId")));
-					mSubplotSpec.put("nstInName", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("NestedInName")));
+					mSubplotSpec.put("nstInName", finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("NestedInName")));
 				} catch (JSONException e) {
 					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
 				}

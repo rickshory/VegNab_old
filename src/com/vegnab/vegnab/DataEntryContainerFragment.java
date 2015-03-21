@@ -223,7 +223,9 @@ public class DataEntryContainerFragment extends Fragment
 			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id FROM SubplotTypes "
+			select = "SELECT _id, ParentPlotCode, SubplotDescription, "
+					+ "PresenceOnly, HasNested, NestedInId, NestedInName "
+					+ "FROM SubplotTypes "
 					+ "WHERE PlotTypeID = " + plotTypeId + " "
 					+ "ORDER BY OrderDone, _id;";
 			cl = new CursorLoader(getActivity(), baseUri,
@@ -239,7 +241,7 @@ public class DataEntryContainerFragment extends Fragment
 //		mRowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
 		case Loaders.CURRENT_SUBPLOTS:
-			// store the list of subplots and then go to the first one
+			// store the list of subplots
 			mPlotSpecs = new JSONArray(); // clear the array
 			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
 			while (finishedCursor.moveToNext()) {
@@ -247,6 +249,12 @@ public class DataEntryContainerFragment extends Fragment
 				// for now, only put the Subplot ID number
 				try {
 					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
+					mSubplotSpec.put("plotTypeCode", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("ParentPlotCode")));
+					mSubplotSpec.put("sbpDescription", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
+					mSubplotSpec.put("presenceOnly", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("PresenceOnly")));
+					mSubplotSpec.put("hasNested", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("HasNested")));
+					mSubplotSpec.put("nstInId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("NestedInId")));
+					mSubplotSpec.put("nstInName", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("NestedInName")));
 				} catch (JSONException e) {
 					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
 				}

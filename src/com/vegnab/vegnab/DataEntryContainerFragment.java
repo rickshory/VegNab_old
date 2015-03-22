@@ -212,14 +212,14 @@ public class DataEntryContainerFragment extends Fragment
 		@Override
 		public int getCount() {
 			Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
-//			return 4; // for testing
-			return mSubplotNames.size();
+			return mSubplotsCursor.getCount();
 		}
 		
 		@Override
 		public CharSequence getPageTitle(int position) {
-//			return "subplot " + (position + 1);
-			return mSubplotNames.valueAt(position);
+			mSubplotsCursor.moveToPosition(position);
+            return mSubplotsCursor.getString(
+            		mSubplotsCursor.getColumnIndexOrThrow("SubplotDescription"));
 		}
 	}
 

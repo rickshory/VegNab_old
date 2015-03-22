@@ -40,6 +40,7 @@ public class DataEntryContainerFragment extends Fragment
 //	static HashMap<String, String> mSubplotSpecs = new HashMap<String, String>();
 //	static SparseArray<(HashMap<String>,<String>)> mPlotSpecs);
 	static SparseArray<String> mSubplotNames = new SparseArray<String>();
+	static Cursor mSubplotsCursor;
 	private JSONObject mSubplotSpec = new JSONObject();
 	private JSONArray mPlotSpecs = new JSONArray();
 
@@ -178,6 +179,12 @@ public class DataEntryContainerFragment extends Fragment
 			Log.v(LOG_TAG, "visit id = " + mVisitId);
             Bundle args = new Bundle();
             args.putInt(TestPagerFragment.POSITION_KEY, position);
+            mSubplotsCursor.moveToPosition(position);
+            args.putLong(TestPagerFragment.VISIT_ID, mVisitId);
+            args.putLong(TestPagerFragment.SUBPLOT_TYPE_ID, mSubplotsCursor.getLong(
+            		mSubplotsCursor.getColumnIndexOrThrow("_id")));
+            args.putInt(TestPagerFragment.PRESENCE_ONLY, mSubplotsCursor.getInt(
+            		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")));
             return TestPagerFragment.newInstance(args);
         }
 
@@ -249,6 +256,8 @@ public class DataEntryContainerFragment extends Fragment
 //		mRowCt = finishedCursor.getCount();
 		switch (loader.getId()) {
 		case Loaders.CURRENT_SUBPLOTS:
+			// store a reference to the cursor
+			mSubplotsCursor = finishedCursor;
 			// store the list of subplots
 			mPlotSpecs = new JSONArray(); // clear the array
 			mSubplotNames.clear();

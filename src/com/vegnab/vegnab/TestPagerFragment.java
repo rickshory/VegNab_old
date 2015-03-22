@@ -17,6 +17,16 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 	public static final String POSITION_KEY = "FragmentPositionKey";
 	private int position = -1;
 
+	public static final String VISIT_ID = "VisitId";
+	private long mVisitId = 0;
+
+	public static final String SUBPLOT_TYPE_ID = "SubplotTypeId";
+	private long mSubplotTypeID = -1;
+
+	public static final String PRESENCE_ONLY = "PresenceOnly";
+	private int mPresenceOnly = -1;
+	
+	
 //	long mVisitId = 0, mSubplotTypeId = -1; // defaults for new or not specified yet
 //	Uri mUri, mNamersUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "namers");
 //	ContentValues mValues = new ContentValues();
@@ -57,9 +67,14 @@ public class TestPagerFragment extends Fragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		position = getArguments().getInt(POSITION_KEY);
+		mVisitId = getArguments().getLong(VISIT_ID);
+		mSubplotTypeID = getArguments().getLong(SUBPLOT_TYPE_ID);
+		mPresenceOnly = getArguments().getInt(PRESENCE_ONLY);
+		
 		View root = inflater.inflate(R.layout.fragment_test_pager, container, false);
 		TextView textview = (TextView) root.findViewById(R.id.txt_test_pager);
-		textview.setText(Integer.toString(position));
+		textview.setText("Position=" + position + ", VisitId=" + mVisitId +
+				", SubplotTypeId=" + mSubplotTypeID + ", PresenceOnly=" + mPresenceOnly);
 		textview.setOnClickListener(this);
 		//
 // assign any UI elements		

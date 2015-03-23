@@ -322,5 +322,31 @@ public class DataEntryContainerFragment extends Fragment
 			break;
 		}
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    if(savedInstanceState != null) {
+	    	// crashes on following line, null pointer
+	    	mDataScreenPager.setCurrentItem(savedInstanceState.getInt("dataPagePosition"));
+	    }
+	}
+	
+//	@Override
+//	public void onStart() {
+//	    super.onStart();
+//	    Bundle args = getArguments();
+//	    if(args != null) {
+//	    	mDataScreenPager.setCurrentItem(args.getInt("dataPagePosition"));
+//	    }
+//	}
+	
+	
 }
 

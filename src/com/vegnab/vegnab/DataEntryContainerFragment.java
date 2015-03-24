@@ -97,6 +97,7 @@ public class DataEntryContainerFragment extends Fragment
 		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
 		if (savedInstanceState != null) {
 			Log.v(LOG_TAG, "About to do 'getInt(dataPagePosition)', mScreenToShow=" + mScreenToShow);
+			mVisitId = savedInstanceState.getLong(VISIT_ID);
 			mScreenToShow = savedInstanceState.getInt("dataPagePosition");
 			Log.v(LOG_TAG, "Completed 'getInt(dataPagePosition)', mScreenToShow=" + mScreenToShow);
 		}
@@ -334,27 +335,8 @@ public class DataEntryContainerFragment extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
+		outState.putLong(VISIT_ID, mVisitId);
 		super.onSaveInstanceState(outState);
 	}
-	
-//	@Override
-//	public void onCreate(Bundle savedInstanceState) {
-//	    super.onCreate(savedInstanceState);
-//	    if(savedInstanceState != null) {
-//	    	// crashes on following line, null pointer
-//	    	mDataScreenPager.setCurrentItem(savedInstanceState.getInt("dataPagePosition"));
-//	    }
-//	}
-	
-//	@Override
-//	public void onStart() {
-//	    super.onStart();
-//	    Bundle args = getArguments();
-//	    if(args != null) {
-//	    	mDataScreenPager.setCurrentItem(args.getInt("dataPagePosition"));
-//	    }
-//	}
-	
-	
 }
 

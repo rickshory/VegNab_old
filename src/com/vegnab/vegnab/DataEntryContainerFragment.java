@@ -37,6 +37,7 @@ public class DataEntryContainerFragment extends Fragment
 	public static final String TAG = DataEntryContainerFragment.class.getName();
 	public static final String VISIT_ID = "VisitId";
 	static long mVisitId = 0; // new or not specified yet
+	static int mScreenToShow = 0; // default unless changed
 //	static HashMap<String, String> mSubplotSpecs = new HashMap<String, String>();
 //	static SparseArray<(HashMap<String>,<String>)> mPlotSpecs);
 	static SparseArray<String> mSubplotNames = new SparseArray<String>();
@@ -94,7 +95,11 @@ public class DataEntryContainerFragment extends Fragment
 		Log.e(LOG_TAG, "About to call LoaderManager.initLoader CURRENT_SUBPLOTS");
 		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOTS, null, this);
 		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
-
+		if (savedInstanceState != null) {
+			Log.v(LOG_TAG, "About to do 'getInt(dataPagePosition)', mScreenToShow=" + mScreenToShow);
+			mScreenToShow = savedInstanceState.getInt("dataPagePosition");
+			Log.v(LOG_TAG, "Completed 'getInt(dataPagePosition)', mScreenToShow=" + mScreenToShow);
+		}
 		// wait on the following till loader done
 //        // must use ChildFragmentManager
 //		mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
@@ -283,6 +288,9 @@ public class DataEntryContainerFragment extends Fragment
 			}
 	        // must use ChildFragmentManager
 			mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
+			Log.v(LOG_TAG, "About to do 'mDataScreenPager.setCurrentItem(mScreenToShow)'");
+			mDataScreenPager.setCurrentItem(mScreenToShow);
+			Log.v(LOG_TAG, "Just did 'mDataScreenPager.setCurrentItem(mScreenToShow)'");
 
 //			mPlotSpecsNewlySetUp = true;
 //			// use a callback to continue program flow outside this fn, where direct calls to 
@@ -325,18 +333,18 @@ public class DataEntryContainerFragment extends Fragment
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
 		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
+		super.onSaveInstanceState(outState);
 	}
 	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    if(savedInstanceState != null) {
-	    	// crashes on following line, null pointer
-	    	mDataScreenPager.setCurrentItem(savedInstanceState.getInt("dataPagePosition"));
-	    }
-	}
+//	@Override
+//	public void onCreate(Bundle savedInstanceState) {
+//	    super.onCreate(savedInstanceState);
+//	    if(savedInstanceState != null) {
+//	    	// crashes on following line, null pointer
+//	    	mDataScreenPager.setCurrentItem(savedInstanceState.getInt("dataPagePosition"));
+//	    }
+//	}
 	
 //	@Override
 //	public void onStart() {

@@ -79,6 +79,7 @@ public final class VNContract {
 		public static final String WEBVIEW_TUTORIAL = "WebviewTutorial";
 		public static final String WEBVIEW_PLOT_TYPES = "WebviewPlotTypes";
 		public static final String WEBVIEW_REGIONAL_LISTS = "WebviewSppLists";
+		public static final String DATA_SCREENS_CONTAINER = "DataScreensContainer";
 		public static final String VEG_SUBPLOT = "VegSubplot";
 		public static final String SELECT_SPECIES = "SelectSpecies";
 		

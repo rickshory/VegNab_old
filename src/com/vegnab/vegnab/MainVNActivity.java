@@ -234,6 +234,11 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onBackPressed() {
 		Log.v(LOG_TAG, "Caught 'onBackPressed'");
+		Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+		if (currentFragment.getTag() == Tags.DATA_SCREENS_CONTAINER) {
+			finish();
+			return;
+		}
 		super.onBackPressed();
 	return;
 	}
@@ -258,7 +263,7 @@ public class MainVNActivity extends ActionBarActivity
 		FragmentTransaction transaction = fm.beginTransaction();
 		// put the present fragment on the backstack so the user can navigate back to it
 		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, dataEntryFrag, "data_screens"); // make Tags.DATA_SCREENS_CONTAINER
+		transaction.replace(R.id.fragment_container, dataEntryFrag, Tags.DATA_SCREENS_CONTAINER);
 		transaction.addToBackStack(null);
 		transaction.commit();
 		Log.e(LOG_TAG, "Call to DataEntryContainer complete");

@@ -186,9 +186,13 @@ public class DataEntryContainerFragment extends Fragment
             Bundle args = new Bundle();
             args.putInt(TestPagerFragment.POSITION_KEY, position);
             mSubplotsCursor.moveToPosition(position);
-            args.putLong(TestPagerFragment.VISIT_ID, mVisitId);
+            args.putLong(TestPagerFragment.VISIT_ID, mSubplotsCursor.getLong(
+            		mSubplotsCursor.getColumnIndexOrThrow("VisitId")));
+            args.putString(TestPagerFragment.VISIT_NAME, mSubplotsCursor.getString(
+            		mSubplotsCursor.getColumnIndexOrThrow("VisitName")));
+            // VisitId
             args.putLong(TestPagerFragment.SUBPLOT_TYPE_ID, mSubplotsCursor.getLong(
-            		mSubplotsCursor.getColumnIndexOrThrow("_id")));
+            		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
             args.putInt(TestPagerFragment.PRESENCE_ONLY, mSubplotsCursor.getInt(
             		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")));
             return TestPagerFragment.newInstance(args);
@@ -240,15 +244,15 @@ public class DataEntryContainerFragment extends Fragment
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
 		switch (id) {
 		case Loaders.CURRENT_SUBPLOTS:
-			// current plot type is the default plot type stored in Preferences
-			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
 			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id, ParentPlotCode, SubplotDescription, "
-					+ "PresenceOnly, HasNested, NestedInId, NestedInName "
-					+ "FROM SubplotTypes "
-					+ "WHERE PlotTypeID = " + plotTypeId + " "
-					+ "ORDER BY OrderDone, _id;";
+			select = "SELECT Visits._id AS VisitId, Visits.VisitName, SubplotTypes._id AS SubplotTypeId, "
+					+ "SubplotTypes.ParentPlotCode, SubplotTypes.SubplotDescription, "
+					+ "SubplotTypes.PresenceOnly, SubplotTypes.HasNested, "
+					+ "SubplotTypes.NestedInId, SubplotTypes.NestedInName "
+					+ "FROM Visits LEFT JOIN SubplotTypes "
+					+ "ON Visits.PlotTypeID = SubplotTypes.PlotTypeID "
+					+ "WHERE (((Visits._id)=" + mVisitId + ")) "
+					+ "ORDER BY SubplotTypes.OrderDone, SubplotTypes._id;";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
 			break;		
@@ -269,12 +273,12 @@ public class DataEntryContainerFragment extends Fragment
 			mSubplotNames.clear();
 			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
 			while (finishedCursor.moveToNext()) {
-				mSubplotNames.append(finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")), 
+				mSubplotNames.append(finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("SubplotTypeId")), 
 						finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
 				mSubplotSpec = new JSONObject();
 				// for now, only put the Subplot ID number
 				try {
-					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
+					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("SubplotTypeId")));
 					mSubplotSpec.put("plotTypeCode", finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("ParentPlotCode")));
 					mSubplotSpec.put("sbpDescription", finishedCursor.getString(finishedCursor.getColumnIndexOrThrow("SubplotDescription")));
 					mSubplotSpec.put("presenceOnly", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("PresenceOnly")));

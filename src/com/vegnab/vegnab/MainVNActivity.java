@@ -234,11 +234,22 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onBackPressed() {
 		Log.v(LOG_TAG, "Caught 'onBackPressed'");
-		Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-		if (currentFragment.getTag() == Tags.DATA_SCREENS_CONTAINER) {
-			finish();
-			return;
+		FragmentManager fm = getSupportFragmentManager();
+		try {
+			// try to pop the data screens container fragment
+			if (fm.popBackStackImmediate (Tags.DATA_SCREENS_CONTAINER, FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+				Log.v(LOG_TAG, "DATA_SCREENS_CONTAINER fragment popped from backstack");
+//				wasRemoved = true;
+			}
+		} catch (Exception e) {
+			Log.v(LOG_TAG, "stack pop exception: " + e.getMessage());
 		}
+
+//		Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+//		if (currentFragment.getTag() == Tags.DATA_SCREENS_CONTAINER) {
+//			finish();
+//			return;
+//		}
 		super.onBackPressed();
 	return;
 	}

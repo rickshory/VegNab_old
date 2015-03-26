@@ -249,7 +249,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		if (savedInstanceState != null) {
 		    mResolvingError = savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
 			mCurrentSubplot = savedInstanceState.getInt(ARG_SUBPLOT, 0);
+			Log.v(LOG_TAG, "In onCreateView, about to retrieve mVisitId: " + mVisitId);
 			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID, 0);
+			Log.v(LOG_TAG, "In onCreateView, retrieved mVisitId: " + mVisitId);
 			mLocIsGood = savedInstanceState.getBoolean(ARG_LOC_GOOD_FLAG, false);
 			mCurLocation = savedInstanceState.getParcelable(ARG_CUR_LOCATION);
 			mPrevLocation = savedInstanceState.getParcelable(ARG_PREV_LOCATION);
@@ -259,6 +261,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				mAccuracy = savedInstanceState.getFloat(ARG_LOC_ACCURACY);
 				mLocTime = savedInstanceState.getString(ARG_LOC_TIME);
 			}
+		} else {
+			Log.v(LOG_TAG, "In onCreateView, savedInstanceState == null, mVisitId: " + mVisitId);
 		}
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_visit_header, container, false);
@@ -329,7 +333,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 		// to the fragment
 		Bundle args = getArguments();
 		if (args != null) {
+			Log.v(LOG_TAG, "In onStart, about to retrieve mVisitId: " + mVisitId);
 			mVisitId = args.getLong(ARG_VISIT_ID, 0);
+			Log.v(LOG_TAG, "In onStart, retrieved mVisitId: " + mVisitId);
 			// fire off loaders
 			getLoaderManager().initLoader(Loaders.VISIT_TO_EDIT, null, this);
 			getLoaderManager().initLoader(Loaders.EXISTING_VISITS, null, this);

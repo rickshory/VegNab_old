@@ -231,6 +231,7 @@ public class MainVNActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+/* comment out onBackPressed()
 	@Override
 	public void onBackPressed() {
 		Log.v(LOG_TAG, "Caught 'onBackPressed'");
@@ -253,6 +254,7 @@ public class MainVNActivity extends ActionBarActivity
 		super.onBackPressed();
 	return;
 	}
+*/
 	
 	@Override
 	public void onNewItemButtonClicked(boolean presenceOnly) {
@@ -269,6 +271,7 @@ public class MainVNActivity extends ActionBarActivity
 		Log.e(LOG_TAG, "About to go to DataEntryContainer");
 		FragmentManager fm = getSupportFragmentManager();
 		Bundle args = new Bundle();
+		Log.e(LOG_TAG, "In onVisitHeaderGoButtonClicked, about to putLong mVisitId=" +  mVisitId);
 		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
 		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
 		FragmentTransaction transaction = fm.beginTransaction();

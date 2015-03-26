@@ -159,7 +159,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
-		public void onVisitHeaderGoButtonClicked();
+		public void onVisitHeaderGoButtonClicked(long visitId);
 	}
 	
 	@Override
@@ -446,7 +446,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 				break;
 			}
 			Log.v(LOG_TAG, "in onClick, about to do 'mButtonCallback.onVisitHeaderGoButtonClicked()'");
-			mButtonCallback.onVisitHeaderGoButtonClicked();
+			mButtonCallback.onVisitHeaderGoButtonClicked(mVisitId);
 			Log.v(LOG_TAG, "in onClick, completed 'mButtonCallback.onVisitHeaderGoButtonClicked()'");
 			break;
 		}

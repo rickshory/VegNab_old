@@ -266,13 +266,13 @@ public class MainVNActivity extends ActionBarActivity
 		dispatchDataEntryScreen(); // determine and go to next screen
 	}
 
-	public void onVisitHeaderGoButtonClicked() {
+	public void onVisitHeaderGoButtonClicked(long visitId) {
 		// swap DataEntryContainerFragment in place of existing fragment
 		Log.e(LOG_TAG, "About to go to DataEntryContainer");
 		FragmentManager fm = getSupportFragmentManager();
 		Bundle args = new Bundle();
-		Log.e(LOG_TAG, "In onVisitHeaderGoButtonClicked, about to putLong mVisitId=" +  mVisitId);
-		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
+		Log.e(LOG_TAG, "In onVisitHeaderGoButtonClicked, about to putLong visitId=" +  visitId);
+		args.putLong(DataEntryContainerFragment.VISIT_ID, visitId);
 		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
 		FragmentTransaction transaction = fm.beginTransaction();
 		// put the present fragment on the backstack so the user can navigate back to it

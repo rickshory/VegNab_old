@@ -117,6 +117,7 @@ public class MainVNActivity extends ActionBarActivity
 		 * */
 		if (true) {
 			if (savedInstanceState != null) {
+				mVisitId = savedInstanceState.getLong(ARG_VISIT_ID);
 				mSubplotNum = savedInstanceState.getInt(ARG_SUBPLOT_NUM, 1);
 				mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID, 0);
 				mPlotSpecsNewlySetUp = savedInstanceState.getBoolean(ARG_SUBPLOT_FIRST_TIME, true);
@@ -267,12 +268,13 @@ public class MainVNActivity extends ActionBarActivity
 	}
 
 	public void onVisitHeaderGoButtonClicked(long visitId) {
+		mVisitId = visitId;
 		// swap DataEntryContainerFragment in place of existing fragment
 		Log.e(LOG_TAG, "About to go to DataEntryContainer");
 		FragmentManager fm = getSupportFragmentManager();
 		Bundle args = new Bundle();
-		Log.e(LOG_TAG, "In onVisitHeaderGoButtonClicked, about to putLong visitId=" +  visitId);
-		args.putLong(DataEntryContainerFragment.VISIT_ID, visitId);
+		Log.e(LOG_TAG, "In onVisitHeaderGoButtonClicked, about to putLong mVisitId=" +  mVisitId);
+		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
 		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
 		FragmentTransaction transaction = fm.beginTransaction();
 		// put the present fragment on the backstack so the user can navigate back to it

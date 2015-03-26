@@ -100,6 +100,11 @@ public class DataEntryContainerFragment extends Fragment
 			mVisitId = savedInstanceState.getLong(VISIT_ID);
 			mScreenToShow = savedInstanceState.getInt("dataPagePosition");
 			Log.v(LOG_TAG, "Completed 'getInt(dataPagePosition)', mScreenToShow=" + mScreenToShow);
+		} else {
+			Log.v(LOG_TAG, "savedInstanceState == null; mScreenToShow=" + mScreenToShow);
+			// don't yet know why mScreenToShow is retained across re-entry, but explicitly reset it here
+			Log.v(LOG_TAG, "resetting mScreenToShow to 0");
+			mScreenToShow = 0;
 		}
 		// wait on the following till loader done
 //        // must use ChildFragmentManager
@@ -182,7 +187,6 @@ public class DataEntryContainerFragment extends Fragment
 		@Override
         public Fragment getItem(int position) {
 			Log.v(LOG_TAG, "called dataPagerAdapter 'getItem' " + position);
-			Log.v(LOG_TAG, "visit id = " + mVisitId);
             Bundle args = new Bundle();
             args.putInt(TestPagerFragment.POSITION_KEY, position);
             mSubplotsCursor.moveToPosition(position);
@@ -190,7 +194,6 @@ public class DataEntryContainerFragment extends Fragment
             		mSubplotsCursor.getColumnIndexOrThrow("VisitId")));
             args.putString(TestPagerFragment.VISIT_NAME, mSubplotsCursor.getString(
             		mSubplotsCursor.getColumnIndexOrThrow("VisitName")));
-            // VisitId
             args.putLong(TestPagerFragment.SUBPLOT_TYPE_ID, mSubplotsCursor.getLong(
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
             args.putInt(TestPagerFragment.PRESENCE_ONLY, mSubplotsCursor.getInt(
@@ -293,9 +296,9 @@ public class DataEntryContainerFragment extends Fragment
 			}
 	        // must use ChildFragmentManager
 			mDataScreenPager.setAdapter(new dataPagerAdapter(getChildFragmentManager()));
-			Log.v(LOG_TAG, "About to do 'mDataScreenPager.setCurrentItem(mScreenToShow)'");
+			Log.v(LOG_TAG, "About to do mDataScreenPager.setCurrentItem(mScreenToShow)=" + mScreenToShow);
 			mDataScreenPager.setCurrentItem(mScreenToShow);
-			Log.v(LOG_TAG, "Just did 'mDataScreenPager.setCurrentItem(mScreenToShow)'");
+			Log.v(LOG_TAG, "Just did mDataScreenPager.setCurrentItem(mScreenToShow)=" + mScreenToShow);
 
 //			mPlotSpecsNewlySetUp = true;
 //			// use a callback to continue program flow outside this fn, where direct calls to 
@@ -338,6 +341,7 @@ public class DataEntryContainerFragment extends Fragment
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		Log.v(LOG_TAG, "In 'onSaveInstanceState', about to save dataPagePosition; mDataScreenPager.getCurrentItem() = " + mDataScreenPager.getCurrentItem());
 		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
 		outState.putLong(VISIT_ID, mVisitId);
 		super.onSaveInstanceState(outState);

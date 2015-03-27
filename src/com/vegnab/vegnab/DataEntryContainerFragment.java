@@ -188,17 +188,17 @@ public class DataEntryContainerFragment extends Fragment
         public Fragment getItem(int position) {
 			Log.v(LOG_TAG, "called dataPagerAdapter 'getItem' " + position);
             Bundle args = new Bundle();
-            args.putInt(TestPagerFragment.POSITION_KEY, position);
+            args.putInt(VegSubplotFragment.POSITION_KEY, position);
             mSubplotsCursor.moveToPosition(position);
-            args.putLong(TestPagerFragment.VISIT_ID, mSubplotsCursor.getLong(
+            args.putLong(VegSubplotFragment.VISIT_ID, mSubplotsCursor.getLong(
             		mSubplotsCursor.getColumnIndexOrThrow("VisitId")));
-            args.putString(TestPagerFragment.VISIT_NAME, mSubplotsCursor.getString(
+            args.putString(VegSubplotFragment.VISIT_NAME, mSubplotsCursor.getString(
             		mSubplotsCursor.getColumnIndexOrThrow("VisitName")));
-            args.putLong(TestPagerFragment.SUBPLOT_TYPE_ID, mSubplotsCursor.getLong(
+            args.putLong(VegSubplotFragment.SUBPLOT_TYPE_ID, mSubplotsCursor.getLong(
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
-            args.putInt(TestPagerFragment.PRESENCE_ONLY, mSubplotsCursor.getInt(
-            		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")));
-            return TestPagerFragment.newInstance(args);
+            args.putBoolean(VegSubplotFragment.PRESENCE_ONLY, ((mSubplotsCursor.getInt(
+            		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")) == 0) ? false : true));
+            return VegSubplotFragment.newInstance(args);
         }
 
 /*		public Fragment getItem(int dataScreenIndex) {

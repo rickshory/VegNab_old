@@ -144,11 +144,6 @@ public class VegSubplotFragment extends ListFragment
 		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
-
-//		if (savedInstanceState != null) {
-//			mVisitId = savedInstanceState.getLong(VISIT_ID);
-//			mSubplotTypeId = savedInstanceState.getInt(SUBPLOT_TYPE_ID);
-//		}
 		
 		// use query to return 'SppLine', concatenated from code and description; more reading room
 		mVegSubplotSppAdapter = new VegItemAdapter(getActivity(),
@@ -162,25 +157,6 @@ public class VegSubplotFragment extends ListFragment
 	public void onStart() {
 		super.onStart();
 		Log.v(LOG_TAG, "onStart, position = " + mPosition);
-
-/*		
-		// during startup, check if arguments are passed to the fragment
-		// this is where to do this because the layout has been applied
-		// to the fragment
-		Bundle args = getArguments();
-		if (args != null) {
-			mVisitId = args.getLong(VISIT_ID);
-			mSubplotTypeId = args.getInt(SUBPLOT_TYPE_ID);
-
-//			// set up subplot based on arguments passed in
-//			updateSubplotViews(args.getInt(SUBPLOT_TYPE_ID));
-//		} else if (mSubplotTypeId != -1) {
-//			// set up subplot based on saved instance state defined in onCreateView
-//			updateSubplotViews(mSubplotTypeId);
-//		} else {
-//			updateSubplotViews(-1); // figure out what to do for default state 
-		}
-*/	
 		mSubplotLoaderId = Loaders.BASE_SUBPLOT + (int) mSubplotTypeId;
 		getLoaderManager().initLoader(mSubplotLoaderId, null, this);
 		mSppLoaderId = Loaders.BASE_SUBPLOT_SPP + (int) mSubplotTypeId;
@@ -249,21 +225,6 @@ public class VegSubplotFragment extends ListFragment
 		super.onActivityCreated(savedInstanceState);
 		Log.v(LOG_TAG, "onActivityCreated, position = " + mPosition);
 	}
-	
-	/*
-	public void updateSubplotViews(int subplotNum) {
-
-		mSubplotTypeId = subplotNum;
-		if (mSubplotTypeId < 1) { // invalid subplot type, should never happen
-			// fill in something to help with diagnostics
-			((TextView) getActivity().findViewById(R.id.subplot_header_name)).setText("Subplot " + mSubplotTypeId);
-		} else {
-			getLoaderManager().initLoader(mSubplotLoaderId, null, this);
-//			getLoaderManager().initLoader(mSppLoaderId, null, this);
-		}
-		// at this point, after inflate, the frag's objects are all child objects of the activity
-	}
-	*/
 
 	@Override
 	public void onClick(View v) {

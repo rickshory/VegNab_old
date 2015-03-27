@@ -10,10 +10,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 
@@ -50,18 +46,9 @@ public class MainVNActivity extends ActionBarActivity
 	
 	private static final String LOG_TAG = MainVNActivity.class.getSimpleName();
 	static String mUniqueDeviceId, mDeviceIdSource;
-	int mSubplotTypeId = 0, mSubplotNum = 1;
-	long mRowCt, mVisitId = 0;
-	boolean mPlotSpecsNewlySetUp = false;
-	//  maybe JSONArray to be able to include aux data screens
-	private JSONObject mSubplotSpec = new JSONObject();
-	private JSONArray mPlotSpecs = new JSONArray();
+	long mRowCt, mVisitId = 0, mSubplotTypeId = 0;
 	
-	final static String ARG_SUBPLOT_NUM = "subplotNum";
 	final static String ARG_SUBPLOT_TYPE_ID = "subplotTypeId";
-	final static String ARG_SUBPLOT_FIRST_TIME = "justStartedScreens";
-	final static String ARG_SUBPLOTS_LIST = "subplotsList";
-	final static String ARG_PLOT_SPECS = "plotSpecs";
 	final static String ARG_VISIT_ID = "visitId";
 	
 	ViewPager viewPager = null;
@@ -105,15 +92,7 @@ public class MainVNActivity extends ActionBarActivity
 		if (true) {
 			if (savedInstanceState != null) {
 				mVisitId = savedInstanceState.getLong(ARG_VISIT_ID);
-				mSubplotNum = savedInstanceState.getInt(ARG_SUBPLOT_NUM, 1);
 				mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID, 0);
-				mPlotSpecsNewlySetUp = savedInstanceState.getBoolean(ARG_SUBPLOT_FIRST_TIME, true);
-				String jsonArray = savedInstanceState.getString(ARG_PLOT_SPECS);
-				try {
-					mPlotSpecs = new JSONArray(jsonArray);
-				} catch (JSONException e) {
-					Log.v(LOG_TAG, "In 'onCreate' parsing bundle, JSON error: " + e.getMessage());
-				}
 				// if restoring from a previous state, do not create view
 				// could end up with overlapping views
 				return;
@@ -273,9 +252,7 @@ public class MainVNActivity extends ActionBarActivity
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// save the current subplot arguments in case we need to re-create the activity
-		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotNum);
-		outState.putBoolean(ARG_SUBPLOT_FIRST_TIME, mPlotSpecsNewlySetUp);
-		outState.putString(ARG_PLOT_SPECS, mPlotSpecs.toString());
+		outState.putLong(ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 		outState.putLong(ARG_VISIT_ID, mVisitId);
 	}
 	
@@ -335,7 +312,7 @@ public class MainVNActivity extends ActionBarActivity
 		
 		// provide Visit and Subplot IDs, so selector can check for duplicate codes
 		args.putLong(SelectSpeciesFragment.ARG_VISIT_ID, mVisitId);
-		args.putInt(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
+		args.putLong(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
 		// following not used by Spp Select, but passed along to Edit Spp
 		args.putBoolean(SelectSpeciesFragment.ARG_PRESENCE_ONLY_SUBPLOT, presenceOnlySubplot); 
 

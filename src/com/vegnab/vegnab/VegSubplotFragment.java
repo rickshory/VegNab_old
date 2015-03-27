@@ -50,8 +50,9 @@ public class VegSubplotFragment extends ListFragment
 
 	
 
-//	private int mSubplotTypeId = -1, mSubplot = 0;
 	boolean mHasNested;
+	private int mSubplotLoaderId, mSppLoaderId;
+	
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
@@ -180,8 +181,10 @@ public class VegSubplotFragment extends ListFragment
 //			updateSubplotViews(-1); // figure out what to do for default state 
 		}
 */	
-		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
-		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
+		mSubplotLoaderId = Loaders.BASE_SUBPLOT + (int) mSubplotTypeId;
+		getLoaderManager().initLoader(mSubplotLoaderId, null, this);
+		mSppLoaderId = Loaders.BASE_SUBPLOT_SPP + (int) mSubplotTypeId;
+		getLoaderManager().initLoader(mSppLoaderId, null, this);
 	}
 
 	@Override
@@ -255,8 +258,8 @@ public class VegSubplotFragment extends ListFragment
 			// fill in something to help with diagnostics
 			((TextView) getActivity().findViewById(R.id.subplot_header_name)).setText("Subplot " + mSubplotTypeId);
 		} else {
-			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
-//			getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
+			getLoaderManager().initLoader(mSubplotLoaderId, null, this);
+//			getLoaderManager().initLoader(mSppLoaderId, null, this);
 		}
 		// at this point, after inflate, the frag's objects are all child objects of the activity
 	}
@@ -276,7 +279,7 @@ public class VegSubplotFragment extends ListFragment
 	
 	public void refreshSppList() {
 		// when the referred Loader callback returns, will refresh the currently used species
-		getLoaderManager().restartLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
+		getLoaderManager().restartLoader(mSppLoaderId, null, this);
 	}
 
 	@Override
@@ -286,16 +289,15 @@ public class VegSubplotFragment extends ListFragment
 		CursorLoader cl = null;
 		Uri baseUri;
 		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
-		switch (id) {
-		case Loaders.CURRENT_SUBPLOT:
+		if (id == mSubplotLoaderId) {
 			// retrieve any needed header info
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			select = "SELECT SubplotDescription, PresenceOnly, HasNested " 
 					+ "FROM SubplotTypes WHERE _id = " + mSubplotTypeId + ";";
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, null, null);
-			break;
-		case Loaders.CURRENT_SUBPLOT_SPP:
+		}
+		if (id == mSppLoaderId) {
 			baseUri = ContentProvider_VegNab.SQL_URI;
 			// get any species entries for this subplot of this visit
 			select = "SELECT VegItems._id, VegItems.OrigCode, VegItems.OrigDescr, "
@@ -310,7 +312,6 @@ public class VegSubplotFragment extends ListFragment
 			String[] sppSelectionArgs = { "" + mVisitId, "" + mSubplotTypeId };
 			cl = new CursorLoader(getActivity(), baseUri,
 					null, select, sppSelectionArgs, null);
-			break;		
 		}
 		return cl;
 	}
@@ -319,8 +320,8 @@ public class VegSubplotFragment extends ListFragment
 	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		// there will be various loaders, switch them out here
 //		mRowCt = finishedCursor.getCount();
-		switch (loader.getId()) {
-		case Loaders.CURRENT_SUBPLOT:
+		int loaderId = loader.getId();
+		if (loaderId == mSubplotLoaderId) {
 			// fill in any header info
 			// SubplotDescription, PresenceOnly, HasNested
 			int rowCt = c.getCount();
@@ -330,12 +331,10 @@ public class VegSubplotFragment extends ListFragment
 					.setText(c.getString(c.getColumnIndexOrThrow("SubplotDescription")));
 				mPresenceOnly = ((c.getInt(c.getColumnIndexOrThrow("PresenceOnly")) == 1) ? true : false);
 			}
-			
-			break;
-		case Loaders.CURRENT_SUBPLOT_SPP:
+		}
+		if (loaderId == mSppLoaderId) {
 			Log.v(LOG_TAG, "onLoadFinished CURRENT_SUBPLOT_SPP, number of rows returned: " + c.getCount());
 			mVegSubplotSppAdapter.swapCursor(c);
-			break;
 		}
 	}
 
@@ -343,13 +342,12 @@ public class VegSubplotFragment extends ListFragment
 	public void onLoaderReset(Loader<Cursor> loader) {
 		// This is called when the last Cursor provided to onLoadFinished()
 		// is about to be closed. Need to make sure it is no longer is use.
-		switch (loader.getId()) {
-		case Loaders.CURRENT_SUBPLOT:
+		int loaderId = loader.getId();
+		if (loaderId == mSubplotLoaderId) {
 			// no adapter, nothing to do
-			break;
-		case Loaders.CURRENT_SUBPLOT_SPP:
+		}
+		if (loaderId == mSppLoaderId) {
 			mVegSubplotSppAdapter.swapCursor(null);
-			break;
 		}
 	}
 }

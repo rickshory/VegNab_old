@@ -54,8 +54,8 @@ public final class VNContract {
 		// in Veg Subplot
 		public static final int CURRENT_SUBPLOT = 61; // Header info for the current subplot
 		public static final int CURRENT_SUBPLOT_SPP = 71; // Veg species for the current subplot
-		public static final int BASE_SUBPLOT = 100; // Header info for the current subplot; base number, instances will increment
-		public static final int BASE_SUBPLOT_SPP = 200; // Veg species for the current subplot; base number, instances will increment
+		public static final int BASE_SUBPLOT = 1000; // Header info for the current subplot; base number, instances will increment
+		public static final int BASE_SUBPLOT_SPP = 2000; // Veg species for the current subplot; base number, instances will increment
 		// in Species Select
 		public static final int SPP_MATCHES = 71; // Species that match the search string
 		public static final int CODES_ALREADY_ON_SUBPLOT = 72; // To warn about duplicates

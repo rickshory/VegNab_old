@@ -223,11 +223,7 @@ public class MainVNActivity extends ActionBarActivity
 	}
 */
 	
-	@Override
-	public void onNewItemButtonClicked(boolean presenceOnly) {
-		// presenceOnly is not used by Species Select, but passed along to Edit Species
-		showSppSelectScreen(presenceOnly);
-	}
+	
 
 	public void onVisitHeaderGoButtonClicked(long visitId) {
 		mVisitId = visitId;
@@ -295,8 +291,11 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
-	
-	public void showSppSelectScreen(boolean presenceOnlySubplot) {
+
+	@Override
+	public void onNewItemButtonClicked(int screenToReturnTo, long visitId,
+			long subplotId, boolean presenceOnly) {
+		// presenceOnly is not used by Species Select, but passed along to Edit Species
 		SelectSpeciesFragment selSppFrag = new SelectSpeciesFragment();
 		Bundle args = new Bundle();
 		// args available to send to the fragment
@@ -311,10 +310,10 @@ public class MainVNActivity extends ActionBarActivity
 		// args.putString(SelectSpeciesFragment.ARG_TAG_ID, screenTag);
 		
 		// provide Visit and Subplot IDs, so selector can check for duplicate codes
-		args.putLong(SelectSpeciesFragment.ARG_VISIT_ID, mVisitId);
-		args.putLong(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
+		args.putLong(SelectSpeciesFragment.ARG_VISIT_ID, visitId);
+		args.putLong(SelectSpeciesFragment.ARG_SUBPLOT_TYPE_ID, subplotId);
 		// following not used by Spp Select, but passed along to Edit Spp
-		args.putBoolean(SelectSpeciesFragment.ARG_PRESENCE_ONLY_SUBPLOT, presenceOnlySubplot); 
+		args.putBoolean(SelectSpeciesFragment.ARG_PRESENCE_ONLY_SUBPLOT, presenceOnly); 
 
 		selSppFrag.setArguments(args);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -498,5 +497,6 @@ public class MainVNActivity extends ActionBarActivity
 		out.close();
 		// must do following or file is not visible externally
 		MediaScannerConnection.scanFile(getApplicationContext(), new String[] { dst.getAbsolutePath() }, null, null);
-	}	
+	}
+
 }

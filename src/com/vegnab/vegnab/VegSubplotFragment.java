@@ -47,7 +47,7 @@ public class VegSubplotFragment extends ListFragment
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
-		public void onNewItemButtonClicked(boolean presenceOnly);
+		public void onNewItemButtonClicked(int screenToReturnTo, long visitId, long subplotId, boolean presenceOnly);
 	}
 	VegItemAdapter mVegSubplotSppAdapter;
 	
@@ -219,7 +219,7 @@ public class VegSubplotFragment extends ListFragment
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.subplotNewItemButton:
-			mButtonCallback.onNewItemButtonClicked(mPresenceOnly);
+			mButtonCallback.onNewItemButtonClicked(mPosition, mVisitId, mSubplotTypeId, mPresenceOnly);
 			break;
 		}
 	}

@@ -2,13 +2,10 @@ package com.vegnab.vegnab;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
-import com.vegnab.vegnab.EditNamerDialog.EditNamerDialogListener;
 import com.vegnab.vegnab.contentprovider.ContentProvider_VegNab;
 import com.vegnab.vegnab.database.VNContract.Loaders;
-import com.vegnab.vegnab.database.VNContract.Prefs;
 import com.vegnab.vegnab.database.VNContract.Tags;
 import com.vegnab.vegnab.database.VNContract.Validation;
 
@@ -17,7 +14,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +46,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 
 	long mVegItemRecId = 0; // zero default means new or not specified yet
 	long mCurVisitRecId = 0;
-	int mCurSubplotRecId = -1;
+	long mCurSubplotRecId = -1;
 	int mRecSource;
 	long mSourceRecId;
 	private String mStrVegCode = null, mStrDescription = null, 
@@ -72,7 +68,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
-	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
+	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, long mCurSubplotTypeRecId, 
 			int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr, 
 			String vegGenus, String vegSpecies, String vegSubsppVar, String vegVernacular) {
 		EditSppItemDialog f = new EditSppItemDialog();
@@ -80,7 +76,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		Bundle args = new Bundle();
 		args.putLong("vegItemRecId", vegItemRecId);
 		args.putLong("curVisitRecId", curVisitRecId);
-		args.putInt("curSubplotRecId", curSubplotRecId);
+		args.putLong("curSubplotRecId", mCurSubplotTypeRecId);
 		args.putInt("recSource", recSource);
 		args.putLong("sourceRecId", sourceRecId);
 		args.putBoolean("presenceOnly", presenceOnly);
@@ -169,7 +165,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		if (args != null) {
 			mVegItemRecId = args.getLong("mVegItemRecId");
 			mCurVisitRecId = args.getLong("curVisitRecId");
-			mCurSubplotRecId = args.getInt("curSubplotRecId");
+			mCurSubplotRecId = args.getLong("curSubplotRecId");
 			mRecSource = args.getInt("recSource");
 			mSourceRecId = args.getLong("sourceRecId");
 			mPresenceOnly = args.getBoolean("presenceOnly");

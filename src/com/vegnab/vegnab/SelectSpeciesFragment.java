@@ -36,7 +36,7 @@ public class SelectSpeciesFragment extends ListFragment
 	final static String ARG_USE_FULLTEXT_SEARCH = "fulltext_search";
 	
 	long mCurVisitRecId = 0;
-	int mCurSubplotTypeRecId = 0;
+	long mCurSubplotTypeRecId = 0;
 	boolean mPresenceOnly = true; 
 	HashSet<String> mVegCodesAlreadyOnSubplot = new HashSet<String>();
 	Cursor mSppMatchCursor;
@@ -155,7 +155,7 @@ public class SelectSpeciesFragment extends ListFragment
 		
 		if (args != null) {
 			mCurVisitRecId = args.getLong(ARG_VISIT_ID);
-			mCurSubplotTypeRecId = args.getInt(ARG_SUBPLOT_TYPE_ID);
+			mCurSubplotTypeRecId = args.getLong(ARG_SUBPLOT_TYPE_ID);
 			mPresenceOnly = args.getBoolean(ARG_PRESENCE_ONLY_SUBPLOT);
 			/*	final static String ARG_VISIT_ID = "visId";
 	final static String ARG_SUBPLOT_TYPE_ID = "sbpId";

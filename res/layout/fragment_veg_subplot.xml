@@ -7,7 +7,17 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.vegnab.vegnab.NewVisit$PlaceholderFragment" >
-
+    
+    <Button
+        android:id="@+id/subplotNewItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/veg_subplot_new_item_button_msg"
+        android:padding="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+         />
+    
     <TextView 
         android:id="@+id/txt_test_pager"
         android:text="pager test fragment"
@@ -16,43 +26,15 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_alignParentLeft="true"        
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/subplotNewItemButton"        
         />
-    
-    <TextView
-        android:id="@+id/subplot_header_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:text="@string/veg_subplot_name_msg"
-        android:layout_alignLeft="@id/txt_test_pager"
-        android:layout_below="@id/txt_test_pager"
-         />
-    
-    <Button
-        android:id="@+id/subplotNewItemButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/veg_subplot_new_item_button_msg"
-        android:padding="5dp"
-        android:layout_toRightOf="@id/subplot_header_name"
-        android:layout_alignTop="@id/subplot_header_name"
-         />
-    
-    <Button
-        android:id="@+id/subplotNextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/veg_subplot_next_button_msg"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/subplotNewItemButton"
-         />
     
     <ListView android:id="@id/android:list"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:drawSelectorOnTop="false"
-         android:layout_alignLeft="@id/subplot_header_name"
+         android:layout_alignLeft="@id/subplotNewItemButton"
          android:layout_below="@id/subplotNewItemButton"
          />
 

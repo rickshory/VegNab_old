@@ -58,7 +58,6 @@ public class VegSubplotFragment extends ListFragment
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
 		public void onNewItemButtonClicked(boolean presenceOnly);
-		public void onNextSubplotButtonClicked(long mSubplotTypeId);
 	}
 	VegItemAdapter mVegSubplotSppAdapter;
 	
@@ -141,7 +140,7 @@ public class VegSubplotFragment extends ListFragment
 
 		// set click listener for the buttons in the view
 		rootView.findViewById(R.id.subplotNewItemButton).setOnClickListener(this);
-		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
+//		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 		
@@ -232,9 +231,6 @@ public class VegSubplotFragment extends ListFragment
 		case R.id.subplotNewItemButton:
 			mButtonCallback.onNewItemButtonClicked(mPresenceOnly);
 			break;
-		case R.id.subplotNextButton:
-			mButtonCallback.onNextSubplotButtonClicked(mSubplotTypeId);
-			break;
 		}
 	}
 	
@@ -288,8 +284,6 @@ public class VegSubplotFragment extends ListFragment
 			int rowCt = c.getCount();
 			Log.v(LOG_TAG, "onLoadFinished CURRENT_SUBPLOT, number of rows returned: " + rowCt);
 			if (c.moveToNext()) {
-				((TextView) getActivity().findViewById(R.id.subplot_header_name))
-					.setText(c.getString(c.getColumnIndexOrThrow("SubplotDescription")));
 				mPresenceOnly = ((c.getInt(c.getColumnIndexOrThrow("PresenceOnly")) == 1) ? true : false);
 			}
 		}

@@ -50,8 +50,7 @@ import android.widget.Toast;
 import android.os.Build;
 
 public class MainVNActivity extends ActionBarActivity 
-		implements LoaderManager.LoaderCallbacks<Cursor>, 
-		NewVisitFragment.OnButtonListener, 
+		implements NewVisitFragment.OnButtonListener, 
 		NewVisitFragment.OnVisitClickListener,
 		VisitHeaderFragment.OnButtonListener, 
 		VisitHeaderFragment.EditVisitDialogListener,
@@ -263,10 +262,6 @@ public class MainVNActivity extends ActionBarActivity
 		showSppSelectScreen(presenceOnly);
 	}
 
-	public void onNextSubplotButtonClicked(long subpNum) {
-		dispatchDataEntryScreen(); // determine and go to next screen
-	}
-
 	public void onVisitHeaderGoButtonClicked(long visitId) {
 		mVisitId = visitId;
 		// swap DataEntryContainerFragment in place of existing fragment
@@ -284,50 +279,6 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.commit();
 		Log.e(LOG_TAG, "Call to DataEntryContainer complete");
 
-// no longer get subplots here, instead in DataEntryContainer	
-		
-//		Log.e(LOG_TAG, "About to call LoaderManager.initLoader CURRENT_SUBPLOTS");
-//		getSupportLoaderManager().initLoader(Loaders.CURRENT_SUBPLOTS, null, this);
-//		Log.e(LOG_TAG, "Called LoaderManager.initLoader CURRENT_SUBPLOTS");
-//		goToSubplotScreen();
-
-//		Toast.makeText(getApplicationContext(), 
-//				"Testing Species Select screen", 
-//				Toast.LENGTH_LONG).show();
-//		showSppSelectScreen();
-	}
-	
-	public void dispatchDataEntryScreen() {
-		// for testing, just go to the first veg subplot screen
-		// ultimately will dispatch to relevent veg or aux screen
-		if (mPlotSpecsNewlySetUp == true) {
-			mPlotSpecsNewlySetUp = false;
-			// test for no subplots?
-			mSubplotNum = 0;
-			
-		} else { // not the first
-			mSubplotNum++;
-			if (mSubplotNum >= mPlotSpecs.length()) {
-				// done with Subplots, go back to Visit Header
-				mPlotSpecsNewlySetUp = true;
-				mSubplotNum = -1;
-				// deal with adjusting anything on the backstack
-				Log.v(LOG_TAG, "About to call 'goToVisitHeaderScreen', mVisitId=" + mVisitId);
-				goToVisitHeaderScreen(mVisitId);
-				return;
-			} else {
-				// for now, drop through to 'goToSubplotScreen'
-				// will deal with aux data screens here
-			}
-		}
-		try {
-			mSubplotSpec = mPlotSpecs.getJSONObject(mSubplotNum);
-			mSubplotTypeId = mSubplotSpec.getInt("subplotId");
-		} catch (JSONException e) {
-			Log.v(LOG_TAG, "In 'dispatchDataEntryScreen' parsing subplot spec, JSON error: " + e.getMessage());
-		}
-		Log.v(LOG_TAG, "About to call 'goToSubplotScreen', mSubplotNum=" + mSubplotNum);
-		goToSubplotScreen();
 	}
 	
 	@Override
@@ -363,48 +314,6 @@ public class MainVNActivity extends ActionBarActivity
 		transaction.replace(R.id.fragment_container, visHdrFrag, Tags.VISIT_HEADER);
 		transaction.addToBackStack(null);
 		transaction.commit();
-	}
-
-	public void goToSubplotScreen() {
-		// testing:
-		// swap DataEntryContainerFragment in place of existing fragment
-		FragmentManager fm = getSupportFragmentManager();
-		Bundle args = new Bundle();
-		args.putLong(DataEntryContainerFragment.VISIT_ID, mVisitId);
-		DataEntryContainerFragment dataEntryFrag = DataEntryContainerFragment.newInstance(args);
-		FragmentTransaction transaction = fm.beginTransaction();
-		// put the present fragment on the backstack so the user can navigate back to it
-		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, dataEntryFrag, "data_screens"); // make Tags.DATA_SCREENS_CONTAINER
-		transaction.addToBackStack(null);
-		transaction.commit();
-		
-		
-/*
-		// swap Subplot fragment in place of existing fragment
-		FragmentManager fm = getSupportFragmentManager();
-		VegSubplotFragment vegSbpFrag = new VegSubplotFragment();
-		Bundle args = new Bundle();
-		args.putLong(VegSubplotFragment.ARG_VISIT_ID, mVisitId);
-		args.putInt(VegSubplotFragment.ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
-		vegSbpFrag.setArguments(args);
-		FragmentTransaction transaction = fm.beginTransaction();
-		// put the present fragment on the backstack so the user can navigate back to it
-		// the tag is for the fragment now being added, not the one replaced
-		transaction.replace(R.id.fragment_container, vegSbpFrag, Tags.VEG_SUBPLOT);
-		transaction.addToBackStack(null);
-		transaction.commit();
-		// only allow one Subplot fragment on the the backstack, multiple could interfere with each other's species lists
-		boolean wasRemoved = false;
-		try {
-			// this pops all fragments back to and including the last veg subplot
-			if (fm.popBackStackImmediate (Tags.VEG_SUBPLOT, FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
-				wasRemoved = true;
-			}
-		} catch (Exception e) {
-			Log.v(LOG_TAG, "stack pop exception: " + e.getMessage());
-		}
-		*/
 	}
 	
 	public void showWebViewScreen(String screenTag) {
@@ -624,111 +533,5 @@ public class MainVNActivity extends ActionBarActivity
 		out.close();
 		// must do following or file is not visible externally
 		MediaScannerConnection.scanFile(getApplicationContext(), new String[] { dst.getAbsolutePath() }, null, null);
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// This is called when a new Loader needs to be created.
-		// switch out based on id
-		CursorLoader cl = null;
-		Uri baseUri;
-		String select = null; // default for all-columns, unless re-assigned or overridden by raw SQL
-		switch (id) {
-		case Loaders.CURRENT_SUBPLOTS:
-			// current plot type is the default plot type stored in Preferences
-			SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-			long plotTypeId = sharedPref.getLong(Prefs.DEFAULT_PLOTTYPE_ID, 0);
-			baseUri = ContentProvider_VegNab.SQL_URI;
-			select = "SELECT _id FROM SubplotTypes "
-					+ "WHERE PlotTypeID = " + plotTypeId + " "
-					+ "ORDER BY OrderDone, _id;";
-			cl = new CursorLoader(this, baseUri,
-					null, select, null, null);
-			break;		
-		}
-		return cl;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor finishedCursor) {
-		// there will be various loaders, switch them out here
-		mRowCt = finishedCursor.getCount();
-		switch (loader.getId()) {
-		case Loaders.CURRENT_SUBPLOTS:
-			// store the list of subplots and then go to the first one
-			mPlotSpecs = new JSONArray(); // clear the array
-			Log.v(LOG_TAG, "In 'onLoadFinished', mPlotSpecs=" + mPlotSpecs.toString());
-			while (finishedCursor.moveToNext()) {
-				mSubplotSpec = new JSONObject();
-				// for now, only put the Subplot ID number
-				try {
-					mSubplotSpec.put("subplotId", finishedCursor.getInt(finishedCursor.getColumnIndexOrThrow("_id")));
-				} catch (JSONException e) {
-					Log.v(LOG_TAG, "In 'onLoadFinished', JSON error: " + e.getMessage());
-				}
-				// can put in the auxiliary data specs, here or in post-processing
-				mPlotSpecs.put(mSubplotSpec);
-			}
-			mPlotSpecsNewlySetUp = true;
-			// use a callback to continue program flow outside this fn, where direct calls to 
-			// 'dispatchDataEntryScreen' are not legal
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to create message");
-			Message msgPlotSpecsDone = Message.obtain();
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to create callback");
-			Callback cbkSbsDone = new Callback() {
-
-				@Override
-				public boolean handleMessage(Message msg) {
-					// execute this during callback
-					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, about to call 'dispatchDataEntryScreen'");
-					dispatchDataEntryScreen();
-					Log.v(LOG_TAG, "In 'cbkSbsDone' callback, after call to 'dispatchDataEntryScreen'");
-					return false;
-				}
-			};
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to create handler");
-			Handler hnd = new Handler(cbkSbsDone);
-			Log.v(LOG_TAG, "In 'onLoadFinished', about to send message");
-			hnd.sendMessage(msgPlotSpecsDone);
-			Log.v(LOG_TAG, "In 'onLoadFinished', message sent");
-			break;
-		}
-	}
-	
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		// This is called when the last Cursor provided to onLoadFinished()
-		// is about to be closed. Need to make sure it is no longer is use.
-		switch (loader.getId()) {
-		case Loaders.CURRENT_SUBPLOTS:
-			// no adapter, nothing to do
-			break;
-		}
-	}
+	}	
 }
-/*
-class dataPagerAdapter extends FragmentStatePagerAdapter {
-
-	public dataPagerAdapter(FragmentManager fm) {
-		super(fm);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public Fragment getItem(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	@Override
-	public CharSequence getPageTitle(int position) {
-		return "subplot " + (position + 1);
-	}
-	
-} */

@@ -32,27 +32,60 @@ public class VegSubplotFragment extends ListFragment
 		implements OnClickListener,
 		LoaderManager.LoaderCallbacks<Cursor> {
 	private static final String LOG_TAG = VegSubplotFragment.class.getSimpleName();
-	public static final String ARG_SUBPLOT = "subplot"; // position in the subplot order
-	public static final String ARG_VISIT_ID = "visitID"; // used to query veg items
-	public static final String ARG_SUBPLOT_TYPE_ID = "subplotTypeId"; // used to query veg items
+	
+	public static final String POSITION_KEY = "FragmentPositionKey";
+	private int mPosition = -1;
+	
+	public static final String VISIT_ID = "VisitId";
 	private long mVisitId = 0;
-	private int mSubplotTypeId = -1, mSubplot = 0;
-	boolean mPresenceOnly, mHasNested;
+
+	public static final String SUBPLOT_TYPE_ID = "SubplotTypeId";
+	private long mSubplotTypeId = -1;
+
+	public static final String PRESENCE_ONLY = "PresenceOnly";
+	private boolean mPresenceOnly = true;
+	
+	public static final String VISIT_NAME = "VisitName";
+	private String mVisitName = "";
+
+	
+
+//	private int mSubplotTypeId = -1, mSubplot = 0;
+	boolean mHasNested;
 	OnButtonListener mButtonCallback; // declare the interface
 	// declare that the container Activity must implement this interface
 	public interface OnButtonListener {
 		// methods that must be implemented in the container Activity
 		public void onNewItemButtonClicked(boolean presenceOnly);
-		public void onNextSubplotButtonClicked(int subpNum);
+		public void onNextSubplotButtonClicked(long mSubplotTypeId);
 	}
 	VegItemAdapter mVegSubplotSppAdapter;
+	
+	static VegSubplotFragment newInstance(Bundle args) {
+		VegSubplotFragment f = new VegSubplotFragment();
+		f.setArguments(args);
+		return f;
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	setHasOptionsMenu(true);
+//	setHasOptionsMenu(true);
+		if (savedInstanceState == null) {
+			Log.v(LOG_TAG, "onCreate FIRST TIME, position = " + mPosition);
+		} else {
+			Log.v(LOG_TAG, "onCreate SUBSEQUENT TIME, position = " + mPosition);
+		}
+// set up any interfaces
+//		try {
+//        	mEditNamerListener = (EditNamerDialogListener) getActivity();
+//        	Log.v(LOG_TAG, "(EditNamerDialogListener) getActivity()");
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException("Main Activity must implement EditNamerDialogListener interface");
+//        }
 	}	
-	
+
+/*	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.veg_subplot, menu);
@@ -86,51 +119,67 @@ public class VegSubplotFragment extends ListFragment
 		}
 		return super.onOptionsItemSelected(item);
 	}
+*/
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 			Bundle savedInstanceState) {
-		// if the activity was re-created (e.g. from a screen rotate)
-		// restore the previous subplot remembered by onSaveInstanceState()
-		// This is mostly needed in fixed-pane layouts
-		if (savedInstanceState != null) {
-			mVisitId = savedInstanceState.getLong(ARG_VISIT_ID);
-			mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID);
-		}
+		mPosition = getArguments().getInt(POSITION_KEY);
+		mVisitId = getArguments().getLong(VISIT_ID);
+		mVisitName = getArguments().getString(VISIT_NAME);
+		mSubplotTypeId = getArguments().getLong(SUBPLOT_TYPE_ID);
+		mPresenceOnly = getArguments().getBoolean(PRESENCE_ONLY);
+		
 		// inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_veg_subplot, container, false);
+		// set up the diagnostics
+		TextView textview = (TextView) rootView.findViewById(R.id.txt_test_pager);
+		textview.setText("Position=" + mPosition + ", VisitId=" + mVisitId +
+				", Visit Name: '" + mVisitName + "'" +
+				", SubplotTypeId=" + mSubplotTypeId + ", PresenceOnly=" + (mPresenceOnly ? 1 : 0));
+
 		// set click listener for the buttons in the view
 		rootView.findViewById(R.id.subplotNewItemButton).setOnClickListener(this);
 		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
+
+//		if (savedInstanceState != null) {
+//			mVisitId = savedInstanceState.getLong(VISIT_ID);
+//			mSubplotTypeId = savedInstanceState.getInt(SUBPLOT_TYPE_ID);
+//		}
 		
 		// use query to return 'SppLine', concatenated from code and description; more reading room
 		mVegSubplotSppAdapter = new VegItemAdapter(getActivity(),
 				R.layout.list_veg_item, null, 0);
 		setListAdapter(mVegSubplotSppAdapter);
+		Log.v(LOG_TAG, "onCreateView, position = " + mPosition);
 		return rootView;
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
+		Log.v(LOG_TAG, "onStart, position = " + mPosition);
+
+/*		
 		// during startup, check if arguments are passed to the fragment
 		// this is where to do this because the layout has been applied
 		// to the fragment
 		Bundle args = getArguments();
 		if (args != null) {
-			mVisitId = args.getLong(ARG_VISIT_ID);
-			mSubplotTypeId = args.getInt(ARG_SUBPLOT_TYPE_ID);
+			mVisitId = args.getLong(VISIT_ID);
+			mSubplotTypeId = args.getInt(SUBPLOT_TYPE_ID);
 
 //			// set up subplot based on arguments passed in
-//			updateSubplotViews(args.getInt(ARG_SUBPLOT_TYPE_ID));
+//			updateSubplotViews(args.getInt(SUBPLOT_TYPE_ID));
 //		} else if (mSubplotTypeId != -1) {
 //			// set up subplot based on saved instance state defined in onCreateView
 //			updateSubplotViews(mSubplotTypeId);
 //		} else {
 //			updateSubplotViews(-1); // figure out what to do for default state 
 		}
+*/	
 		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT, null, this);
 		getLoaderManager().initLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
 	}
@@ -138,6 +187,7 @@ public class VegSubplotFragment extends ListFragment
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		Log.v(LOG_TAG, "onAttach, position = " + mPosition);
 		// assure the container activity has implemented the callback interface
 		try {
 			mButtonCallback = (OnButtonListener) activity;
@@ -145,7 +195,58 @@ public class VegSubplotFragment extends ListFragment
 			throw new ClassCastException (activity.toString() + " must implement OnButtonListener");
 		}
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.v(LOG_TAG, "onSaveInstanceState, position = " + mPosition);
+		// save the current subplot arguments in case we need to re-create the fragment
+		outState.putLong(VISIT_ID, mVisitId);
+		outState.putLong(SUBPLOT_TYPE_ID, mSubplotTypeId);
+	}
 
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.v(LOG_TAG, "onStop, position = " + mPosition);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v(LOG_TAG, "onDestroy, position = " + mPosition);
+	}
+	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		Log.v(LOG_TAG, "onDestroyView, position = " + mPosition);
+	}	
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		Log.v(LOG_TAG, "onDetach, position = " + mPosition);
+	}	
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.v(LOG_TAG, "onPause, position = " + mPosition);
+	}	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.v(LOG_TAG, "onResume, position = " + mPosition);
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Log.v(LOG_TAG, "onActivityCreated, position = " + mPosition);
+	}
+	
 	/*
 	public void updateSubplotViews(int subplotNum) {
 
@@ -160,14 +261,6 @@ public class VegSubplotFragment extends ListFragment
 		// at this point, after inflate, the frag's objects are all child objects of the activity
 	}
 	*/
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		// save the current subplot arguments in case we need to re-create the fragment
-		outState.putLong(ARG_VISIT_ID, mVisitId);
-		outState.putInt(ARG_SUBPLOT_TYPE_ID, mSubplotTypeId);
-	}
 
 	@Override
 	public void onClick(View v) {
@@ -182,7 +275,7 @@ public class VegSubplotFragment extends ListFragment
 	}
 	
 	public void refreshSppList() {
-		// when the referred Loader callback returns, will update the Namers spinner
+		// when the referred Loader callback returns, will refresh the currently used species
 		getLoaderManager().restartLoader(Loaders.CURRENT_SUBPLOT_SPP, null, this);
 	}
 

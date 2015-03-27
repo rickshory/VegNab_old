@@ -8,12 +8,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.vegnab.vegnab.NewVisit$PlaceholderFragment" >
 
+    <TextView 
+        android:id="@+id/txt_test_pager"
+        android:text="pager test fragment"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignParentLeft="true"        
+        />
+    
     <TextView
         android:id="@+id/subplot_header_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:text="@string/veg_subplot_name_msg" />
+        android:text="@string/veg_subplot_name_msg"
+        android:layout_alignLeft="@id/txt_test_pager"
+        android:layout_below="@id/txt_test_pager"
+         />
     
     <Button
         android:id="@+id/subplotNewItemButton"

@@ -263,7 +263,7 @@ public class MainVNActivity extends ActionBarActivity
 		showSppSelectScreen(presenceOnly);
 	}
 
-	public void onNextSubplotButtonClicked(int subpNum) {
+	public void onNextSubplotButtonClicked(long subpNum) {
 		dispatchDataEntryScreen(); // determine and go to next screen
 	}
 

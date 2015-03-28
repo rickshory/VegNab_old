@@ -33,13 +33,13 @@ public class VegSubplotFragment extends ListFragment
 
 	public static final String PRESENCE_ONLY = "PresenceOnly";
 	private boolean mPresenceOnly = true;
+
+	public static final String HAS_NESTED = "HasNested";
+	private boolean mHasNested = false;
 	
 	public static final String VISIT_NAME = "VisitName";
 	private String mVisitName = "";
 
-	
-
-	boolean mHasNested;
 //	private int mSubplotLoaderId, mSppLoaderId;
 	private int mSppLoaderId;
 	

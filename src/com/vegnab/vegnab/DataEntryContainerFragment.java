@@ -84,6 +84,9 @@ public class DataEntryContainerFragment extends Fragment
 	}
 	
 	public static class dataPagerAdapter extends FragmentStatePagerAdapter {
+		
+		
+		private SparseArray<WeakReference<Fragment>> mFragments = new SparseArray<>();
 	
 		public dataPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -103,7 +106,9 @@ public class DataEntryContainerFragment extends Fragment
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
             args.putBoolean(VegSubplotFragment.PRESENCE_ONLY, ((mSubplotsCursor.getInt(
             		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")) == 0) ? false : true));
-            return VegSubplotFragment.newInstance(args);
+            Fragment f = VegSubplotFragment.newInstance(args);
+            mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
+            return f;
         }
 	
 		@Override
@@ -118,15 +123,18 @@ public class DataEntryContainerFragment extends Fragment
             return mSubplotsCursor.getString(
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotDescription"));
 		}
-		
-		private SparseArray<WeakReference<Fragment>> mFragments = new SparseArray<>();
-		
+
+/*
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 			Fragment f = (Fragment) super.instantiateItem(container, position);
+			Log.v(LOG_TAG, "Tag of fragment instatiated at position " + position + ": " + f.getTag());
+//			this.getSupportFragmentManager().beginTransaction().add(f, "dataScreen" + position).commit();
+//			Log.v(LOG_TAG, "After setting tag of fragment at position " + position + ": " + f.getTag());
 			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in position
 			return f;
 		}
+*/
 		
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {

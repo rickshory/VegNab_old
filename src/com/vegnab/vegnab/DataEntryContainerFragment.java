@@ -1,5 +1,7 @@
 package com.vegnab.vegnab;
 
+import java.lang.ref.WeakReference;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -115,6 +117,30 @@ public class DataEntryContainerFragment extends Fragment
 			mSubplotsCursor.moveToPosition(position);
             return mSubplotsCursor.getString(
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotDescription"));
+		}
+		
+		private SparseArray<WeakReference<Fragment>> mFragments = new SparseArray<>();
+		
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			Fragment f = (Fragment) super.instantiateItem(container, position);
+			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in position
+			return f;
+		}
+		
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			super.destroyItem(container, position, object);
+			mFragments.remove(position);
+		}
+		
+		public Fragment getFragment(int position) {
+			WeakReference<Fragment> ref = mFragments.get(position);
+			Fragment f = ref != null ? ref.get() : null;
+			if (f == null) {
+				Log.d(LOG_TAG, "fragment for " + position + " is null!");
+			}
+			return f;
 		}
 	}
 

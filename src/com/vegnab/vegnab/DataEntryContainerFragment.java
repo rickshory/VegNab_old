@@ -36,7 +36,7 @@ public class DataEntryContainerFragment extends Fragment
 	private JSONObject mSubplotSpec = new JSONObject();
 	private JSONArray mPlotSpecs = new JSONArray();
 
-	ViewPager mDataScreenPager = null;
+	public ViewPager mDataScreenPager = null;
 	public static DataEntryContainerFragment newInstance(Bundle args) {
 		DataEntryContainerFragment f = new DataEntryContainerFragment();
 		f.setArguments(args);

@@ -393,14 +393,39 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onEditVegItemComplete(DialogFragment dialog) {
 		Log.v(LOG_TAG, "onEditSppComplete(DialogFragment dialog)");
-		VegSubplotFragment vegSubpFragment = (VegSubplotFragment) 
-				getSupportFragmentManager().findFragmentByTag(Tags.VEG_SUBPLOT);
-		if (vegSubpFragment == null) {
-			Log.v(LOG_TAG, "vegSubpFragment == null");
+		
+		/*int index = mViewPager.getCurrentItem();
+MyAdapter adapter = ((MyAdapter)mViewPager.getAdapter());
+MyFragment fragment = adapter.getFragment(index);*/
+		DataEntryContainerFragment dataScreensFrag = (DataEntryContainerFragment)
+				getSupportFragmentManager().findFragmentByTag(Tags.DATA_SCREENS_CONTAINER);
+		if (dataScreensFrag == null) {
+			Log.v(LOG_TAG, "dataScreensFrag == null");
 		} else {
-			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
-			vegSubpFragment.refreshSppList();
+			Log.v(LOG_TAG, "dataScreensFrag: " + dataScreensFrag.toString());
+			int index = dataScreensFrag.mDataScreenPager.getCurrentItem();
+			DataEntryContainerFragment.dataPagerAdapter adapter = 
+					((DataEntryContainerFragment.dataPagerAdapter)dataScreensFrag.mDataScreenPager.getAdapter());
+			VegSubplotFragment vegSubpFragment = (VegSubplotFragment) adapter.getFragment(index);
+//			vegSubpFragment.refreshSppList();
+			if (vegSubpFragment == null) {
+				Log.v(LOG_TAG, "vegSubpFragment == null");
+			} else {
+				Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+				Log.v(LOG_TAG, "About to do 'refreshSppList' for data page " + index);
+				vegSubpFragment.refreshSppList();
+				Log.v(LOG_TAG, "Completed 'refreshSppList' for data page " + index);
+			}			
 		}
+		
+//		VegSubplotFragment vegSubpFragment = (VegSubplotFragment) 
+//				getSupportFragmentManager().findFragmentByTag(Tags.VEG_SUBPLOT);
+//		if (vegSubpFragment == null) {
+//			Log.v(LOG_TAG, "vegSubpFragment == null");
+//		} else {
+//			Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+//			vegSubpFragment.refreshSppList();
+//		}
 		Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 		if (currentFragment.getTag() == Tags.SELECT_SPECIES) {
 			super.onBackPressed();

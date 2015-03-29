@@ -75,8 +75,8 @@ public class DataEntryContainerFragment extends Fragment
 		} else {
 			Log.v(LOG_TAG, "savedInstanceState == null; mScreenToShow=" + mScreenToShow);
 			// don't yet know why mScreenToShow is retained across re-entry, but explicitly reset it here
-			Log.v(LOG_TAG, "resetting mScreenToShow to 0");
-			mScreenToShow = 0;
+//			Log.v(LOG_TAG, "resetting mScreenToShow to 0");
+//			mScreenToShow = 0;
 		}
 		// set Pager Adapter when loader done
 		Log.v(LOG_TAG, "about to return from 'onCreateView'");

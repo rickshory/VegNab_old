@@ -415,6 +415,7 @@ MyFragment fragment = adapter.getFragment(index);*/
 				Log.v(LOG_TAG, "About to do 'refreshSppList' for data page " + index);
 				vegSubpFragment.refreshSppList();
 				Log.v(LOG_TAG, "Completed 'refreshSppList' for data page " + index);
+				dataScreensFrag.mDataScreenPager.setCurrentItem(index);
 			}			
 		}
 		

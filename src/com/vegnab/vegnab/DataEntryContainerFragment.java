@@ -106,9 +106,10 @@ public class DataEntryContainerFragment extends Fragment
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
             args.putBoolean(VegSubplotFragment.PRESENCE_ONLY, ((mSubplotsCursor.getInt(
             		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")) == 0) ? false : true));
-            Fragment f = VegSubplotFragment.newInstance(args);
-            mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
-            return f;
+//            Fragment f = VegSubplotFragment.newInstance(args);
+//            mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
+//            return f;
+            return VegSubplotFragment.newInstance(args);
         }
 	
 		@Override
@@ -124,17 +125,15 @@ public class DataEntryContainerFragment extends Fragment
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotDescription"));
 		}
 
-/*
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 			Fragment f = (Fragment) super.instantiateItem(container, position);
 			Log.v(LOG_TAG, "Tag of fragment instatiated at position " + position + ": " + f.getTag());
 //			this.getSupportFragmentManager().beginTransaction().add(f, "dataScreen" + position).commit();
 //			Log.v(LOG_TAG, "After setting tag of fragment at position " + position + ": " + f.getTag());
-			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in position
+			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
 			return f;
 		}
-*/
 		
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
@@ -232,6 +231,7 @@ public class DataEntryContainerFragment extends Fragment
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		// following can crash on screen rotate when EditSppItemDialog is displayed
 		Log.v(LOG_TAG, "In 'onSaveInstanceState', about to save dataPagePosition; mDataScreenPager.getCurrentItem() = " + mDataScreenPager.getCurrentItem());
 		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
 		outState.putLong(VISIT_ID, mVisitId);

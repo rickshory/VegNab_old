@@ -174,7 +174,7 @@ public class DataEntryContainerFragment extends Fragment
 		public Object instantiateItem(ViewGroup container, int position) {
 			Fragment f = (Fragment) super.instantiateItem(container, position);
 //			Log.v(LOG_TAG, "Tag of fragment instatiated at position " + position + ": " + f.getTag());
-//			this.getSupportFragmentManager().beginTransaction().add(f, "dataScreen" + position).commit();
+//			getSupportFragmentManager().beginTransaction().add(f, "dataScreen" + position).commit();
 //			Log.v(LOG_TAG, "After setting tag of fragment at position " + position + ": " + f.getTag());
 			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
 			return f;

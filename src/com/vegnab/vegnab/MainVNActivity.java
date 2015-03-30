@@ -92,7 +92,7 @@ public class MainVNActivity extends ActionBarActivity
 		if (true) {
 			if (savedInstanceState != null) {
 				mVisitId = savedInstanceState.getLong(ARG_VISIT_ID);
-				mSubplotTypeId = savedInstanceState.getInt(ARG_SUBPLOT_TYPE_ID, 0);
+				mSubplotTypeId = savedInstanceState.getLong(ARG_SUBPLOT_TYPE_ID, 0);
 				// if restoring from a previous state, do not create view
 				// could end up with overlapping views
 				return;
@@ -393,17 +393,14 @@ public class MainVNActivity extends ActionBarActivity
 	@Override
 	public void onEditVegItemComplete(DialogFragment dialog) {
 		Log.v(LOG_TAG, "onEditSppComplete(DialogFragment dialog)");
-		
-		/*int index = mViewPager.getCurrentItem();
-MyAdapter adapter = ((MyAdapter)mViewPager.getAdapter());
-MyFragment fragment = adapter.getFragment(index);*/
 		DataEntryContainerFragment dataScreensFrag = (DataEntryContainerFragment)
 				getSupportFragmentManager().findFragmentByTag(Tags.DATA_SCREENS_CONTAINER);
 		if (dataScreensFrag == null) {
 			Log.v(LOG_TAG, "dataScreensFrag == null");
 		} else {
 			Log.v(LOG_TAG, "dataScreensFrag: " + dataScreensFrag.toString());
-			int index = dataScreensFrag.mDataScreenPager.getCurrentItem();
+//			int index = dataScreensFrag.mDataScreenPager.getCurrentItem();
+			int index = dataScreensFrag.mScreenToShow;
 			DataEntryContainerFragment.dataPagerAdapter adapter = 
 					((DataEntryContainerFragment.dataPagerAdapter)dataScreensFrag.mDataScreenPager.getAdapter());
 			VegSubplotFragment vegSubpFragment = (VegSubplotFragment) adapter.getFragment(index);
@@ -415,7 +412,7 @@ MyFragment fragment = adapter.getFragment(index);*/
 				Log.v(LOG_TAG, "About to do 'refreshSppList' for data page " + index);
 				vegSubpFragment.refreshSppList();
 				Log.v(LOG_TAG, "Completed 'refreshSppList' for data page " + index);
-				dataScreensFrag.mDataScreenPager.setCurrentItem(index);
+//				dataScreensFrag.mDataScreenPager.setCurrentItem(index);
 			}			
 		}
 		

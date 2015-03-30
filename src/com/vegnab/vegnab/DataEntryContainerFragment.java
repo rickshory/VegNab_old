@@ -30,7 +30,7 @@ public class DataEntryContainerFragment extends Fragment
 	public static final String TAG = DataEntryContainerFragment.class.getName();
 	public static final String VISIT_ID = "VisitId";
 	static long mVisitId = 0; // new or not specified yet
-	static int mScreenToShow = 0; // default unless changed
+	public static int mScreenToShow = 0; // default unless changed
 	static SparseArray<String> mSubplotNames = new SparseArray<String>();
 	static Cursor mSubplotsCursor;
 	private JSONObject mSubplotSpec = new JSONObject();
@@ -83,6 +83,51 @@ public class DataEntryContainerFragment extends Fragment
 		return root;
 	}
 	
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.v(LOG_TAG, "onStop, ScreenToShow = " + mScreenToShow);
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v(LOG_TAG, "onDestroy, ScreenToShow = " + mScreenToShow);
+	}
+	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		Log.v(LOG_TAG, "onDestroyView, ScreenToShow = " + mScreenToShow);
+	}	
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		Log.v(LOG_TAG, "onDetach, ScreenToShow = " + mScreenToShow);
+	}	
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.v(LOG_TAG, "onPause, ScreenToShow = " + mScreenToShow + "; about to set to 'mDataScreenPager.getCurrentItem()'");
+		mScreenToShow = mDataScreenPager.getCurrentItem();
+		Log.v(LOG_TAG, "onPause, ScreenToShow = " + mScreenToShow);
+	}	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.v(LOG_TAG, "onResume, ScreenToShow = " + mScreenToShow);
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Log.v(LOG_TAG, "onActivityCreated, ScreenToShow = " + mScreenToShow);
+	}
+
 	public static class dataPagerAdapter extends FragmentStatePagerAdapter {
 		
 		
@@ -114,7 +159,7 @@ public class DataEntryContainerFragment extends Fragment
 	
 		@Override
 		public int getCount() {
-			Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
+//			Log.v(LOG_TAG, "called dataPagerAdapter 'getCount'");
 			return mSubplotsCursor.getCount();
 		}
 		
@@ -128,7 +173,7 @@ public class DataEntryContainerFragment extends Fragment
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 			Fragment f = (Fragment) super.instantiateItem(container, position);
-			Log.v(LOG_TAG, "Tag of fragment instatiated at position " + position + ": " + f.getTag());
+//			Log.v(LOG_TAG, "Tag of fragment instatiated at position " + position + ": " + f.getTag());
 //			this.getSupportFragmentManager().beginTransaction().add(f, "dataScreen" + position).commit();
 //			Log.v(LOG_TAG, "After setting tag of fragment at position " + position + ": " + f.getTag());
 			mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
@@ -232,8 +277,10 @@ public class DataEntryContainerFragment extends Fragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// following can crash on screen rotate when EditSppItemDialog is displayed
-		Log.v(LOG_TAG, "In 'onSaveInstanceState', about to save dataPagePosition; mDataScreenPager.getCurrentItem() = " + mDataScreenPager.getCurrentItem());
-		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
+//		Log.v(LOG_TAG, "In 'onSaveInstanceState', about to save dataPagePosition; mDataScreenPager.getCurrentItem() = " + mDataScreenPager.getCurrentItem());
+//		outState.putInt("dataPagePosition", mDataScreenPager.getCurrentItem());
+		Log.v(LOG_TAG, "In 'onSaveInstanceState', about to save dataPagePosition; mScreenToShow = " + mScreenToShow);
+		outState.putInt("dataPagePosition", mScreenToShow);
 		outState.putLong(VISIT_ID, mVisitId);
 		super.onSaveInstanceState(outState);
 	}

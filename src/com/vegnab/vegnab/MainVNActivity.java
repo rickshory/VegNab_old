@@ -399,21 +399,28 @@ public class MainVNActivity extends ActionBarActivity
 			Log.v(LOG_TAG, "dataScreensFrag == null");
 		} else {
 			Log.v(LOG_TAG, "dataScreensFrag: " + dataScreensFrag.toString());
-//			int index = dataScreensFrag.mDataScreenPager.getCurrentItem();
-			int index = dataScreensFrag.mScreenToShow;
-			DataEntryContainerFragment.dataPagerAdapter adapter = 
-					((DataEntryContainerFragment.dataPagerAdapter)dataScreensFrag.mDataScreenPager.getAdapter());
-			VegSubplotFragment vegSubpFragment = (VegSubplotFragment) adapter.getFragment(index);
-//			vegSubpFragment.refreshSppList();
-			if (vegSubpFragment == null) {
-				Log.v(LOG_TAG, "vegSubpFragment == null");
-			} else {
-				Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
-				Log.v(LOG_TAG, "About to do 'refreshSppList' for data page " + index);
-				vegSubpFragment.refreshSppList();
-				Log.v(LOG_TAG, "Completed 'refreshSppList' for data page " + index);
-//				dataScreensFrag.mDataScreenPager.setCurrentItem(index);
-			}			
+			try {
+				// Sometimes screen-rotates while EditSppItemDialog is displayed destroy some of
+				// the following objects, in which case the app would crash with null pointer exceptions
+				// In this case, skip the data screen refresh and allow it to happen when 
+				// fragments are re-instantiated
+				int index = dataScreensFrag.mDataScreenPager.getCurrentItem();
+	//			int index = dataScreensFrag.mScreenToShow;
+				DataEntryContainerFragment.dataPagerAdapter adapter = 
+						((DataEntryContainerFragment.dataPagerAdapter)dataScreensFrag.mDataScreenPager.getAdapter());
+				VegSubplotFragment vegSubpFragment = (VegSubplotFragment) adapter.getFragment(index);
+				if (vegSubpFragment == null) {
+					Log.v(LOG_TAG, "vegSubpFragment == null");
+				} else {
+					Log.v(LOG_TAG, "vegSubpFragment: " + vegSubpFragment.toString());
+					Log.v(LOG_TAG, "About to do 'refreshSppList' for data page " + index);
+					vegSubpFragment.refreshSppList();
+					Log.v(LOG_TAG, "Completed 'refreshSppList' for data page " + index);
+	//				dataScreensFrag.mDataScreenPager.setCurrentItem(index);
+				}
+			} catch (Exception e) {
+				Log.v(LOG_TAG, "exception: " + e.getMessage());
+			} 
 		}
 		
 //		VegSubplotFragment vegSubpFragment = (VegSubplotFragment) 

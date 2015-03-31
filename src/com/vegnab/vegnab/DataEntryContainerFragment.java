@@ -151,9 +151,6 @@ public class DataEntryContainerFragment extends Fragment
             		mSubplotsCursor.getColumnIndexOrThrow("SubplotTypeId")));
             args.putBoolean(VegSubplotFragment.PRESENCE_ONLY, ((mSubplotsCursor.getInt(
             		mSubplotsCursor.getColumnIndexOrThrow("PresenceOnly")) == 0) ? false : true));
-//            Fragment f = VegSubplotFragment.newInstance(args);
-//            mFragments.put(position, new WeakReference<>(f));  // Remember what fragment was in this position
-//            return f;
             return VegSubplotFragment.newInstance(args);
         }
 	

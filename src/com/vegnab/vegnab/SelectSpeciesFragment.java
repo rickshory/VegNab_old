@@ -220,6 +220,7 @@ public class SelectSpeciesFragment extends ListFragment
         //static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
 		//int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr) {
         Log.v(LOG_TAG, "about to dispatch 'EditSppItemDialog' dialog to create new record");
+        
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
         		VegcodeSources.REGIONAL_LIST, id, mPresenceOnly, vegCode, vegDescr, vegGenus, vegSpecies, vegSubsppVar, vegVernacular);
         newVegItemDlg.show(getFragmentManager(), "frg_new_veg_item");

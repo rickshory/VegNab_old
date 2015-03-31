@@ -44,18 +44,37 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	}
 	EditSppItemDialogListener mEditVegItemListener;
 
-	long mVegItemRecId = 0; // zero default means new or not specified yet
-	long mCurVisitRecId = 0;
-	long mCurSubplotRecId = -1;
-	int mRecSource;
-	long mSourceRecId;
+	public static final String VEG_ITEM_REC_ID = "VegItemRecId";
+	private long mVegItemRecId = 0; // zero default means new or not specified yet
+	
+	public static final String CUR_VISIT_REC_ID = "CurVisitRecId";
+	private long mCurVisitRecId = 0;
+	
+	public static final String CUR_SUBPLOT_REC_ID = "CurSubplotRecId";
+	private long mCurSubplotRecId = -1;
+	
+	public static final String REC_SOURCE = "RecSource";
+	private int mRecSource;
+	
+	public static final String SOURCE_REC_ID = "SourceRecId";
+	private long mSourceRecId;
+	
+	public static final String PRESENCE_ONLY = "PresenceOnly";
+	private boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
+
+	public static final String VEG_CODE = "VegCode";
+	public static final String VEG_DESCR = "VegDescr";
+	public static final String VEG_GENUS = "VegGenus";
+	public static final String VEG_SPECIES = "VegSpecies";
+	public static final String VEG_SUBSPP_VAR = "VegSubsppVar";
+	public static final String VEG_VERNACULAR = "VegVernacular";
+
 	private String mStrVegCode = null, mStrDescription = null, 
 			mStrGenus = null, mStrSpecies = null, mStrSubsppVar = null, mStrVernacular = null;
 	private int mHeight, mCover;
 	private boolean isPresent = true; // assume present; explicit false by user means verified absent
 	long mIDConfidence = 1; // default 'no doubt of ID'
 	Cursor mCFCursor;
-	boolean mPresenceOnly = true; // default is that this veg item needs only presence/absence
 	boolean mAutoVerifyPresence = false;
 	private int mValidationLevel = Validation.SILENT;
 	Uri mUri, mVegItemsUri = Uri.withAppendedPath(ContentProvider_VegNab.CONTENT_URI, "vegitems");

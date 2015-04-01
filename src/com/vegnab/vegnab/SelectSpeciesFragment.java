@@ -220,6 +220,20 @@ public class SelectSpeciesFragment extends ListFragment
         //static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
 		//int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr) {
         Log.v(LOG_TAG, "about to dispatch 'EditSppItemDialog' dialog to create new record");
+        Bundle args = new Bundle();
+        args.putLong(EditSppItemDialog.VEG_ITEM_REC_ID, 0); // don't need this, default is in class
+        args.putLong(EditSppItemDialog.CUR_VISIT_REC_ID, mCurVisitRecId);
+        args.putLong(EditSppItemDialog.CUR_SUBPLOT_REC_ID, mCurSubplotTypeRecId);
+        args.putInt(EditSppItemDialog.REC_SOURCE, VegcodeSources.REGIONAL_LIST);
+        args.putLong(EditSppItemDialog.SOURCE_REC_ID, id);
+        args.putBoolean(EditSppItemDialog.PRESENCE_ONLY, mPresenceOnly);
+        // streamline this, get directly from cursor
+        args.putString(EditSppItemDialog.VEG_CODE, vegCode);
+        args.putString(EditSppItemDialog.VEG_DESCR, vegDescr);
+        args.putString(EditSppItemDialog.VEG_GENUS, vegGenus);
+        args.putString(EditSppItemDialog.VEG_SPECIES, vegSpecies);
+        args.putString(EditSppItemDialog.VEG_SUBSPP_VAR, vegSubsppVar);
+        args.putString(EditSppItemDialog.VEG_VERNACULAR, vegVernacular);
         
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
         		VegcodeSources.REGIONAL_LIST, id, mPresenceOnly, vegCode, vegDescr, vegGenus, vegSpecies, vegSubsppVar, vegVernacular);

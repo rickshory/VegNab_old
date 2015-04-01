@@ -23,15 +23,25 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 		} else {
 //			view.setBackgroundColor(ctx.getResources().getColor(R.color.background_even));
 		}
+		int cfCode = c.getInt(c.getColumnIndexOrThrow("IdLevelID")); // not used yet
+		String sppLine = ""; // not used yet
 		TextView vegText = (TextView) v.findViewById(R.id.veg_descr_text);
 		vegText.setText(c.getString(c.getColumnIndexOrThrow("SppLine")));
 
 		TextView vegHt = (TextView) v.findViewById(R.id.veg_height_text);
-		vegHt.setText(c.getString(c.getColumnIndexOrThrow("Height")) + "cm");
-
-		TextView vegCov = (TextView) v.findViewById(R.id.veg_cover_text);
-		vegCov.setText(c.getString(c.getColumnIndexOrThrow("Cover")) + "%");
+		String ht = c.getString(c.getColumnIndexOrThrow("Height"));
+		if (ht == null) {
+			vegHt.setVisibility(View.GONE);
+		} else {
+			vegHt.setText(ht + "cm");
+		}
 		
-		// 
+		TextView vegCov = (TextView) v.findViewById(R.id.veg_cover_text);
+		String cv = c.getString(c.getColumnIndexOrThrow("Cover"));
+		if (cv == null) {
+			vegCov.setVisibility(View.GONE);
+		} else {
+			vegCov.setText(cv + "%");
+		}
 	}
 }

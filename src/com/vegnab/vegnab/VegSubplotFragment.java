@@ -251,7 +251,7 @@ public class VegSubplotFragment extends ListFragment
 			// get any species entries for this subplot of this visit
 			select = "SELECT VegItems._id, VegItems.OrigCode, VegItems.OrigDescr, "
 					+ "VegItems.OrigCode || ': ' || VegItems.OrigDescr AS SppLine , "
-					+ "VegItems.Height, VegItems.Cover, VegItems.Presence, "
+					+ "VegItems.Height, VegItems.Cover, VegItems.Presence, VegItems.IdLevelID, "
 					+ "IdLevels.IdLevelDescr, IdLevels.IdLevelLetterCode "
 					+ "FROM VegItems LEFT JOIN IdLevels ON VegItems.IdLevelID = IdLevels._id "
 					+ "WHERE (((VegItems.VisitID)=?) AND ((VegItems.SubPlotID)=?)) "

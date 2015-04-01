@@ -127,6 +127,9 @@ public class VegSubplotFragment extends ListFragment
 		textview.setText("Position=" + mPosition + ", VisitId=" + mVisitId +
 				", Visit Name: '" + mVisitName + "'" +
 				", SubplotTypeId=" + mSubplotTypeId + ", PresenceOnly=" + (mPresenceOnly ? 1 : 0));
+		// for now, hide this; comment out following line to show for diagnostics
+		textview.setVisibility(View.GONE);
+		// eventually remove it entirely
 
 		// set click listener for the buttons in the view
 		rootView.findViewById(R.id.subplotNewItemButton).setOnClickListener(this);

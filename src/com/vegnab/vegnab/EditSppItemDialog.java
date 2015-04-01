@@ -87,35 +87,12 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
-//	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, long mCurSubplotTypeRecId, 
-//			int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr, 
-//			String vegGenus, String vegSpecies, String vegSubsppVar, String vegVernacular) {
 	static EditSppItemDialog newInstance(Bundle args) {
-
 		EditSppItemDialog f = new EditSppItemDialog();
-//		// supply arguments
-//		Bundle args = new Bundle();
-//		args.putLong("vegItemRecId", vegItemRecId);
-//		args.putLong("curVisitRecId", curVisitRecId);
-//		args.putLong("curSubplotRecId", mCurSubplotTypeRecId);
-//		args.putInt("recSource", recSource);
-//		args.putLong("sourceRecId", sourceRecId);
-//		args.putBoolean("presenceOnly", presenceOnly);
-//		args.putString("vegCode", vegCode);
-//		args.putString("vegDescr", vegDescr);
-//		args.putString("vegGenus", vegGenus);
-//		args.putString("vegSpecies", vegSpecies);
-//		args.putString("vegSubsppVar", vegSubsppVar);
-//		args.putString("vegVernacular", vegVernacular);
-		Log.v(LOG_TAG, "EditSppItemDialog newInstance, args = " + args.toString());
 		f.setArguments(args);
 		return f;
 	}
-/*	static VegSubplotFragment newInstance(Bundle args) {
-		VegSubplotFragment f = new VegSubplotFragment();
-		f.setArguments(args);
-		return f;
-	}*/	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -125,16 +102,7 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
         } catch (ClassCastException e) {
             throw new ClassCastException("Main Activity must implement EditSppItemDialogListener interface");
         }
-//	setHasOptionsMenu(true);
 	}
-	
-	
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//		inflater.inflate(R.menu.visit_header, menu);
-//		super.onCreateOptionsMenu(menu, inflater);
-//	}
-	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState) {

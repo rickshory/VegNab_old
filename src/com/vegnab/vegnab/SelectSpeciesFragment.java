@@ -239,12 +239,7 @@ public class SelectSpeciesFragment extends ListFragment
         
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(args);
 
-//        EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(0, mCurVisitRecId, mCurSubplotTypeRecId,
-//        		VegcodeSources.REGIONAL_LIST, id, mPresenceOnly, vegCode, vegDescr, vegGenus, vegSpecies, vegSubsppVar, vegVernacular);
         newVegItemDlg.show(getFragmentManager(), "frg_new_veg_item");
-//        mListClickCallback.onSelSppDone();
-//        mListClickCallback.onSppMatchListClicked(
-//        		VegcodeSources.REGIONAL_LIST, id, vegCode, vegDescr); // for testing, send ID for both parameters
     }
 
 	@Override

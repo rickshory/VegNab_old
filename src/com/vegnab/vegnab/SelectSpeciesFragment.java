@@ -217,8 +217,6 @@ public class SelectSpeciesFragment extends ListFragment
         if (mVegCodesAlreadyOnSubplot.contains(vegCode)) {
         	// warn user and allow to cancel
         }
-        //static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, int curSubplotRecId, 
-		//int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr) {
         Log.v(LOG_TAG, "about to dispatch 'EditSppItemDialog' dialog to create new record");
         Bundle args = new Bundle();
         args.putLong(EditSppItemDialog.VEG_ITEM_REC_ID, 0); // don't need this, default is in class
@@ -234,8 +232,6 @@ public class SelectSpeciesFragment extends ListFragment
         args.putString(EditSppItemDialog.VEG_SPECIES, vegSpecies);
         args.putString(EditSppItemDialog.VEG_SUBSPP_VAR, vegSubsppVar);
         args.putString(EditSppItemDialog.VEG_VERNACULAR, vegVernacular);
-        
-        Log.v(LOG_TAG, "onListItemClick, args = " + args.toString());
         
         EditSppItemDialog newVegItemDlg = EditSppItemDialog.newInstance(args);
 

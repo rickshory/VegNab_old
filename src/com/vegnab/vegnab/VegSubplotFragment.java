@@ -130,7 +130,6 @@ public class VegSubplotFragment extends ListFragment
 
 		// set click listener for the buttons in the view
 		rootView.findViewById(R.id.subplotNewItemButton).setOnClickListener(this);
-//		rootView.findViewById(R.id.subplotNextButton).setOnClickListener(this);
 		// if more, loop through all the child items of the ViewGroup rootView and 
 		// set the onclicklistener for all the Button instances found
 		

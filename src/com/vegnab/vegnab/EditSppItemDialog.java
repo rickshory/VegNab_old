@@ -87,29 +87,35 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 	private Boolean mBoolRecHasChanged = false;
 	SimpleDateFormat mTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	
-	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, long mCurSubplotTypeRecId, 
-			int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr, 
-			String vegGenus, String vegSpecies, String vegSubsppVar, String vegVernacular) {
+//	static EditSppItemDialog newInstance(long vegItemRecId, long curVisitRecId, long mCurSubplotTypeRecId, 
+//			int recSource, long sourceRecId, boolean presenceOnly, String vegCode, String vegDescr, 
+//			String vegGenus, String vegSpecies, String vegSubsppVar, String vegVernacular) {
+	static EditSppItemDialog newInstance(Bundle args) {
+
 		EditSppItemDialog f = new EditSppItemDialog();
-		// supply arguments
-		Bundle args = new Bundle();
-		args.putLong("vegItemRecId", vegItemRecId);
-		args.putLong("curVisitRecId", curVisitRecId);
-		args.putLong("curSubplotRecId", mCurSubplotTypeRecId);
-		args.putInt("recSource", recSource);
-		args.putLong("sourceRecId", sourceRecId);
-		args.putBoolean("presenceOnly", presenceOnly);
-		args.putString("vegCode", vegCode);
-		args.putString("vegDescr", vegDescr);
-		args.putString("vegGenus", vegGenus);
-		args.putString("vegSpecies", vegSpecies);
-		args.putString("vegSubsppVar", vegSubsppVar);
-		args.putString("vegVernacular", vegVernacular);
-		
+//		// supply arguments
+//		Bundle args = new Bundle();
+//		args.putLong("vegItemRecId", vegItemRecId);
+//		args.putLong("curVisitRecId", curVisitRecId);
+//		args.putLong("curSubplotRecId", mCurSubplotTypeRecId);
+//		args.putInt("recSource", recSource);
+//		args.putLong("sourceRecId", sourceRecId);
+//		args.putBoolean("presenceOnly", presenceOnly);
+//		args.putString("vegCode", vegCode);
+//		args.putString("vegDescr", vegDescr);
+//		args.putString("vegGenus", vegGenus);
+//		args.putString("vegSpecies", vegSpecies);
+//		args.putString("vegSubsppVar", vegSubsppVar);
+//		args.putString("vegVernacular", vegVernacular);
+		Log.v(LOG_TAG, "EditSppItemDialog newInstance, args = " + args.toString());
 		f.setArguments(args);
 		return f;
 	}
-	
+/*	static VegSubplotFragment newInstance(Bundle args) {
+		VegSubplotFragment f = new VegSubplotFragment();
+		f.setArguments(args);
+		return f;
+	}*/	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -182,19 +188,18 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		Bundle args = getArguments();
 		
 		if (args != null) {
-			mVegItemRecId = args.getLong("mVegItemRecId");
-			mCurVisitRecId = args.getLong("curVisitRecId");
-			mCurSubplotRecId = args.getLong("curSubplotRecId");
-			mRecSource = args.getInt("recSource");
-			mSourceRecId = args.getLong("sourceRecId");
-			mPresenceOnly = args.getBoolean("presenceOnly");
-			mStrVegCode = args.getString("vegCode");
-			mStrDescription = args.getString("vegDescr");
-			mStrGenus = args.getString("vegGenus");
-			mStrSpecies = args.getString("vegSpecies");
-			mStrSubsppVar = args.getString("vegSubsppVar");
-			mStrVernacular = args.getString("vegVernacular");
-			
+			mVegItemRecId = args.getLong(VEG_ITEM_REC_ID);
+			mCurVisitRecId = args.getLong(CUR_VISIT_REC_ID);
+			mCurSubplotRecId = args.getLong(CUR_SUBPLOT_REC_ID);
+			mRecSource = args.getInt(REC_SOURCE);
+			mSourceRecId = args.getLong(SOURCE_REC_ID);
+			mPresenceOnly = args.getBoolean(PRESENCE_ONLY);
+			mStrVegCode = args.getString(VEG_CODE);
+			mStrDescription = args.getString(VEG_DESCR);
+			mStrGenus = args.getString(VEG_GENUS);
+			mStrSpecies = args.getString(VEG_SPECIES);
+			mStrSubsppVar = args.getString(VEG_SUBSPP_VAR);
+			mStrVernacular = args.getString(VEG_VERNACULAR);
 		}
 		mTxtSpeciesItemLabel.setText(mStrDescription);
 		// fire off these database requests
@@ -273,7 +278,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 			mValues.put("OrigDescr", mStrDescription);
 			mValues.put("TimeCreated", mTimeFormat.format(new Date()));
 			mValues.put("TimeLastChanged", mTimeFormat.format(new Date()));
-
 			
 			mUri = rs.insert(mVegItemsUri, mValues);
 			Log.v(LOG_TAG, "new record in saveVegItemRecord; returned URI: " + mUri.toString());

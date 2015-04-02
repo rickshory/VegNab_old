@@ -18,11 +18,12 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 
 	@Override
 	public void bindView(View v, Context ctx, Cursor c) {
-		if(c.getPosition()%2==1) {
+// example of formatting by position
+//		if(c.getPosition()%2==1) {
 //			view.setBackgroundColor(ctx.getResources().getColor(R.color.background_odd));
-		} else {
+//		} else {
 //			view.setBackgroundColor(ctx.getResources().getColor(R.color.background_even));
-		}
+//		}
 		int cfCode = c.getInt(c.getColumnIndexOrThrow("IdLevelID")); // not used yet
 		String sppLine = ""; // not used yet
 		TextView vegText = (TextView) v.findViewById(R.id.veg_descr_text);

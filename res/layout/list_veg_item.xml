@@ -38,11 +38,11 @@
 	        android:textAppearance="?attr/textAppearanceListItemSmall"
 	        android:layout_gravity="right"
 	         />
-        
+	    <CheckBox
+	        android:id="@+id/veg_presence_ck"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	         />
     </LinearLayout>
-    <TextView
-        android:id="@+id/veg_presence_text"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-         />
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v4.widget.ResourceCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class VegItemAdapter extends ResourceCursorAdapter {
@@ -43,6 +44,19 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 			vegCov.setVisibility(View.GONE);
 		} else {
 			vegCov.setText(cv + "%");
+		}
+		
+		CheckBox vegPresence = (CheckBox) v.findViewById(R.id.veg_presence_ck);
+		// find a better way to do this, explicitly test Presence for null
+		if ((ht == null) && (cv == null)) {
+			Integer presence = c.getInt(c.getColumnIndexOrThrow("Presence"));
+			if (presence != 0) {
+				vegPresence.setChecked(true);
+			} else {
+				vegPresence.setChecked(false);
+			}
+		} else {
+			vegPresence.setVisibility(View.GONE);
 		}
 	}
 }

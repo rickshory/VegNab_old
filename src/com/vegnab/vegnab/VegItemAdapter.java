@@ -47,16 +47,16 @@ public class VegItemAdapter extends ResourceCursorAdapter {
 		}
 		
 		CheckBox vegPresence = (CheckBox) v.findViewById(R.id.veg_presence_ck);
-		// find a better way to do this, explicitly test Presence for null
-		if ((ht == null) && (cv == null)) {
-			Integer presence = c.getInt(c.getColumnIndexOrThrow("Presence"));
+		// explicitly test Presence for null
+		if (c.isNull(c.getColumnIndexOrThrow("Presence"))) {
+			vegPresence.setVisibility(View.GONE);
+		} else {
+			int presence = c.getInt(c.getColumnIndexOrThrow("Presence"));
 			if (presence != 0) {
 				vegPresence.setChecked(true);
 			} else {
 				vegPresence.setChecked(false);
-			}
-		} else {
-			vegPresence.setVisibility(View.GONE);
+			}			
 		}
 	}
 }

@@ -210,7 +210,8 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			Log.v(LOG_TAG, "about to do 'mGoogleApiClient.connect()'");
 			mGoogleApiClient.connect();
 			Log.v(LOG_TAG, "just after 'mGoogleApiClient.connect()'");
-
+			// file is actually created by a callback, search in this code for:
+			// ResultCallback<DriveContentsResult> driveContentsCallback
 			return true;
 		
 		case R.id.action_delete_visit:
@@ -1336,10 +1337,11 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    							+ "LEFT JOIN PlotTypes ON Visits.PlotTypeID = PlotTypes._id) " 
 	    							+ "LEFT JOIN Namers ON Visits.NamerID = Namers._id) " 
 	    							+ "LEFT JOIN Locations ON Visits.RefLocID = Locations._id) " 
-	    							+ "LEFT JOIN LocationSources ON Locations.SourceID = LocationSources._id;";
+	    							+ "LEFT JOIN LocationSources ON Locations.SourceID = LocationSources._id " 
+	    							+ "WHERE Visits._id = " + visId + ";";
 	    					thdCs = thdDb.getReadableDatabase().rawQuery(sSQL, null);
 	    					int numCols = thdCs.getColumnCount();
-//	    					while (thdCs.moveToNext()) {
+	    					while (thdCs.moveToNext()) {
 	    						for (int i=0; i<numCols; i++) {
 	    							writer.write(thdCs.getColumnName(i) + "\t");
 	    							try {
@@ -1350,7 +1352,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    							}
 	    						}
 	    						Log.v(LOG_TAG, "wrote a record");
-//	    					}
+	    					}
 	    					Log.v(LOG_TAG, "cursor done");
 	    					thdCs.close();
 	    					Log.v(LOG_TAG, "cursor closed");

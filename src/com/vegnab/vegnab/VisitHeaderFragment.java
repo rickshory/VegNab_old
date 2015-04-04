@@ -1319,8 +1319,9 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    					// test getting data from the database
 	    					VegNabDbHelper thdDb = new VegNabDbHelper(getActivity());
 //	    					ContentResolver thdRs = getActivity().getContentResolver();
-	    					Cursor thdCs;
+	    					Cursor thdCs, thdSb, thdVg;
 	    					String sSQL;
+	    					// get the Visit Header information
 	    					sSQL = "SELECT Visits.VisitName, Visits.VisitDate, Projects.ProjCode, " 
 	    							+ "PlotTypes.PlotTypeDescr, Visits.StartTime, Visits.LastChanged, " 
 	    							+ "Namers.NamerName, Visits.Scribe, Locations.LocName, " 
@@ -1351,11 +1352,35 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    								writer.write("\r\n");
 	    							}
 	    						}
-	    						Log.v(LOG_TAG, "wrote a record");
+//	    						Log.v(LOG_TAG, "wrote a record");
 	    					}
 	    					Log.v(LOG_TAG, "cursor done");
 	    					thdCs.close();
 	    					Log.v(LOG_TAG, "cursor closed");
+	    					// get the Subplots for this Visit
+	    					long sbId;
+	    					String sbName, spCode, spDescr, spParams;
+	    					sSQL = "SELECT Visits._id, PlotTypes.PlotTypeDescr, PlotTypes.Code, " 
+	    							+ "SubplotTypes.[_id] AS SubplotTypeId, " 
+	    							+ "SubplotTypes.SubplotDescription, SubplotTypes.OrderDone, " 
+	    							+ "SubplotTypes.PresenceOnly, SubplotTypes.HasNested, " 
+	    							+ "SubplotTypes.SubPlotAngle, SubplotTypes.XOffset, SubplotTypes.YOffset, " 
+	    							+ "SubplotTypes.SbWidth, SubplotTypes.SbLength, SubplotTypes.SbShape, " 
+	    							+ "SubplotTypes.NestParam1, SubplotTypes.NestParam2, " 
+	    							+ "SubplotTypes.NestParam3, SubplotTypes.NestParam4 " 
+	    							+ "FROM (Visits LEFT JOIN PlotTypes ON Visits.PlotTypeID = PlotTypes._id) " 
+	    							+ "LEFT JOIN SubplotTypes ON PlotTypes._id = SubplotTypes.PlotTypeID " 
+	    							+ "WHERE (((Visits._id)=" + visId + ")) " 
+	    							+ "ORDER BY SubplotTypes.OrderDone;";
+	    					thdSb = thdDb.getReadableDatabase().rawQuery(sSQL, null);
+	    					while (thdSb.moveToNext()) {
+	    						sbName = thdSb.getString(thdSb.getColumnIndexOrThrow("SubplotDescription"));
+	    						sbId = thdSb.getLong(thdSb.getColumnIndexOrThrow("SubplotTypeId"));
+	    						writer.write("\r\n" + sbName + "\r\n");
+	    						
+	    					}
+	    					/*thdSb, thdVg*/
+	    					// get the data for each subplot
 	    					thdDb.close();
 	    					Log.v(LOG_TAG, "database closed");
 	    				}

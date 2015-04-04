@@ -1377,10 +1377,34 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    						sbName = thdSb.getString(thdSb.getColumnIndexOrThrow("SubplotDescription"));
 	    						sbId = thdSb.getLong(thdSb.getColumnIndexOrThrow("SubplotTypeId"));
 	    						writer.write("\r\n" + sbName + "\r\n");
-	    						
+	    						// get the data for each subplot
+	    						sSQL = "SELECT VegItems._id, VegItems.VisitID, VegItems.SubPlotID, " 
+	    								+ "VegItems.OrigCode, VegItems.OrigDescr, VegItems.Height, VegItems.Cover, " 
+	    								+ "VegItems.Presence, VegItems.IdLevelID, " 
+	    								+ "VegItems.TimeCreated, VegItems.TimeLastChanged FROM VegItems " 
+	    								+ "WHERE (((VegItems.VisitID)=" + visId + ") " 
+	    								+ "AND ((VegItems.SubPlotID)=" + sbId + ")) " 
+	    								+ "ORDER BY VegItems.TimeLastChanged DESC;";
+	    						thdVg = thdDb.getReadableDatabase().rawQuery(sSQL, null);
+		    					while (thdVg.moveToNext()) {
+		    						spCode = thdVg.getString(thdVg.getColumnIndexOrThrow("OrigCode"));
+		    						spDescr = thdVg.getString(thdVg.getColumnIndexOrThrow("OrigDescr"));
+		    						if (thdVg.isNull(thdVg.getColumnIndexOrThrow("Presence"))) {
+		    							// we should have Height and Cover
+		    							spParams = "\t\t" + thdVg.getString(thdVg.getColumnIndexOrThrow("Height")) + "cm, "
+		    									+ thdVg.getString(thdVg.getColumnIndexOrThrow("Cover")) + "%";
+		    						} else {
+		    							// we should have Presence = 1 (true) or 0 (false)
+		    							spParams = "\t\t" 
+		    									+ ((thdVg.getInt(thdVg.getColumnIndexOrThrow("Presence")) == 0)
+		    									? "Absent" : "Present");
+		    						}
+		    						writer.write("\t" + spCode + ": " + spDescr + "\r\n");
+		    						writer.write(spParams + "\r\n");
+		    					}
+		    					thdVg.close();
 	    					}
-	    					/*thdSb, thdVg*/
-	    					// get the data for each subplot
+	    					thdSb.close();
 	    					thdDb.close();
 	    					Log.v(LOG_TAG, "database closed");
 	    				}

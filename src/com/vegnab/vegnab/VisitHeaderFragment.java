@@ -197,21 +197,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 			Toast.makeText(getActivity(), "''Visit Details'' of Visit Header is not implemented yet", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_export_visit:
-			Toast.makeText(getActivity(), "''Export Visit'' of Visit Header is not fully implemented yet", Toast.LENGTH_SHORT).show();
-			// test, create new contents resource
-		    try {
-		    	LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-		    } catch (Exception e) {
-		    	Log.v(LOG_TAG, "GoogleApiClient may not be connected yet, error code " + e);
-		    }
-			mGACState = GAC_STATE_DRIVE;
-			Log.v(LOG_TAG, "about to call 'buildGoogleApiClient()'");
-			buildGoogleApiClient();
-			Log.v(LOG_TAG, "about to do 'mGoogleApiClient.connect()'");
-			mGoogleApiClient.connect();
-			Log.v(LOG_TAG, "just after 'mGoogleApiClient.connect()'");
-			// file is actually created by a callback, search in this code for:
-			// ResultCallback<DriveContentsResult> driveContentsCallback
+			exportVisit();
 			return true;
 		
 		case R.id.action_delete_visit:
@@ -1278,7 +1264,24 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
     		
     		break;
     	}
-    	
+    }
+    
+    private void exportVisit() {
+    	Toast.makeText(getActivity(), "''Export Visit'' of Visit Header is not fully implemented yet", Toast.LENGTH_SHORT).show();
+    	// test, create new contents resource
+    	try {
+    		LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    	} catch (Exception e) {
+    		Log.v(LOG_TAG, "GoogleApiClient may not be connected yet, error code " + e);
+    	}
+    	mGACState = GAC_STATE_DRIVE;
+    	Log.v(LOG_TAG, "about to call 'buildGoogleApiClient()'");
+    	buildGoogleApiClient();
+    	Log.v(LOG_TAG, "about to do 'mGoogleApiClient.connect()'");
+    	mGoogleApiClient.connect();
+    	Log.v(LOG_TAG, "just after 'mGoogleApiClient.connect()'");
+    	// file is actually created by a callback, search in this code for:
+    	// ResultCallback<DriveContentsResult> driveContentsCallback
     }
 
     final private ResultCallback<DriveContentsResult> driveContentsCallback = new
@@ -1308,8 +1311,7 @@ public class VisitHeaderFragment extends Fragment implements OnClickListener,
 	    			try {
 						// \n writes only a '0x0a' character to the file (newline)
 						// 'normal' text files contain '0x0d' '0x0a' (carriage return and then newline)
-	    				writer.write("This will be the output of a visit's data.\r\n");
-	    				writer.write("Presently it is a test of logging.\r\n");
+	    				writer.write("This is the output of a Visit's data.\r\n");
 	    				// temporarily comment out the following
 //	    				if (visId == 0) {
 //	    					writer.write("\nNo data yet for this Visit.\n");

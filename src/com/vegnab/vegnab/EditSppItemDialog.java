@@ -189,7 +189,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
-
 		if(!hasFocus) { // something lost focus
 			mValues.clear();
 			switch (v.getId()) { 
@@ -205,7 +204,6 @@ public class EditSppItemDialog extends DialogFragment implements android.view.Vi
 		}		
 	}
 	
-
 	@Override
 	public void onCancel (DialogInterface dialog) {
 		// update the project record in the database, if everything valid	
